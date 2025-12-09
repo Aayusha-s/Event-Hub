@@ -21,23 +21,23 @@ const Footer = () => {
 
     ]
 
-    const platformLinks =[
+    const platformLinks = [
         { name: 'Browse Events', href: '/browseevents' },
         { name: 'Create Events', href: '/createevents' },
         { name: 'Pricing', href: '/pricing' },
         { name: 'Categories', href: '/categories' },
     ]
 
-    const socialLinks =[
-        {name: 'Facebook', href:'https://facebook.com', icon:<i className="fa-brands fa-facebook"></i> },
-        {name: 'Twitter', href:'https://twitter.com', icon:<i className="fa-brands fa-twitter"></i> },
-        {name: 'Instagram', href:'https://instagram.com', icon:<i className="fa-brands fa-instagram"></i> },
-        {name: 'LinkedIn', href:'https://linkedin.com', icon:<i className="fa-brands fa-linkedin"></i> },
-        {name: 'YouTube', href:'https://youtube.com', icon:<i className="fa-brands fa-youtube"></i> }
+    const socialLinks = [
+        { name: 'Facebook', href: 'https://facebook.com', icon: <i className="fa-brands fa-facebook"></i> },
+        { name: 'Twitter', href: 'https://twitter.com', icon: <i className="fa-brands fa-twitter"></i> },
+        { name: 'Instagram', href: 'https://instagram.com', icon: <i className="fa-brands fa-instagram"></i> },
+        { name: 'LinkedIn', href: 'https://linkedin.com', icon: <i className="fa-brands fa-linkedin"></i> },
+        { name: 'YouTube', href: 'https://youtube.com', icon: <i className="fa-brands fa-youtube"></i> }
     ]
     return (
-        <footer className='bg-brown-light text-text-dark py-12 mt-20 '>
-            <div className='max-w-[1440px] mx-auto px-5 grid lg:grid-cols-6 gap-8'>
+        <footer className='w-full bg-brown-light text-text-dark py-12 mt-20'>
+            <div className='mx-5 px-4 grid lg:grid-cols-6 gap-8'>
 
                 {/* Logo & Description */}
                 <div className='lg:col-span-2'>
@@ -141,7 +141,7 @@ const Footer = () => {
             </div>
 
             {/* Bottom Section - Social & Copyright */}
-            <div className='max-w-[1440px] mx-auto px-5 mt-10 pt-8 border-t border-brown-normal'>
+            <div className='mx-5 px-4 mt-10 pt-8 border-t border-brown-normal'>
                 <div className='flex flex-row justify-between items-center gap-4'>
                     {/* Copyright */}
                     <div className="text-text-light text-sm">

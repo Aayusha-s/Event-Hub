@@ -2,8 +2,9 @@ import React from 'react'
 
 const Header = () => {
     return (
-        <header className='header'>
-            <div className='bg-brown-light flex justify-between items-center max-w-[1440px] h-[70px] mx-auto px-4'>
+        // header background spans full width; inner content uses same mx-5 px-4 spacing as HeroSection
+        <header className='w-full bg-brown-light'>
+            <div className='mx-5 px-4 flex justify-between items-center h-[70px]'>
                 <div className='nav-left'>
                     <img className='w-[130px] h-[70px] cursor-pointer' src="/images/logo.png" alt="EventHub Logo" />
                 </div>
@@ -21,10 +22,25 @@ const Header = () => {
                 </div>
 
                 <div className='nav-right flex items-center gap-6'>
-                    <button className=' w-[90px] h-[40px] rounded-[10px] border border-brown-dark bg-transparent text-text-light hover:bg-brown-light-active hover:border-brown-dark-hover hover:translate-y-[-2px] hover:shadow-md transition-all cursor-pointer'>
+                    <button className='w-[90px] h-[40px] 
+                    rounded-[10px] border 
+                    border-brown-dark bg-transparent 
+                    text-text-light hover:bg-brown-light-active 
+                    hover:border-brown-dark-hover 
+                    hover:translate-y-[-2px] 
+                    hover:shadow-md transition-all 
+                    cursor-pointer'>
                         Login
                     </button>
-                    <button className=' w-[90px] h-[40px] rounded-[10px] border border-brown-dark bg-transparent text-text-light hover:bg-brown-light-hover hover:border-brown-dark-hover hover:translate-y-[-2px] hover:shadow-md transition-all cursor-pointer'>
+                    <button className=' w-[90px] h-[40px] 
+                    rounded-[10px] border 
+                    border-brown-dark 
+                    bg-transparent text-text-light 
+                    hover:bg-brown-light-hover 
+                    hover:border-brown-dark-hover 
+                    hover:translate-y-[-2px] 
+                    hover:shadow-md transition-all 
+                    cursor-pointer'>
                         Sign Up
                     </button>
                 </div>

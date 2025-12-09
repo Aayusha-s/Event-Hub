@@ -1,0 +1,39 @@
+const HeroSection = () => {
+    return (
+        <section className="my-10 mx-5 px-4">
+            <div className="flex flex-col 
+            text-text-dark 
+            items-center justify-center 
+            border border-brown-normal rounded-[10px] 
+            p-5 
+            bg-brown-light-hover
+            leading-14">
+                <h3 className="text-lg mt-4">Discover 10,000+ events happening near you</h3>
+
+                <h1 className="text-4xl mt-5 w-1/2 text-center font-semibold">Find Your Next Unforgettable Experience</h1>
+
+                <p className="text-base mt-5 w-1/2 text-center">Discover events, connect with communities, and create memories that last a lifetime.
+                    From concerts to conferences, find what moves you.</p>
+
+                <button className=' w-[150px] h-[45px] 
+                    rounded-[10px] 
+                    border border-brown-dark 
+                    bg-transparent 
+                    text-text-light 
+                    hover:bg-brown-light-active 
+                    hover:border-brown-dark-hover 
+                    hover:translate-y-[-2px] 
+                    hover:shadow-md transition-all 
+                    cursor-pointer
+                    flex items-center justify-center mt-5 mb-2'>
+                    Explore Events
+                    <i className="fa-solid fa-arrow-right ml-2 "></i>
+                </button>
+
+                <h4>Quick search • Personalized results • Secure booking</h4>
+            </div>
+        </section>
+    )
+}
+
+export default HeroSection;
