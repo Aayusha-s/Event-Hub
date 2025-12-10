@@ -1,18 +1,80 @@
 "use client";
 import React, { useState } from "react";
-import Button from "./Button"; ``
+import Button from "./Button"; 
+import HowItWorksStep from "./HowItWorksStep";
+
 
 const HowItWorks = () => {
-    const [activeTab, setActiveTab] = useState("attendees");
+
+    const attendeeSteps = [
+        {
+            icon: "fa-solid fa-magnifying-glass",
+            title: "Discover Events",
+            description: "Browse events that match your interests.",
+        },
+        {
+            icon: "fa-solid fa-ticket",
+            title: "Book Your Spot",
+            description: "Buy tickets easily and securely.",
+        },
+        {
+            icon: "fa-solid fa-gift",
+            title: "Enjoy & Connect",
+            description: "Attend events and meet people.",
+        },
+    ];
+
+    const organizerSteps = [
+        {
+            icon: "fa-solid fa-plus",
+            title: "Create Event",
+            description: "Create your event in minutes.",
+        },
+        {
+            icon: "fa-solid fa-user-group",
+            title: "Reach Audience",
+            description: "Reach people who care.",
+        },
+        {
+            icon: "fa-solid fa-chart-column",
+            title: "Manage & Grow",
+            description: "Track and improve your events.",
+        },
+    ];
+
+    const vendorSteps = [
+        {
+            icon: "fa-solid fa-store",
+            title: "Create Profile",
+            description: "Showcase your services.",
+        },
+        {
+            icon: "fa-solid fa-file",
+            title: "Apply to Events",
+            description: "Apply to suitable events.",
+        },
+        {
+            icon: "fa-solid fa-handshake",
+            title: "Grow Business",
+            description: "Build long-term partnerships.",
+        },
+    ];
+
+
+
+    const [activeTab, setActiveTab] = useState<"attendees" | "organizers" | "vendors">("attendees");
+    
+    const stepsMaps ={
+        attendees: attendeeSteps,
+        organizers: organizerSteps,
+        vendors: vendorSteps
+    }
     return (
         <section className="text-text-dark">
             {/* title */}
             <div>
-                <div className="flex flex-col items-center justify-center
-            mx-5 mb-15 mt-15 px-4 ">
-                    <h2 className="text-3xl 
-                font-semibold 
-                text-text-dark">
+                <div className="flex flex-col items-center justify-centermx-5 mb-15 mt-15 px-4 ">
+                    <h2 className="text-3xl font-semibold text-text-dark">
                         How It Works
                     </h2>
                 </div>
@@ -23,15 +85,13 @@ const HowItWorks = () => {
                     gap-8 border 
                     border-brown-normal
                     rounded-[10px]
-                    p-2
-                    mx-94
-                    max-w-[800px]
-                    h-[60px]">
+                    p-2 mx-94 max-w-[800px] h-[60px]">
 
                     <Button
                         text="For Attendees"
                         variant="cta"
                         size="md"
+                        isActive={activeTab === "attendees"}
                         onClick={() => setActiveTab("attendees")}>
                     </Button>
 
@@ -39,6 +99,7 @@ const HowItWorks = () => {
                         text="For Organizers"
                         variant="cta"
                         size="md"
+                        isActive={activeTab === "organizers"}
                         onClick={() => setActiveTab("organizers")}>
                     </Button>
 
@@ -46,75 +107,41 @@ const HowItWorks = () => {
                         text="For Vendors"
                         variant="cta"
                         size="md"
+                        isActive={activeTab === "vendors"}
                         onClick={() => setActiveTab("vendors")}>
                     </Button>
                 </div>
 
                 {/* contents of each tabs */}
                 <div>
+                    {/* ATTENDEE TAB */}
                     {
-                        activeTab === "attendees" &&
-                        <div>
-                            <div className="relative flex items-center justify-center 
-                            gap-10 mx-16 my-10">
-                                {/* connecting line*/}
-                                <div className="
+                        <div className="relative flex items-center justify-center gap-40  my-10">
+
+                            {/* connecting line*/}
+                            <div className="
                                     absolute 
-                                    top-1/2 
-                                    left-28 
-                                    right-28 
+                                    top-[50px] 
+                                    left-80
+                                    right-80
                                     h-0.5
                                     bg-brown-normal
                                     " />
-                                <div className="
-                                    border border-brown-normal rounded-[10px] 
-                                    p-6 mx-16 
-                                    max-w-24 w-full 
-                                    max-h-24 
-                                    my-10">
-                                    <div className="flex flex-row items-center justify-center ">
-                                        <i className="fa-solid fa-ticket text-4xl"></i>
-                                    </div>
-                                </div>
 
-                                <div className="
-                                    border border-brown-normal rounded-[10px] 
-                                    p-6 mx-16 
-                                    max-w-24 w-full 
-                                    max-h-24 
-                                    my-10">
-                                    <div className="flex flex-row items-center justify-center ">
-                                        <i className="fa-solid fa-magnifying-glass text-4xl"></i>
-                                    </div>
-                                </div>
-
-                                <div className="
-                                    border border-brown-normal rounded-[10px] 
-                                    p-6 mx-16 
-                                    max-w-24 w-full 
-                                    max-h-24 
-                                    my-10">
-                                    <div className="flex flex-row items-center justify-center ">
-                                        <i className="fa-solid fa-gift text-4xl"></i>
-                                    </div>
-                                </div>
-                            </div>
+                            {stepsMaps[activeTab].map((step, index)=> (
+                                <HowItWorksStep
+                                    key={index}
+                                    step={index + 1}
+                                    icon={step.icon}
+                                    title={step.title}
+                                    description={step.description}
+                                />
+                            ))}
                         </div>
                     }
 
-                    {
-                        activeTab === "organizers" &&
-                        <div>
 
-                        </div>
-                    }
-
-                    {
-                        activeTab === "vendors" &&
-                        <div>
-
-                        </div>
-                    }
+                    
                 </div>
             </div>
         </section>
