@@ -1,8 +1,8 @@
-import React from 'react'
+import Button from "./Button"
+
 
 const Header = () => {
     return (
-        // header background spans full width; inner content uses same mx-5 px-4 spacing as HeroSection
         <header className='w-full bg-brown-light'>
             <div className='mx-5 px-4 flex justify-between items-center h-[70px]'>
                 <div className='nav-left'>
@@ -22,27 +22,16 @@ const Header = () => {
                 </div>
 
                 <div className='nav-right flex items-center gap-6'>
-                    <button className='w-[90px] h-[40px] 
-                    rounded-[10px] border 
-                    border-brown-dark bg-transparent 
-                    text-text-light hover:bg-brown-light-active 
-                    hover:border-brown-dark-hover 
-                    hover:translate-y-[-2px] 
-                    hover:shadow-md transition-all 
-                    cursor-pointer'>
-                        Login
-                    </button>
-                    <button className=' w-[90px] h-[40px] 
-                    rounded-[10px] border 
-                    border-brown-dark 
-                    bg-transparent text-text-light 
-                    hover:bg-brown-light-hover 
-                    hover:border-brown-dark-hover 
-                    hover:translate-y-[-2px] 
-                    hover:shadow-md transition-all 
-                    cursor-pointer'>
-                        Sign Up
-                    </button>
+                    {/* login Button */}
+                    <Button 
+                    text="Log In"
+                    variant="cta">
+                    </Button>
+
+                    {/* sign up Button */}
+                    <Button text="Sign Up"
+                    variant="cta">
+                    </Button>
                 </div>
             </div>
         </header>

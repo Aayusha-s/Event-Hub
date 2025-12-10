@@ -1,49 +1,44 @@
+import React from "react";
 
-const baseStyles =
-    "w-[90px] border border-brown-dark bg-transparent text-text-light cursor-pointer transition-all hover:bg-brown-light-active hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md";
-
-const buttonSizes = {
-    normal: "w-[90px] h-[40px] rounded-[10px]",
-    tags: "w-[90px] h-[30px] rounded-[40px]",
-}
-
-interface ButtonProps {
-    title?: string;
-    size?: "normal" | "tags";
+type ButtonProps = {
+    text: string;
     icon?: React.ReactNode;
-}
+    variant?: "cta" | "tag";
+    size?: "sm" | "md" | "lg";
+    onClick?: () => void;
+};
 
-// export const Button = ()=>{
-//     return (
-        
-//     )
-// }
-// export const TagsButton = () => {
-//     return (
-        
-//     )
-// }
+const Button = ({ text, icon, variant = "cta", size = "md", onClick }: ButtonProps) => {
+    const baseStyles =
+        "group border border-brown-dark bg-transparent text-text-light hover:bg-brown-light-active hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
 
+    const variants = {
+        cta: "rounded-[10px]",
+        tag: "rounded-[40px] ",
+    };
 
-// export const ButtonPrimary = () => {
-//     return (
-//     )
-// }
-
-export const ButtonSecondary = () => {
+    const sizes = {
+        cta: {
+            sm: "px-4 h-10",
+            md: "px-5 h-10",
+            lg: "px-6 h-12",
+        },
+        tag: {
+            sm: "px-3 h-6",
+            md: "px-5 h-8",
+            lg: "px-5 h-10",
+        },
+    };
     return (
-        <button
-            className='w-[90px] h-10 
-            rounded-[10px] border 
-            border-brown-dark bg-transparent 
-            text-text-light hover:bg-brown-light-active 
-            hover:border-brown-dark-hover 
-            hover:-translate-y-0.5 
-            hover:shadow-md transition-all 
-            cursor-pointer'>
-
-            Login
+        <button className={`${baseStyles} ${variants[variant]} ${sizes[variant][size]}`} 
+        onClick={onClick}>
+            {text}
+            {icon && <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">{icon}</span>}
         </button>
-    )
-}
+    );
+};
+
+export default Button;
+
+
 
