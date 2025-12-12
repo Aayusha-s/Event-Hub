@@ -60,8 +60,6 @@ const HowItWorks = () => {
         },
     ];
 
-
-
     const [activeTab, setActiveTab] = useState<"attendees" | "organizers" | "vendors">("attendees");
     
     const stepsMaps ={
@@ -74,7 +72,7 @@ const HowItWorks = () => {
             {/* title */}
             <div>
                 <div className="flex flex-col items-center justify-centermx-5 mb-15 mt-15 px-4 ">
-                    <h2 className="text-3xl font-semibold text-text-dark">
+                    <h2 className="text-3xl font-semibold text-text-dark font-dynapuff">
                         How It Works
                     </h2>
                 </div>

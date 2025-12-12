@@ -5,16 +5,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "EventHub",
   description: "Turn Moments into Memories",
@@ -32,10 +22,17 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Header />
+        
+        {/* Dynapuff */}
+        <link href="https://fonts.googleapis.com/css2?family=Chewy&family=DynaPuff:wght@400..700&family=Niconne&display=swap" 
+        rel="stylesheet"></link>
 
+        {/* Cause */}
+        <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Cause:wght@400..700&family=Niconne&display=swap" rel="stylesheet"></link>
+        <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Montserrat:wght@400..700&family=Niconne&display=swap" rel="stylesheet"></link>
+      </head>
+      <body className="font-cause">
+        <Header />
         {children}
         <Footer />
       </body>

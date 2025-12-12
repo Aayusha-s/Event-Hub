@@ -5,6 +5,7 @@ const TrendingNearYou = () => {
 
     const events = [
         {
+            eventId: 1,
             tags: ["Music", "Trending"],
             imageUrl: "/images/party.png",
             imageAlt: "Summer Music Festival",
@@ -15,6 +16,7 @@ const TrendingNearYou = () => {
             price: "Rs.360",
         },
         {
+            eventId: 2,
             tags: ["Art", "Featured"],
             imageUrl: "/images/ArtExhibition.png",
             imageAlt: "Art Exhibition",
@@ -25,6 +27,7 @@ const TrendingNearYou = () => {
             price: "Rs.200",
         },
         {
+            eventId: 3,
             tags: ["Tech", "Workshop"],
             imageUrl: "/images/ReactWorkshop.png",
             imageAlt: "Tech Workshop",
@@ -35,6 +38,7 @@ const TrendingNearYou = () => {
             price: "Rs.500",
         },
         {
+            eventId: 4,
             tags: ["Food", "Festival"],
             imageUrl: "/images/FoodFestival.png",
             imageAlt: "Food Festival",
@@ -45,6 +49,7 @@ const TrendingNearYou = () => {
             price: "Rs.250",
         },
         {
+            eventId: 5,
             tags: ["Health", "Wellness"],
             imageUrl: "/images/Wellness.png",
             imageAlt: "Wellness Retreat",
@@ -54,7 +59,8 @@ const TrendingNearYou = () => {
             location: "Mountain Resort, Kathmandu",
             price: "Rs.800",
         },
-        {
+        {   
+            eventId: 6,
             tags: ["Business", "Networking"],
             imageUrl: "/images/Business.png",
             imageAlt: "Business Networking Event",
@@ -68,31 +74,31 @@ const TrendingNearYou = () => {
 
     ]
     return (
-        <>
+        <section className="mx-5 px-4">
             <div className="flex flex-row items-center
-            mx-5 mb-15 mt-5 px-4  ">
+            mb-15 ">
                 <h2 className="text-3xl 
                 font-semibold 
                 text-text-dark">
                     Trending Near
-                    <span className=""> KATHMANDU</span>
+                    <span className="font-dynapuff"> KATHMANDU</span>
                     <i className="fa-solid fa-caret-down cursor-pointer text-3xl ml-3 "></i>
                 </h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-9 gap-x-15">
                 {events.map((event, index) => (
                     <EventCard key={index} {...event} />
                 ))}
             </div>
 
-            <div className="flex justify-center mx-5 mt-5 px-4  ">
+            <div className="flex justify-center mx-5 mt-7 px-4  ">
                 <Button
                     text="View All Events"
                     icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}
                     variant="cta"
                 />
             </div>
-        </>
+        </section>
     )
 }
 

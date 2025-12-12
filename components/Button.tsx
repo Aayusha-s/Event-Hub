@@ -1,7 +1,7 @@
 import React from "react";
 
 type ButtonProps = {
-    text: string;
+    text?: string;
     icon?: React.ReactNode;
     variant?: "cta" | "tag";
     size?: "sm" | "md" | "lg";

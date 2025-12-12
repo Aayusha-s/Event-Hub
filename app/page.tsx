@@ -9,12 +9,12 @@ import CallToAction from "@/components/CallToAction";
 
 export default function Home() {
   return (
-    <>
+    <section className="font-cause">
     <HeroSection />
     <TrendingNearYou/>
     <BrowseInterest/>
     <HowItWorks/>
     <CallToAction/>
-    </>
+    </section>
   );
 }

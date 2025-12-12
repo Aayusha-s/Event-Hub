@@ -33,7 +33,7 @@ const BrowseInterest = () => {
         {
             title: "Health & Wellness",
             icon: <i className="fa-solid fa-heart-pulse text-4xl"></i>,
-            description: "Yoga, meditation, and wellness retreats"  
+            description: "Yoga, meditation, and wellness retreats"
         },
         {
             title: "Business",
@@ -54,65 +54,67 @@ const BrowseInterest = () => {
             title: "Gaming",
             icon: <i className="fa-solid fa-gamepad text-4xl"></i>,
             description: "Tournaments, conventions, and gaming nights"
-        },
-        {
-            title: "Fashion",
-            icon: <i className="fa-solid fa-tshirt text-4xl"></i>,
-            description: "Shows, expos, and style workshops"
-        },{
-            title: "Film & Theater",
-            icon: <i className="fa-solid fa-film text-4xl"></i>,
-            description: "Screenings, plays, and acting classes"
-        },
-        {
-            title: "Networking",
-            icon: <i className="fa-solid fa-users text-4xl"></i>,
-            description: "Meetups, mixers, and professional gatherings"
-        },
-        {
-            title: "Charity & Causes",
-            icon: <i className="fa-solid fa-hand-holding-heart text-4xl"></i>,
-            description: "Fundraisers, awareness events, and volunteer opportunities"
-        },
-        {
-            title: "Outdoors & Adventure",
-            icon: <i className="fa-solid fa-tree text-4xl"></i>,
-            description: "Hiking, camping, and nature excursions"
         }
+        // ,
+        // {
+        //     title: "Fashion",
+        //     icon: <i className="fa-solid fa-tshirt text-4xl"></i>,
+        //     description: "Shows, expos, and style workshops"
+        // }
+        // ,{
+        //     title: "Film & Theater",
+        //     icon: <i className="fa-solid fa-film text-4xl"></i>,
+        //     description: "Screenings, plays, and acting classes"
+        // },
+        // {
+        //     title: "Networking",
+        //     icon: <i className="fa-solid fa-users text-4xl"></i>,
+        //     description: "Meetups, mixers, and professional gatherings"
+        // },
+        // {
+        //     title: "Charity & Causes",
+        //     icon: <i className="fa-solid fa-hand-holding-heart text-4xl"></i>,
+        //     description: "Fundraisers, awareness events, and volunteer opportunities"
+        // },
+        // {
+        //     title: "Outdoors & Adventure",
+        //     icon: <i className="fa-solid fa-tree text-4xl"></i>,
+        //     description: "Hiking, camping, and nature excursions"
+        // }
     ]
     return (
         <>
-            {/* title and sub-title */}
-            <div className="flex flex-col items-center justify-center
-            mx-5 mb-15 mt-15 px-4 ">
-                <h2 className="text-3xl 
-                font-semibold 
-                text-text-dark">
-                    Browse by Interest
-                </h2>
-                <p className="mt-8 max-w-100 text-center">Find events that match your passion.
-                    From live music to tech talks, there's something for everyone.</p>
-            
-            </div>
-            {/* cards */}
-            <div className="grid grid-cols-5 gap-y-4 ">
-                {categories.map((category, index)=>(
-                    <CategoryCard 
-                    key ={index}
-                    title={category.title}
-                    icon={category.icon}
-                    description={category.description}/>
-                ))}
+            <section className="my-10 mx-5 px-4">
 
-            </div>
-            <div className="flex justify-center mx-5 mt-5 px-4  ">
+                {/* title and sub-title */}
+                <div className="flex flex-col items-center justify-center mb-8 ">
+                    <h2 className="text-3xl font-semibold text-text-dark font-dynapuff">
+                        Browse by Interest
+                    </h2>
+                    <p className="mt-8 max-w-100 text-center">Find events that match your passion.
+                        From live music to tech talks, there's something for everyone.</p>
+
+                </div>
+                {/* cards */}
+                <div className="grid grid-cols-5 gap-y-4 gap-x-11 justify-center ">
+                    {categories.map((category, index) => (
+                        <CategoryCard
+                            key={index}
+                            title={category.title}
+                            icon={category.icon}
+                            description={category.description} />
+                    ))}
+
+                </div>
+                <div className="flex justify-center mx-5 mt-5 ">
                     <Button text="View All Categories"
-                    variant="cta"
-                    icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                        variant="cta"
+                        icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
                     </Button>
                 </div>
 
 
+            </section>
         </>
     )
 }

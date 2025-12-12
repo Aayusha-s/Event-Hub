@@ -8,8 +8,10 @@ type CategoryCardProps = {
 
 const CategoryCard = ({ title, icon, description }: CategoryCardProps) => {
     return (
-        <section className="mx-5 px-4 text-text-dark">
+        <section className="text-text-dark">
+            
             <div className="border border-brown-normal rounded-[10px] p-3 my-2 w-[200px] h-[200px] flex flex-col justify-between">
+                
                 {/* Title and icon */}
                 <div className="flex flex-row items-center justify-between mb-2">
                     <h3 className="text-lg font-semibold">{title}</h3>

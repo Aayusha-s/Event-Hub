@@ -37,7 +37,7 @@ const HowItWorksStep = (
                                         bg-brown-normal text-white
                                         text-sm font-semibold
                                         flex items-center justify-center">
-                                        1
+                                        {step}
                                     </div>
                                 </div>
 

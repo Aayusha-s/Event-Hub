@@ -1,6 +1,9 @@
+"use client";
 import Button from "./Button"
+import { useRouter } from 'next/navigation';
 
 type EventCardProps = {
+    eventId: number;
     tags: string[];
     imageUrl: string;
     imageAlt: string;
@@ -12,6 +15,7 @@ type EventCardProps = {
 }
 const EventCard = (
     {
+        eventId,
         tags,
         imageUrl,
         imageAlt,
@@ -20,10 +24,24 @@ const EventCard = (
         descriptions,
         location,
         price
-    }: EventCardProps) => {
+    }: EventCardProps
+) => {
+
+    const router =useRouter();
+
+    const handleCardClick =() => {
+        router.push (`/event-details/${eventId}`);
+    }
+
+    const handleTagClick =(e: React.MouseEvent, tag:string) => {
+        e.stopPropagation();
+        router.push (`/event-tags`);
+    }
 
     return (
-        <section className="mx-5 px-4 mb-4 text-text-dark">
+
+        <section className="text-text-dark cursor-pointer"
+        onClick={handleCardClick}>
             <div className="border border-brown-normal w-[350.8px] rounded-[10px] p-3">
                 {/* tags and image */}
                 <div className="tags">
