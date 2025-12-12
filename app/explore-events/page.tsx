@@ -242,7 +242,7 @@ const page = () => {
             <div className="flex flex-row items-center ">
                 <h2 className="text-3xl 
                 font-semibold 
-                text-text-dark">
+                text-text-dark font-dynapuff">
                     Explore Events
                 </h2>
             </div>
