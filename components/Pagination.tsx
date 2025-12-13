@@ -22,14 +22,12 @@ const Pagination = () => {
             variant='cta'
             size='sm'
             />
-            
 
             <Button 
             icon={<i className="fa-solid fa-angle-right"></i>}
             variant='cta'
             size='sm'
             />
-
         </div>
     )
 }

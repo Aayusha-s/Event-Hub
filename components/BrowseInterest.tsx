@@ -1,5 +1,6 @@
 import Button from "./Button";
 import CategoryCard from "./CategoryCard";
+import Link from "next/link";
 
 const BrowseInterest = () => {
     const categories = [
@@ -96,6 +97,7 @@ const BrowseInterest = () => {
 
                 </div>
                 {/* cards */}
+                <Link href="/categories">
                 <div className="grid grid-cols-5 gap-y-4 gap-x-11 justify-center ">
                     {categories.map((category, index) => (
                         <CategoryCard
@@ -106,6 +108,7 @@ const BrowseInterest = () => {
                     ))}
 
                 </div>
+                </Link>
                 <div className="flex justify-center mx-5 mt-5 ">
                     <Button text="View All Categories"
                         variant="cta"

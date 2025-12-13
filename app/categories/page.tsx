@@ -1,5 +1,6 @@
 // import "./page.module.css";
 import EventCard from '@/components/EventCard'
+import Pagination from '@/components/Pagination'
 import React from 'react'
 
 const page = () => {
@@ -100,6 +101,11 @@ const page = () => {
                 {events.map((event, index) => (
                     <EventCard key={index} {...event} />
                 ))}
+            </div>
+
+            {/* pagination */}
+            <div className='mt-7'>
+            <Pagination/>
             </div>
 
         </section>

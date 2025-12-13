@@ -24,15 +24,19 @@ const Header = () => {
 
                 <div className='nav-right flex items-center gap-6'>
                     {/* login Button */}
-                    <Button 
-                    text="Log In"
-                    variant="cta">
-                    </Button>
+                    <Link href="/login">
+                        <Button
+                            text="Log In"
+                            variant="cta">
+                        </Button>
+                    </Link>
 
                     {/* sign up Button */}
-                    <Button text="Sign Up"
-                    variant="cta">
-                    </Button>
+                    <Link href="/signup">
+                        <Button text="Sign Up"
+                            variant="cta">
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </header>

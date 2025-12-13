@@ -85,7 +85,7 @@ const TrendingNearYou = () => {
                     <i className="fa-solid fa-caret-down cursor-pointer text-3xl ml-3 "></i>
                 </h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-9 gap-x-15">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-9 lg:gap-x-20 lg:justify-center ">
                 {events.map((event, index) => (
                     <EventCard key={index} {...event} />
                 ))}

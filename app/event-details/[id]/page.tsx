@@ -2,6 +2,7 @@
 import Button from '@/components/Button';
 import EventCard from '@/components/EventCard';
 import Map from '@/components/Map';
+import Link from 'next/link';
 
 const page = () => {
     const location = [
@@ -80,10 +81,11 @@ const page = () => {
                     </div>
 
                     <div className='flex flex-row items-center'>
-                        <div className='border-2 border-brown-normal rounded-[50%] p-3 flex items-center justify-center'>
-                            <i className="fa-solid fa-user text-2xl"></i>
+                        <div className='border-2 border-brown-normal rounded-[50%] p-3 flex items-center justify-center w-[50px] h-[50px]'>
+                            <Link href="/userprofile"> <i className="fa-solid fa-user text-2xl"></i></Link>
                         </div>
-                        <p className='ml-2'>Hosted by <span className='font-semibold font-dynapuff'>{eventDetailsTitle.organizerName}</span></p>
+                        <p className='ml-2'>Hosted by <Link href="/userprofile">
+                        <span className='font-semibold font-dynapuff'>{eventDetailsTitle.organizerName}</span></Link></p>
                     </div>
 
                     <div>
@@ -232,7 +234,7 @@ const page = () => {
 
             {/* Photos*/}
             <div>
-                <div className='flex flex-row items-center justify-between mt-5 mb-4'>
+                <div className='flex flex-row items-center justify-between mt-6 mb-4'>
                     <h2 className='text-lg font-dynapuff my-4'>Photos</h2>
                     <Button
                         text='View Group Photos'
@@ -292,17 +294,17 @@ const page = () => {
             </div>
 
             {/* similar evnets */}
-            <div className='mt-5'>
+            <div className='mt-10'>
                 <div className='flex flex-row items-center justify-between mt-5 mb-4'>
                     <h2 className='text-lg font-dynapuff my-4'>Similar Events</h2>
                     <Button
-                        text='View Group Photos'
+                        text='View More'
                         variant='cta'
                         icon={<i className="fa-solid fa-arrow-right"></i>}>
                     </Button>
                 </div>
 
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-9 gap-x-15'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-9 md:gap-x-25'>
                     {events.map((event, index) => (
                         <EventCard key={index} {...event}/>
                     ))}

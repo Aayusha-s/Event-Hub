@@ -42,7 +42,8 @@ const EventCard = (
 
         <section className="text-text-dark cursor-pointer"
         onClick={handleCardClick}>
-            <div className="border border-brown-normal w-[350.8px] rounded-[10px] p-3">
+            <div className="border border-brown-normal w-[330px] rounded-[10px] p-3
+            transform transition-all duration-300 ease-in-out  hover:scale-105 hover:shadow-lg">
                 {/* tags and image */}
                 <div className="tags">
                     <div className="flex items-center justify-between mb-2">
