@@ -1,4 +1,5 @@
 import Button from '@/components/Button';
+import DashboardBox from '@/components/DashboardBox';
 import PastEventsCard from '@/components/PastEventsCard';
 import SavedEventsCard from '@/components/SavedEventsCard';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
@@ -7,18 +8,10 @@ const page = () => {
     return (
         <section className='font-cause text-text-dark my-10 mx-5 px-4 flex flex-col'>
             {/* welcome message */}
-            <div className='w-full border border-brown-normal rounded-xl px-10 py-6 space-y-1 flex flex-col justify-start gap-4'>
-                <h2 className='font-dynapuff text-3xl font-semibold '>
-                    Welcome to Your Dashboard
-                </h2>
-                <p className='text-lg'>
-                    You have 2 upcoming events and 4 saved favourites
-                </p>
-                <div>
-                    <Button text="Explore New Events" variant="cta" icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                    </Button>
-                </div>
-            </div>
+            <DashboardBox
+            title='Welcome to your dashboard'
+            description='You have 5 upcoming events and 4 saved favorites'>
+            </DashboardBox>
 
             {/* 4 cards */}
             <div className='flex flex-row mt-10 justify-between'>
@@ -63,7 +56,7 @@ const page = () => {
                 </h2>
                 <Button text='View All'
                     variant='cta'
-                    icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                    iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
 
                 </Button>
             </div>
@@ -131,7 +124,7 @@ const page = () => {
                             </h2>
                             <Button text='View All'
                                 variant='cta'
-                                icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                                iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
                             </Button>
                         </div>
 
@@ -166,7 +159,7 @@ const page = () => {
                             </h2>
                             <Button text='View All'
                                 variant='cta'
-                                icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                                iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
                             </Button>
                         </div>
 

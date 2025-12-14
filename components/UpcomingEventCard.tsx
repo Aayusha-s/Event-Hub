@@ -22,7 +22,7 @@ const UpcomingEventCard = (
 ) => {
     return (
         <div  className="border border-brown-normal rounded-xl p-4 w-[535px] cursor-pointer
-        transform transition-all duration-300 ease-in-out  hover:scale-105 hover:shadow-lg">
+        transform transition-all duration-300 ease-in-out  hover:scale-103 hover:shadow-lg">
             <div className='flex flex-row items-center gap-6 
                 '>
                 <div>

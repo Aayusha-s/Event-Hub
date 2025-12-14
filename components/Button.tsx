@@ -1,15 +1,15 @@
-import React from "react";
 
 type ButtonProps = {
     text?: string;
-    icon?: React.ReactNode;
+    iconLeft?: React.ReactNode;
+    iconRight?: React.ReactNode;
     variant?: "cta" | "tag";
     size?: "sm" | "md" | "lg";
     onClick?: () => void;
     isActive?: boolean;
 };
 
-const Button = ({ text, icon, variant = "cta", size = "md", onClick, isActive }: ButtonProps) => {
+const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onClick, isActive }: ButtonProps) => {
     const baseStyles =
         "group border border-brown-dark bg-transparent text-text-light hover:bg-brown-light-active hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
 
@@ -37,8 +37,9 @@ const Button = ({ text, icon, variant = "cta", size = "md", onClick, isActive }:
             style={isActive ? { backgroundColor: "#988973" } : {}}
             onClick={onClick}
         >
+            {iconLeft && <span className="mr-2">{iconLeft}</span>}
             {text}
-            {icon && <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">{icon}</span>}
+            {iconRight && <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">{iconRight}</span>}
         </button>
     );
 };

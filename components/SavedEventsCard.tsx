@@ -21,7 +21,7 @@ const SavedEventsCard = (
 
             <div className='flex flex-row items-center gap-6 
                 '>
-                <div className='space-y-2 flex-grow'>
+                <div className='space-y-2 grow'>
                     <div className='flex justify-between items-center gap-4'>
                         <h3 className='font-dynapuff text-xl'>{title}</h3>
                         <i className='fa-solid fa-heart text-2xl  text-red-500 

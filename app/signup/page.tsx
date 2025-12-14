@@ -9,7 +9,7 @@ const page = () => {
 
                 {/* RIGHT SIDE */}
                 <div className="flex-1 flex flex-col justify-center items-center 
-                p-6 rounded-lg bg-gradient-to-b from-gray-300 to-brown-400 text-center">
+                p-6 rounded-lg bg-linear-to-b from-gray-300 to-brown-400 text-center">
                     <h3 className="font-dynapuff font-bold text-3xl">
                         Discover Amazing Events
                     </h3>
@@ -86,7 +86,7 @@ const page = () => {
 
                     <div className="mt-5">
 
-                    <Button text="Register" variant="cta" icon={<i className="fa-solid fa-arrow-right ml-2 "></i>} />
+                    <Button text="Register" variant="cta" iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>} />
                     </div>
 
                     <p className="mt-4">
