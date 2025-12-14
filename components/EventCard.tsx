@@ -74,7 +74,7 @@ const EventCard = (
                 </div>
                 <div className="flex flex-row items-center ">
                     <i className="fa-regular fa-calendar text-5xl my-4"></i>
-                    <div className="flex flex-col ml-4  leading-6">
+                    <div className="flex flex-col ml-4 leading-6">
                         <h3 className="text-lg font-semibold">{title}</h3>
                         <h3 className="text-md">{organizer}</h3>
                     </div>
