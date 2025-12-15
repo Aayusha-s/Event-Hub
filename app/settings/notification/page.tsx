@@ -4,7 +4,8 @@ import SettingsTab from '../../../components/SettingsTab'
 import Button from '../../../components/Button';
 
 import {
-    ToggleRight
+    ToggleRight,
+    Save
 } from 'lucide-react';
 
 const page = () => {
@@ -66,7 +67,7 @@ const page = () => {
                     <div className='flex flex-row items-center justify-between'>
                         <div>
                             <h4 className='font-bold mt-4 mb-2'>Event Reminders</h4>
-                            <p>get reminded about incmoing events</p>
+                            <p>Get reminded about incoming events</p>
                         </div>
                         <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
                     </div>
