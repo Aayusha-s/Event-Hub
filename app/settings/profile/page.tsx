@@ -16,13 +16,16 @@ const page = () => {
 
             <SettingsHeading/>
 
-            <div className='flex flex-col gap-6 lg:flex-row lg:gap-8'>
+            <div className='flex flex-col gap-6 lg:flex-row lg:gap-12'>
                 {/* tab */}
                 <SettingsTab />
 
 
                 {/* main tab */}
-                <div className='border border-brown-normal rounded-xl p-4 w-full 
+                <div className='border border-brown-normal rounded-xl p-4 w-full
+                lg:p-6
+                    xl:p-8
+                    2xl:p-10 
 '>
                     {/* titles */}
                     <div className='space-y-2'>

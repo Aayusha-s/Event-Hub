@@ -25,8 +25,8 @@ const page = () => {
 
                     {/* titles */}
                     <div className='space-y-2 mb-6'>
-                        <h3 className='font-dynapuff text-xl'>Profile Information</h3>
-                        <p className='text-lg font-bold'>Update your personal information and profile picture</p>
+                        <h3 className='font-dynapuff text-xl'>Account Security </h3>
+                        <p className='text-lg font-bold'>Manage your password and account security settings</p>
                     </div>
 
                     {/* two factor authentication */}
