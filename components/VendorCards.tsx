@@ -3,7 +3,7 @@ import { TrendingUp } from 'lucide-react';
 
 type VendorCardsProps = {
     icon1?: React.ReactNode;
-    count?: number;
+    count?: number | string;
     label?: string;
     icon2?: React.ReactNode;
     subLabel?: string;

@@ -112,7 +112,7 @@ const BrowseInterest = () => {
                 <div className="flex justify-center mx-5 mt-5 ">
                     <Button text="View All Categories"
                         variant="cta"
-                        icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                        iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
                     </Button>
                 </div>
 

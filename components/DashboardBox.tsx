@@ -21,7 +21,7 @@ const DashboardBox = (
                 {description}
             </p>
             <div>
-                <Button text="Explore New Events" variant="cta" icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                <Button text="Explore New Events" variant="cta" iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
                 </Button>
             </div>
         </div>
