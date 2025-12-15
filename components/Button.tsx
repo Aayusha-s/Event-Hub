@@ -22,7 +22,7 @@ const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onCli
 
     const sizes = {
         cta: {
-            sm: "px-2 h-10",
+            sm: "px-3 h-10 text-sm",
             md: "px-5 h-10",
             lg: "px-6 h-12",
         },

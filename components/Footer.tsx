@@ -36,8 +36,8 @@ const Footer = () => {
         { name: 'YouTube', href: 'https://youtube.com', icon: <i className="fa-brands fa-youtube"></i> }
     ]
     return (
-        <footer className='w-full bg-brown-light text-text-dark py-12 mt-20'>
-            <div className='mx-5 px-4 grid lg:grid-cols-6 gap-8'>
+        <footer className='w-full bg-brown-light text-text-dark py-12 mt-20 border-t border-brown-normal'>
+            <div className='mx-5 px-4 grid lg:grid-cols-6 gap-8 '>
 
                 {/* Logo & Description */}
                 <div className='lg:col-span-2'>
@@ -68,88 +68,93 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Platform Links */}
-                <div>
-                    <h3 className="text-brown-darker font-semibold text-lg mb-4">Platform</h3>
-                    <ul className="space-y-2">
-                        {platformLinks.map((link) => (
-                            <li key={link.name}>
-                                <Link href={link.href}
-                                    className='text-text-light 
+                <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:col-span-4">
+                    {/* Platform Links */}
+                    <div>
+                        <h3 className="text-brown-darker font-semibold text-lg mb-4">Platform</h3>
+                        <ul className="space-y-2">
+                            {platformLinks.map((link) => (
+                                <li key={link.name}>
+                                    <Link href={link.href}
+                                        className='text-text-light 
                                     hover:text-brown-darker
                                     transition-all duration-300 ease-in-out
                                     hover:translate-x-2 hover:scale-105'>
-                                    {link.name}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                                        {link.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-                {/* Company Links */}
-                <div>
-                    <h3 className="text-brown-darker font-semibold text-lg mb-4">Company</h3>
-                    <ul className="space-y-2">
-                        {companyLinks.map((link) => (
-                            <li key={link.name}>
-                                <Link href={link.href}
-                                    className='text-text-light 
+                    {/* Legal Links */}
+                    <div>
+                        <h3 className="text-brown-darker font-semibold text-lg mb-4">Legal</h3>
+                        <ul className="space-y-2">
+                            {legalLinks.map((link) => (
+                                <li key={link.name}>
+                                    <Link href={link.href}
+                                        className='text-text-light 
                                     hover:text-brown-darker 
                                     transition-all duration-300 ease-in-out'>
-                                    {link.name}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                                        {link.name}</Link>
+                                </li>
+                            )
+                            )}
 
-                {/* Support Links */}
-                <div>
-                    <h3 className="text-brown-darker font-semibold text-lg mb-4">Support</h3>
-                    <ul className="space-y-2">
-                        {supportLinks.map((link) => (
-                            <li key={link.name}>
-                                <Link href={link.href}
-                                    className='text-text-light 
+
+                        </ul>
+                    </div>
+
+                    {/* Company Links */}
+                    <div>
+                        <h3 className="text-brown-darker font-semibold text-lg mb-4">Company</h3>
+                        <ul className="space-y-2">
+                            {companyLinks.map((link) => (
+                                <li key={link.name}>
+                                    <Link href={link.href}
+                                        className='text-text-light 
                                     hover:text-brown-darker 
                                     transition-all duration-300 ease-in-out'>
-                                    {link.name}</Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                                        {link.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-                {/* Legal Links */}
-                <div>
-                    <h3 className="text-brown-darker font-semibold text-lg mb-4">Legal</h3>
-                    <ul className="space-y-2">
-                        {legalLinks.map((link) => (
-                            <li key={link.name}>
-                                <Link href={link.href}
-                                    className='text-text-light 
+                    {/* Support Links */}
+                    <div>
+                        <h3 className="text-brown-darker font-semibold text-lg mb-4">Support</h3>
+                        <ul className="space-y-2">
+                            {supportLinks.map((link) => (
+                                <li key={link.name}>
+                                    <Link href={link.href}
+                                        className='text-text-light 
                                     hover:text-brown-darker 
                                     transition-all duration-300 ease-in-out'>
-                                    {link.name}</Link>
-                            </li>
-                        )
-                        )}
+                                        {link.name}</Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-
-                    </ul>
+                    
                 </div>
 
             </div>
 
             {/* Bottom Section - Social & Copyright */}
             <div className='mx-5 px-4 mt-10 pt-8 border-t border-brown-normal'>
-                <div className='flex flex-row justify-between items-center gap-4'>
+                <div className='flex flex-col justify-between gap-4 lg:flex-row md:flex-row '>
+                    
                     {/* Copyright */}
-                    <div className="text-text-light text-sm">
+                    <div className= "flex items-center justify-center text-text-light text-sm lg:justify-start">
                         <p>© 2024 EventHub. All rights reserved.</p>
                     </div>
 
                     {/* Social Links */}
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 items-center justify-center lg:justify-end md:justify-end">
                         {socialLinks.map((link) => (
                             <div key={link.name}>
                                 <Link href={link.href}
@@ -166,6 +171,8 @@ const Footer = () => {
                             </div>
                         ))}
                     </div>
+
+                    
                 </div>
             </div>
         </footer>
