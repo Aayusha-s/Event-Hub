@@ -8,30 +8,37 @@ type CategoryCardProps = {
 
 const CategoryCard = ({ title, icon, description }: CategoryCardProps) => {
     return (
-        <section className="text-text-dark">
+        <div className="border border-brown-normal rounded-xl p-4 md:p-5 lg:p-6
+            flex flex-col justify-between
+            w-full h-auto min-h-[180px] md:min-h-[200px]
+            hover:shadow-md hover:border-brown-dark transition-all duration-300
+            bg-white">
             
-            <div className="border border-brown-normal rounded-[10px] p-3 my-2 w-[200px] h-[200px] flex flex-col justify-between">
-                
-                {/* Title and icon */}
-                <div className="flex flex-row items-center justify-between mb-2">
-                    <h3 className="text-lg font-semibold">{title}</h3>
+            {/* Title and icon */}
+            <div className="flex flex-row items-center justify-between mb-3 md:mb-4">
+                <h3 className="text-base md:text-lg font-semibold truncate pr-2">
+                    {title}
+                </h3>
+                <div className="text-brown-dark text-lg md:text-xl">
                     {icon}
                 </div>
-
-                {/* Description */}
-                <p className="text-sm leading-relaxed overflow-hidden text-ellipsis h-[60px] mb-4">
-                    {description}
-                </p>
-
-                {/* Button */}
-                <Button
-                    text="Explore Now"
-                    variant="cta"
-                    size="sm"
-                    icon={<i className="fa-solid fa-arrow-right ml-2"></i>}
-                />
             </div>
-        </section>
+
+            {/* Description */}
+            <p className="text-sm md:text-base text-text-dark/70 
+                leading-relaxed line-clamp-3 md:line-clamp-4 
+                mb-4 md:mb-6 grow">
+                {description}
+            </p>
+
+            {/* Button  */}
+            <Button
+                text="Explore Now"
+                variant="cta"
+                size="sm"
+                iconRight={<i className="fa-solid fa-arrow-right ml-2"></i>}
+            />
+        </div>
     );
 };
 

@@ -1,6 +1,6 @@
 "use client";
-import Button from "./Button"
-import { useRouter } from 'next/navigation';
+import Button from "./Button";
+import { useRouter } from "next/navigation";
 
 type EventCardProps = {
     eventId: number;
@@ -12,90 +12,94 @@ type EventCardProps = {
     descriptions: string[];
     location: string;
     price: string;
-}
-const EventCard = (
-    {
-        eventId,
-        tags,
-        imageUrl,
-        imageAlt,
-        title,
-        organizer,
-        descriptions,
-        location,
-        price
-    }: EventCardProps
-) => {
+};
 
-    const router =useRouter();
+const EventCard = ({
+    eventId,
+    tags,
+    imageUrl,
+    imageAlt,
+    title,
+    organizer,
+    descriptions,
+    location,
+    price,
+}: EventCardProps) => {
+    const router = useRouter();
 
-    const handleCardClick =() => {
-        router.push (`/event-details/${eventId}`);
-    }
+    const handleCardClick = () => {
+        router.push(`/event-details/${eventId}`);
+    };
 
-    const handleTagClick =(e: React.MouseEvent, tag:string) => {
+    const handleTagClick = (e: React.MouseEvent, tag: string) => {
         e.stopPropagation();
-        router.push (`/event-tags`);
-    }
+        router.push(`/event-tags?tag=${tag}`);
+    };
 
     return (
-
-        <section className="text-text-dark cursor-pointer"
-        onClick={handleCardClick}>
-            <div className="border border-brown-normal w-[330px] rounded-[10px] p-3
-            transform transition-all duration-300 ease-in-out  hover:scale-105 hover:shadow-lg">
-                {/* tags and image */}
-                <div className="tags">
-                    <div className="flex items-center justify-between mb-2">
-                        {tags[0] && (
-                            <Button
-                                text={tags[0]}
-                                variant="tag"
-                                size="md">
-                            </Button>
-                        )}
-
-                        {tags[1] && (
-                            <Button
-                                text={tags[1]}
-                                variant="tag"
-                                size="md">
-                            </Button>
-                        )}
-
-                    </div>
-                    <div className="h-[210px] w-full overflow-hidden rounded-md">
-                        <img
-                            src={imageUrl}
-                            alt={imageAlt}
-                            className="h-full w-full object-cover"
-                        />
-                    </div>
-                </div>
-                <div className="flex flex-row items-center ">
-                    <i className="fa-regular fa-calendar text-5xl my-4"></i>
-                    <div className="flex flex-col ml-4 leading-6">
-                        <h3 className="text-lg font-semibold">{title}</h3>
-                        <h3 className="text-md">{organizer}</h3>
-                    </div>
-                </div>
-                <div>
-                    {descriptions.map((desc, index) => (
-                        <p key={index}>
-                            <i className="fa-solid fa-angles-right mr-2"></i>
-                            {desc}
-                        </p>
+        <div
+            onClick={handleCardClick}
+            className="
+                cursor-pointer 
+                text-text-dark
+                border border-brown-normal 
+                rounded-xl 
+                p-4 
+                w-full
+                transition-all duration-300
+                hover:shadow-lg
+                hover:-translate-y-1">
+                    
+            {/* Tag, Image */}
+            <div className="mb-4">
+                {/* Tags */}
+                <div className="flex gap-2 mb-3 flex-wrap">
+                    {tags.slice(0, 2).map((tag, index) => (
+                        <div key={index} onClick={(e) => handleTagClick(e, tag)}>
+                            <Button text={tag} variant="tag" size="sm" />
+                        </div>
                     ))}
                 </div>
-                <div className="flex flex-row my-4 justify-between items-center mb-0.5">
-                    <div className="flex flex-row items-center justify-center gap-3">
-                        <i className="fa-solid fa-location-dot"></i>
-                        <p>{location}</p>
-                    </div>
-                    <p>{price}</p>
+
+                {/* image */}
+                <div className="w-full h-[180px] sm:h-[200px] md:h-[220px] overflow-hidden rounded-md">
+                    <img
+                        src={imageUrl}
+                        alt={imageAlt}
+                        className="w-full h-full object-cover"
+                    />
                 </div>
             </div>
-        </section>
-    )
-}
-export default EventCard
+
+            {/* Title,Organizer */}
+            <div className="flex items-center gap-4 mb-4">
+                <i className="fa-regular fa-calendar text-3xl sm:text-4xl"></i>
+                <div>
+                    <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
+                    <p className="text-sm text-text-muted">{organizer}</p>
+                </div>
+            </div>
+
+            {/* Description */}
+            <div className="space-y-1 text-sm mb-4">
+                {descriptions.slice(0, 3).map((desc, index) => (
+                    <p key={index} className="flex items-start gap-2">
+                        <i className="fa-solid fa-angles-right mt-1 text-xs"></i>
+                        <span>{desc}</span>
+                    </p>
+                ))}
+            </div>
+
+            {/* Location, Price */}
+            <div className="flex items-center justify-between text-sm font-medium">
+                <div className="flex items-center gap-2">
+                    <i className="fa-solid fa-location-dot"></i>
+                    <span>{location}</span>
+                </div>
+                <span>{price}</span>
+            </div>
+        </div>
+    );
+};
+
+export default EventCard;

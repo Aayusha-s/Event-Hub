@@ -43,7 +43,7 @@ const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onCli
         status
             ? "bg-transparent"
             : isActive
-                ? "bg-brown-dark text-white"
+                ? "bg-brown-dark text-dark"
                 : "bg-white text-text-dark";
 
     return (
