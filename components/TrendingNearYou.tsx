@@ -59,7 +59,7 @@ const TrendingNearYou = () => {
             location: "Mountain Resort, Kathmandu",
             price: "Rs.800",
         },
-        {   
+        {
             eventId: 6,
             tags: ["Business", "Networking"],
             imageUrl: "/images/Business.png",
@@ -74,18 +74,21 @@ const TrendingNearYou = () => {
 
     ]
     return (
-        <section className="mx-5 px-4">
-            <div className="flex flex-row items-center
-            mb-15 ">
-                <h2 className="text-3xl 
-                font-semibold 
-                text-text-dark">
+        <section className="my-2 mx-2 px-4 font-cause text-text-dark 
+            md:my-3 md:mx-3 md:px-3
+            lg:my-4 lg:mx-4 lg:px-4
+            xl:my-6 xl:mx-6 xl:px-6
+            2xl:my-8 2xl:mx-8 2xl:px-8">
+
+            <div className="flex items-center flex-wrap gap-2 md:gap-3 my-6">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl 
+                        font-semibold text-text-dark leading-tight">
                     Trending Near
                     <span className="font-dynapuff"> KATHMANDU</span>
                     <i className="fa-solid fa-caret-down cursor-pointer text-3xl ml-3 "></i>
                 </h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-9 lg:gap-x-20 lg:justify-center ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-y-9 lg:gap-x-4 lg:justify-center ">
                 {events.map((event, index) => (
                     <EventCard key={index} {...event} />
                 ))}
@@ -94,7 +97,7 @@ const TrendingNearYou = () => {
             <div className="flex justify-center mx-5 mt-7 px-4  ">
                 <Button
                     text="View All Events"
-                    icon={<i className="fa-solid fa-arrow-right ml-2 "></i>}
+                    iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}
                     variant="cta"
                 />
             </div>

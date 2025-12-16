@@ -1,11 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import Button from "./Button"; 
+import Button from "./Button";
 import HowItWorksStep from "./HowItWorksStep";
 
-
 const HowItWorks = () => {
-
     const attendeeSteps = [
         {
             icon: "fa-solid fa-magnifying-glass",
@@ -61,89 +59,88 @@ const HowItWorks = () => {
     ];
 
     const [activeTab, setActiveTab] = useState<"attendees" | "organizers" | "vendors">("attendees");
-    
-    const stepsMaps ={
+
+    const stepsMaps = {
         attendees: attendeeSteps,
         organizers: organizerSteps,
         vendors: vendorSteps
-    }
+    };
+
     return (
-        <section className="text-text-dark">
-            {/* title */}
-            <div>
-                <div className="flex flex-col items-center justify-centermx-5 mb-15 mt-15 px-4 ">
-                    <h2 className="text-3xl font-semibold text-text-dark font-dynapuff">
-                        How It Works
-                    </h2>
-                </div>
+        <section className="text-text-dark px-4 py-10">
+            {/* Title */}
+            <div className="flex justify-center mb-8">
+                <h2 className="text-2xl sm:text-3xl font-semibold font-dynapuff">
+                    How It Works
+                </h2>
+            </div>
 
-                {/* tabs */}
+            {/* Tabs */}
+            <div className="flex justify-center">
                 <div className="
-                    flex flex-row items-center justify-center 
-                    gap-8 border 
-                    border-brown-normal
-                    rounded-[10px]
-                    p-2 mx-94 max-w-[800px] h-[60px]">
-
+                    flex flex-wrap justify-center gap-3
+                    border border-brown-normal
+                    rounded-xl p-2
+                    max-w-full sm:max-w-[700px]"
+                >
                     <Button
                         text="For Attendees"
                         variant="cta"
-                        size="md"
+                        size="sm"
                         isActive={activeTab === "attendees"}
-                        onClick={() => setActiveTab("attendees")}>
-                    </Button>
+                        onClick={() => setActiveTab("attendees")}
+                    />
 
                     <Button
                         text="For Organizers"
                         variant="cta"
-                        size="md"
+                        size="sm"
                         isActive={activeTab === "organizers"}
-                        onClick={() => setActiveTab("organizers")}>
-                    </Button>
+                        onClick={() => setActiveTab("organizers")}
+                    />
 
                     <Button
                         text="For Vendors"
                         variant="cta"
-                        size="md"
+                        size="sm"
                         isActive={activeTab === "vendors"}
-                        onClick={() => setActiveTab("vendors")}>
-                    </Button>
+                        onClick={() => setActiveTab("vendors")}
+                    />
                 </div>
+            </div>
 
-                {/* contents of each tabs */}
-                <div>
-                    {/* ATTENDEE TAB */}
-                    {
-                        <div className="relative flex items-center justify-center gap-40  my-10">
+            {/* Steps */}
+            <div className="relative mt-10 flex justify-center">
+                
+                <div className="lg:block absolute
+                    top-12 left-1/4 right-1/4
+                    lg:top-12 lg:left-1/3 lg:right-1/3   
+                    2xl:top-12 2xl:left-1/3 2xl:right-1/3
+                    h-0.5 bg-brown-normal"
+                />
 
-                            {/* connecting line*/}
-                            <div className="
-                                    absolute 
-                                    top-[50px] 
-                                    left-80
-                                    right-80
-                                    h-0.5
-                                    bg-brown-normal
-                                    " />
-
-                            {stepsMaps[activeTab].map((step, index)=> (
-                                <HowItWorksStep
-                                    key={index}
-                                    step={index + 1}
-                                    icon={step.icon}
-                                    title={step.title}
-                                    description={step.description}
-                                />
-                            ))}
-                        </div>
-                    }
-
-
-                    
+                <div className="
+                    grid grid-cols-3
+                    sm:grid-cols-3
+                    md:grid-cols-3
+                    lg:grid-cols-3
+                    gap-8
+                    max-w-6xl"
+                >
+                    {stepsMaps[activeTab].map((step, index) => (
+                        <HowItWorksStep
+                            key={index}
+                            step={index + 1}
+                            icon={step.icon}
+                            title={step.title}
+                            description={step.description}
+                        />
+                    ))}
                 </div>
             </div>
         </section>
-    )
-}
+    );
+
+};
 
 export default HowItWorks;
