@@ -12,12 +12,13 @@ const HeroSection = () => {
             <div className="flex flex-col text-text-dark items-center justify-center 
                 border border-brown-normal rounded-[10px] p-4
                 bg-brown-light-hover leading-14
-                w-full max-w-6xl mx-auto">
+                w-full max-w-8xl mx-auto 2xl:space-y-2 space-y-0.5">
 
 
-                <h3 className="text-base md:text-base lg:text-lg font-bold">Discover 10,000+ events happening near you</h3>
+                <h3 className="text-base font-bold
+                sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-xl">Discover 10,000+ events happening near you</h3>
 
-                    <h1 className="text-4xl mt-5 text-center font-semibold">Find Your Next</h1>
+                <h1 className="text-4xl mt-5 text-center font-semibold">Find Your Next</h1>
 
                 <div className="flex flex-col gap-2 lg:flex-row lg:gap-4 md:flex-row md:gap-4 items-center justify-center">
                     <h1 className="text-4xl mt-5 text-center font-semibold">
@@ -25,26 +26,30 @@ const HeroSection = () => {
                             Unforgettable
                         </span>
                     </h1>
-                <span className="text-4xl mt-5 text-center font-semibold">Experience</span>
+                    <span className="text-4xl mt-5 text-center font-semibold">Experience</span>
                 </div>
 
-                <p className="font-bold text-base my-4 md:my-6 lg:my-8 w-full md:w-3/4 lg:w-3/4 text-center px-2 md:px-6 lg:px-0">
+                <div className="font-bold text-base my-4 md:my-6 lg:my-6 w-full md:w-3/4 lg:w-3/4 2xl:w-2/4 text-center px-2 md:px-6 lg:px-0
+                sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-xl">
 
                     Discover events, connect with communities, and create memories that last a lifetime.
                     From concerts to conferences, find what moves you.
-                </p>
+                </div>
 
                 <Link href="/explore-events">
-                    <Button
-                        text="Explore Events"
-                        variant="cta"
-                        size="md"
-                        iconRight={<i className="fa-solid fa-arrow-right ml-2"></i>}
-                    />
+                    <div className="my-2">
+                        <Button
+                            text="Explore Events"
+                            variant="cta"
+                            size="md"
+                            iconRight={<i className="fa-solid fa-arrow-right ml-2"></i>}
+                        />
+                    </div>
                 </Link>
 
                 <div className="w-full flex items-center justify-center 
-                    text-sm md:text-base lg:text-lg mt-4 md:mt-6 lg:mt-6 font-bold">
+                    text-sm mt-4 md:mt-6 lg:mt-6 font-bold
+                    sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-xl">
                     <h4 >Quick search • Personalized results • Secure booking</h4>
                 </div>
             </div>
