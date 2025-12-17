@@ -13,8 +13,10 @@ const Map = (
 ) => {
     return (
         <section>
-            <h1 className='text-lg font-dynapuff mt-9 mb-2 max-w-[400px]'>Event Location</h1>
-            <div className='max-w-[400px] h-[250px] border-2 border-brown-normal rounded-xl overflow-hidden p-2'>
+            <h1 className='mt-9 mb-2 max-w-[400px]
+            font-dynapuff my-4 font-bold 
+                    text-xl sm:text-xl md:text-xl lg:text-xl'>Event Location</h1>
+            <div className='max-w-full h-[250px] border-2 border-brown-normal rounded-xl overflow-hidden p-2'>
                 <iframe
                     id={`map-${mapId}`}
                     src={mapUrl}

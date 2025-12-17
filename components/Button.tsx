@@ -13,7 +13,7 @@ type ButtonProps = {
 
 const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onClick, isActive, status }: ButtonProps) => {
     const baseStyles =
-        "group border border-brown-dark bg-transparent hover:bg-brown-light-active hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
+        "group font-semibold border border-brown-dark bg-transparent hover:bg-brown-light-active hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
 
     const variants = {
         cta: "rounded-[10px]",
