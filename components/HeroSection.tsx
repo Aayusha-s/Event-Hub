@@ -22,7 +22,7 @@ const HeroSection = () => {
 
                 <div className="flex flex-col gap-2 lg:flex-row lg:gap-4 md:flex-row md:gap-4 items-center justify-center">
                     <h1 className="text-4xl mt-5 text-center font-semibold">
-                        <span className="font-dynapuff border-b-6 rounded-xl tranform transition rotate-6">
+                        <span className="font-dynapuff border-b-6 border-text-dark rounded-xl tranform transition rotate-6">
                             Unforgettable
                         </span>
                     </h1>

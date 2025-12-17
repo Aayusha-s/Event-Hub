@@ -15,11 +15,10 @@ const PastEventsCard = (
     }: PastEventsCardProps
 ) => {
     return (
-        <div  className="border border-brown-normal rounded-xl p-4 w-[500px] 
+        <div className="border border-brown-normal bg-brown-light rounded-xl p-4 w-full md:max-w-[535px]
         cursor-pointer transform transition-all duration-300 ease-in-out hover:shadow-lg">
 
-            <div className='flex flex-row items-center gap-6
-                '>
+            <div className='flex flex-col gap-6'>
                 <div className='space-y-2'>
                     <h3 className='font-dynapuff text-xl'>{title}</h3>
                     <p><i className="fa-solid fa-calendar mr-2"></i>{date}</p>

@@ -34,9 +34,9 @@ const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onCli
     };
 
     const statusStyles = {
-        danger: "border-red-500  text-red-500 hover:bg-red-600 hover:text-white",
-        success: "border-green-500 text-green-500 hover:bg-green-600 hover:text-white",
-        warning: "border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white",
+        danger: "border-red-500 text-red-500 hover:bg-red-600 hover:text-white hover:icon-white",
+        success: "border-green-500 text-green-500 hover:bg-green-600 hover:text-white hover:icon-white",
+        warning: "border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:icon-white",
     };
 
     const baseColor =

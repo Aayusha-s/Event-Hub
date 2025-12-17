@@ -19,7 +19,7 @@ const VendorCards = (
     }: VendorCardsProps
 ) => {
     return (
-        <div className='w-[250px] border border-brown-normal rounded-xl mt-6 p-4 font-bold space-y-2
+        <div className='w-full lg:max-w-[250px] border border-brown-normal rounded-xl mt-6 p-4 font-bold space-y-2
         transform transition duration-all-300 ease-in-out hover:shadow-lg'>
             <div className='flex flex-row items-center justify-between gap-2'>
                 <h3>{label}</h3>

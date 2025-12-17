@@ -6,38 +6,42 @@ import UpcomingEventCard from '@/components/UpcomingEventCard';
 import UserCards from '@/components/UserCards';
 const page = () => {
     return (
-        <section className='font-cause text-text-dark my-10 mx-5 px-4 flex flex-col'>
+        <section className='flex flex-col
+            my-4 mx-2 px-4 font-cause text-text-dark 
+            md:my-3 md:mx-3 md:px-3
+            lg:my-4 lg:mx-4 lg:px-4
+            xl:my-6 xl:mx-6 xl:px-6
+            2xl:my-8 2xl:mx-8 2xl:px-8'>
+
             {/* welcome message */}
             <DashboardBox
-            title='Welcome to your dashboard'
-            description='You have 5 upcoming events and 4 saved favorites'>
+                title='Welcome to your dashboard'
+                description='You have 5 upcoming events and 4 saved favorites'>
             </DashboardBox>
 
             {/* 4 cards */}
-            <div className='flex flex-row mt-10 justify-between'>
+            <div className='grid grid-cols-2 gap-4 mt-10
+            md:grid-cols-4'>
                 {/* card 1 */}
                 <UserCards
                     icon={<i className="fa-solid fa-ticket text-3xl"></i>}
                     count={12}
-                    label="Total Events Attended"
-                >
+                    label="Total Events Attended">
                 </UserCards>
 
                 {/* card 2 */}
                 <UserCards
                     icon={<i className="fa-solid fa-calendar text-3xl"></i>}
                     count={12}
-                    label="Upcoming Events"
-                >
+                    label="Upcoming Events">
                 </UserCards>
 
-                {/* card 3 */}
 
+                {/* card 3 */}
                 <UserCards
                     icon={<i className="fa-solid fa-heart text-3xl"></i>}
                     count={12}
-                    label="Favourite Events"
-                >
+                    label="Favourite Events">
                 </UserCards>
 
                 {/* card 4 */}
@@ -51,7 +55,7 @@ const page = () => {
 
             {/* upcoming events */}
             <div className='flex flex-row justify-between items-center mt-10'>
-                <h2 className='font-dynapuff text-2xl font-semibold'>
+                <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
                     Your Upcoming Events
                 </h2>
                 <Button text='View All'
@@ -60,8 +64,8 @@ const page = () => {
 
                 </Button>
             </div>
-            <div className='border border-brown-normal rounded-xl mt-10 p-4 px-6 py-6 
-            grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6 justify-items-center'>
+            <div className='border border-brown-normal rounded-xl mt-6 p-4 px-6 py-6 
+            grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-6 justify-items-center'>
                 {/* card 1 */}
                 <UpcomingEventCard
                     img="/images/party.png"
@@ -112,78 +116,102 @@ const page = () => {
 
 
             {/* past events */}
-            <div className='flex flex-row justify-between'>
+                <div className='flex flex-row justify-between items-center mt-10'>
+                    <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
+                        Past Events
+                    </h2>
+                    <Button text='View All'
+                        variant='cta'
+                        iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
 
-                <div>
-                    <div className='border border-brown-normal rounded-xl mt-10 p-4 px-6 py-6 w-[550px]
-                grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-1 gap-6 justify-items-center'>
-                        {/* card 1 */}
-                        <div className='flex flex-row justify-between items-center w-[550px] px-6'>
-                            <h2 className='font-dynapuff text-2xl font-semibold'>
-                                Past Events
-                            </h2>
-                            <Button text='View All'
-                                variant='cta'
-                                iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                            </Button>
-                        </div>
+                    </Button>
+                </div>
+                <div className='border border-brown-normal rounded-xl mt-6 p-4 
+                    grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 justify-items-center'>
 
-                        <PastEventsCard
-                            title='Summer Music Festival'
-                            date='July 24, 2024'
-                            location='Central Park, New York'
-                            rating={4.5}
-                        >
-                        </PastEventsCard>
+                    <PastEventsCard
+                        title='Summer Music Festival'
+                        date='July 24, 2024'
+                        location='Central Park, New York'
+                        rating={4.5}
+                    >
+                    </PastEventsCard>
 
-                        <PastEventsCard
-                            title='Summer Music Festival'
-                            date='July 24, 2024'
-                            location='Central Park, New York'
-                            rating={4.5}
-                        >
-                        </PastEventsCard>
+                    <PastEventsCard
+                        title='Summer Music Festival'
+                        date='July 24, 2024'
+                        location='Central Park, New York'
+                        rating={4.5}
+                    >
+                    </PastEventsCard>
+                    <PastEventsCard
+                        title='Summer Music Festival'
+                        date='July 24, 2024'
+                        location='Central Park, New York'
+                        rating={4.5}
+                    >
+                    </PastEventsCard>
+                    <PastEventsCard
+                        title='Summer Music Festival'
+                        date='July 24, 2024'
+                        location='Central Park, New York'
+                        rating={4.5}
+                    >
+                    </PastEventsCard>
 
-                    </div>
                 </div>
 
 
                 {/* SAVED EVENTS */}
-                <div>
-                    <div className='border border-brown-normal rounded-xl mt-10 p-4 px-6 py-6 w-[550px]
-                    grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-1 gap-6 justify-items-center'>
-                        {/* card 1 */}
-                        <div className='flex flex-row justify-between items-center w-[550px] px-6'>
-                            <h2 className='font-dynapuff text-2xl font-semibold'>
-                                Saved Events
-                            </h2>
-                            <Button text='View All'
-                                variant='cta'
-                                iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                            </Button>
-                        </div>
-
-                        <SavedEventsCard
-                            title='Summer Music Festival'
-                            date='July 24, 2024'
-                            location='Central Park, New York'
-                            rating={4.5}
-                        >
-                        </SavedEventsCard>
-
-                        <SavedEventsCard
-                            title='Summer Music Festival'
-                            date='July 24, 2024'
-                            location='Central Park, New York'
-                            rating={4.5}
-                        >
-                        </SavedEventsCard>
-                        
-
-                    </div>
+                <div className='flex flex-row justify-between items-center mt-10'>
+                    <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
+                        Saved Events
+                    </h2>
+                    <Button text='View All'
+                        variant='cta'
+                        iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                    </Button>
                 </div>
-            </div>
-        </section >
+
+                <div className='border border-brown-normal  rounded-xl mt-6 p-4 px-6 py-6
+                    grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 justify-items-center'>
+                    {/* card 1 */}
+
+                    <SavedEventsCard
+                        title='Summer Music Festival'
+                        date='July 24, 2024'
+                        location='Central Park, New York'
+                        rating={4.5}
+                    >
+                    </SavedEventsCard>
+
+                    <SavedEventsCard
+                        title='Summer Music Festival'
+                        date='July 24, 2024'
+                        location='Central Park, New York'
+                        rating={4.5}
+                    >
+                    </SavedEventsCard>
+
+                    <SavedEventsCard
+                        title='Summer Music Festival'
+                        date='July 24, 2024'
+                        location='Central Park, New York'
+                        rating={4.5}
+                    >
+                    </SavedEventsCard>
+
+                    <SavedEventsCard
+                        title='Summer Music Festival'
+                        date='July 24, 2024'
+                        location='Central Park, New York'
+                        rating={4.5}
+                    >
+                    </SavedEventsCard>
+                </div>
+            
+        </section>
+
     )
 }
 

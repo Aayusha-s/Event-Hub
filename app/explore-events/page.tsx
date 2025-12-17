@@ -285,7 +285,7 @@ const page = () => {
 
             {/* FILTERS BAR */}
             <div className="flex flex-col gap-4 mb-6 p-4 border border-brown-normal rounded-xl bg-brown-light">
-                
+
                 {/* Row 1: Main Filters */}
                 <div className="flex flex-col md:flex-row gap-4">
                     {/* Category Filter */}
@@ -293,7 +293,7 @@ const page = () => {
                         <label className="block text-sm font-medium text-text-dark mb-1">
                             Category
                         </label>
-                        <select 
+                        <select
                             value={selectedFilters.category}
                             onChange={(e) => handleFilterChange('category', e.target.value)}
                             className="w-full border border-brown-normal rounded-lg px-3 py-2 bg-white text-sm"
@@ -307,14 +307,14 @@ const page = () => {
                             <option value="business">Business</option>
                         </select>
                     </div>
-                    
+
                     {/* Date Range Filter */}
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-text-dark mb-1 flex items-center gap-1">
                             <Calendar size={14} />
                             Date Range
                         </label>
-                        <select 
+                        <select
                             value={selectedFilters.dateRange}
                             onChange={(e) => handleFilterChange('dateRange', e.target.value)}
                             className="w-full border border-brown-normal rounded-lg px-3 py-2 bg-white text-sm"
@@ -330,14 +330,14 @@ const page = () => {
                             <option value="custom">Custom Range</option>
                         </select>
                     </div>
-                    
+
                     {/* Time Range Filter */}
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-text-dark mb-1 flex items-center gap-1">
                             <Clock size={14} />
                             Time of Day
                         </label>
-                        <select 
+                        <select
                             value={selectedFilters.timeRange}
                             onChange={(e) => handleFilterChange('timeRange', e.target.value)}
                             className="w-full border border-brown-normal rounded-lg px-3 py-2 bg-white text-sm"
@@ -359,7 +359,7 @@ const page = () => {
                             <MapPin size={14} />
                             Distance Within
                         </label>
-                        <select 
+                        <select
                             value={selectedFilters.distance}
                             onChange={(e) => handleFilterChange('distance', e.target.value)}
                             className="w-full border border-brown-normal rounded-lg px-3 py-2 bg-white text-sm"
@@ -373,13 +373,13 @@ const page = () => {
                             <option value="100km">Within 100 km</option>
                         </select>
                     </div>
-                    
+
                     {/* Price Filter */}
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-text-dark mb-1">
                             Price Range
                         </label>
-                        <select 
+                        <select
                             value={selectedFilters.price}
                             onChange={(e) => handleFilterChange('price', e.target.value)}
                             className="w-full border border-brown-normal rounded-lg px-3 py-2 bg-white text-sm"
@@ -392,13 +392,13 @@ const page = () => {
                             <option value="2000+">Above Rs. 2,000</option>
                         </select>
                     </div>
-                    
+
                     {/* Location Filter */}
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-text-dark mb-1">
                             Location
                         </label>
-                        <select 
+                        <select
                             value={selectedFilters.location}
                             onChange={(e) => handleFilterChange('location', e.target.value)}
                             className="w-full border border-brown-normal rounded-lg px-3 py-2 bg-white text-sm"
@@ -422,12 +422,12 @@ const page = () => {
                         {Object.entries(selectedFilters)
                             .filter(([_, value]) => value !== '')
                             .map(([key, value]) => (
-                                <span 
+                                <span
                                     key={key}
                                     className="px-3 py-1 bg-brown-light rounded-full text-sm flex items-center gap-1">
                                     {key}: {value}
 
-                                    <button 
+                                    <button
                                         onClick={() => handleFilterChange(key, '')}
                                         className="ml-1 hover:text-brown-darker">
                                         <X size={12} />
@@ -436,13 +436,13 @@ const page = () => {
                             ))
                         }
                     </div>
-                    
+
                     {/* Action Buttons */}
                     <div className="flex  gap-3">
                         <Button text="Clear All Filters" variant="cta" onClick={clearAllFilters}></Button>
-                            
-                        <Button text={`Apply Filters (${Object.values(selectedFilters).filter(v => v !== '').length})`} variant="cta" 
-                        onClick={() => { }} />
+
+                        <Button text={`Apply Filters (${Object.values(selectedFilters).filter(v => v !== '').length})`} variant="cta"
+                            onClick={() => { }} />
                     </div>
                 </div>
             </div>
