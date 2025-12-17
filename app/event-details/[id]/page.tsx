@@ -143,7 +143,7 @@ const page = () => {
                                 { icon: "fa-solid fa-user", title: "Organizer", text: "Nikhil KC" }
                             ].map((item, index) => (
                                 <div key={index} className="flex items-start gap-3 md:gap-4">
-                                    <div className="border-2 border-brown-normal rounded-xl bg-brown-light p-3 flex items-center justify-center flex-shrink-0">
+                                    <div className="border-2 border-brown-normal rounded-xl bg-brown-light p-3 flex items-center justify-center shrink-0">
                                         <i className={`${item.icon} text-xl md:text-2xl`}></i>
                                     </div>
                                     <div className="min-w-0">
