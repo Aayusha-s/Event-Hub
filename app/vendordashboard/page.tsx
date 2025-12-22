@@ -1,6 +1,6 @@
 import DashboardBox from '../../components/DashboardBox';
 import Button from '../../components/Button';
-import { Award, Calendar, Goal, Star, TrendingUp, MapPin, Eye, CircleCheckBig, Clock, TrendingDown } from "lucide-react";
+import { Award, Calendar, Goal, Star, TrendingUp, MapPin, Eye, CircleCheckBig, Clock, TrendingDown, TriangleAlert } from "lucide-react";
 import { Camera } from "lucide-react";
 import { File } from "lucide-react";
 import { Crown } from "lucide-react";
@@ -9,7 +9,13 @@ import VendorCards from '@/components/VendorCards';
 
 const page = () => {
     return (
-        <section className='font-cause text-text-dark my-6 mx-5 px-4 flex flex-col'>
+        <section className='flex flex-col
+        my-4 mx-2 px-4 font-cause text-text-dark 
+            md:my-3 md:mx-3 md:px-3
+            lg:my-4 lg:mx-4 lg:px-4
+            xl:my-6 xl:mx-6 xl:px-6
+            2xl:my-8 2xl:mx-8 2xl:px-8'>
+
             {/*  */}
             <DashboardBox
                 title="Vendor Dashboard"
@@ -18,10 +24,10 @@ const page = () => {
 
 
             {/* upgrade to premium vendor */}
-            <div className='w-full border border-brown-normal rounded-xl px-10 py-6 mt-6 space-y-4'>
+            <div className='w-full border border-brown-normal rounded-xl p-4  mt-6 space-y-4'>
                 <h3 className='font-dynapuff'> <Crown className='inline-block mr-2' />Upgrade to Premium Vendor</h3>
                 <p>Get priority matching, verified badge, unlimited portfolio uploads, direct leads, and business tools for $39/month</p>
-                <div className='mt-4 space-y-2 flex flex-row flex-wrap gap-5 font-bold'>
+                <div className='mt-4 space-y-2 flex flex-row items-center flex-wrap gap-5 font-bold'>
                     <p><Award className='inline-block mr-1' /> Verified Badge</p>
                     <p><Goal className='inline-block mr-1' /> Priority Matching</p>
                     <p><Camera className='inline-block mr-1' /> Unlimited Portfolio Uploads</p>
@@ -34,7 +40,7 @@ const page = () => {
                 </div>
             </div>
 
-            <div className='grid grid-cols-1 ms:grid-cols-4 lg:grid-cols-4 lg:flex justify-between'>
+            <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-4 justify-between'>
 
                 {/* vendor cards */}
                 <VendorCards
@@ -72,42 +78,48 @@ const page = () => {
 
             </div>
 
-            <div className='flex flex-row gap-6 justify-between'>
+
+
+            <div className='flex flex-col gap-6 justify-between'>
 
                 {/* upcoming booth bookings */}
-                <div className='flex flex-row justify-between'>
-                    <div className='border border-brown-normal rounded-xl mt-10 p-4 px-6 py-6 w-[650px]
-                grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-1 gap-6 justify-items-center'>
-                        {/* card 1 */}
-                        <div className='flex flex-row justify-between items-center w-[650px] px-6'>
-                            <h2 className='font-dynapuff text-2xl font-medium'>
-                                Upcoming Booth Bookings
-                            </h2>
-                            <Button text='View All'
-                                variant='cta'
-                                iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                            </Button>
-                        </div>
+                <div className='flex flex-col justify-between mt-10'>
+                    <div className='flex flex-row items-center justify-between'>
+                        <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
+                            Upcoming Booth Bookings
+                        </h2>
+                        <Button text='View All'
+                            variant='cta'
+                            iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+
+                        </Button>
+                    </div>
+                    <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full
+                        grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 gap-6 justify-items-center'>
 
                         {/* card 1 */}
-                        <div className='p-6  w-[600px]  border border-brown-normal rounded-xl space-y-1'>
-                            <div className='flex flex-row gap-4  '>
-                                <img src="/images/party.png" className='w-[200px] rounded-2xl' />
+                        <div className='p-4 w-full md:max-w-[580px] border border-brown-normal rounded-xl space-y-1'>
+                            <div className='flex flex-col lg:flex-row gap-4  '>
+                                <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
 
                                 <div className='flex flex-col flex-1 gap-2'>
                                     <h3 className='font-bold text-lg'>Tech Expo 2024</h3>
                                     <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
                                     <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
                                 </div>
-                                <Button
-                                    text='Confirmed'
-                                    variant='tag'
-                                    size='md'
-                                    iconLeft=<CircleCheckBig className='font-sm text-green-500' /> >
-                                </Button>
+                                <div>
+
+                                    <Button
+                                        text='Confirmed'
+                                        variant='tag'
+                                        size='md'
+                                        status='success'
+                                        iconLeft={<CircleCheckBig />} >
+                                    </Button>
+                                </div>
 
                             </div>
-                            <div className='flex justify-end '>
+                            <div className='flex justify-end'>
                                 <Button text=' Details'
                                     variant='cta'
                                     iconLeft={<Eye />}>
@@ -116,21 +128,25 @@ const page = () => {
                         </div>
 
                         {/* card 2 */}
-                        <div className='p-6  w-[600px]  border border-brown-normal rounded-xl space-y-1'>
-                            <div className='flex flex-row gap-4  '>
-                                <img src="/images/party.png" className='w-[200px] rounded-2xl' />
+                        <div className='p-4 w-full md:max-w-[580px] border border-brown-normal rounded-xl space-y-1'>
+                            <div className='flex flex-col lg:flex-row gap-4'>
+                                <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
 
                                 <div className='flex flex-col flex-1 gap-2'>
                                     <h3 className='font-bold text-lg'>Tech Expo 2024</h3>
                                     <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
                                     <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
                                 </div>
-                                <Button
-                                    text='Pending'
-                                    variant='tag'
-                                    size='md'
-                                    iconLeft={<Clock className='font-sm text-yellow-500' />} >
-                                </Button>
+                                <div>
+
+                                    <Button
+                                        text='Pending'
+                                        variant='tag'
+                                        size='md'
+                                        status='warning'
+                                        iconLeft={<Clock  />} >
+                                    </Button>
+                                </div>
 
                             </div>
                             <div className='flex justify-end '>
@@ -142,21 +158,56 @@ const page = () => {
                         </div>
 
                         {/* card 3 */}
-                        <div className='p-6  w-[600px]  border border-brown-normal rounded-xl space-y-1'>
-                            <div className='flex flex-row gap-4  '>
-                                <img src="/images/party.png" className='w-[200px] rounded-2xl' />
+                        <div className='p-4 w-full md:max-w-[580px]  border border-brown-normal rounded-xl space-y-1'>
+                            <div className='flex flex-col lg:flex-row gap-4'>
+                                <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
 
                                 <div className='flex flex-col flex-1 gap-2'>
                                     <h3 className='font-bold text-lg'>Tech Expo 2024</h3>
                                     <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
                                     <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
                                 </div>
-                                <Button
-                                    text='Confirmed'
-                                    variant='tag'
-                                    size='md'
-                                    iconLeft=<CircleCheckBig className='font-sm text-green-500' /> >
+                                <div>
+
+                                    <Button
+                                        text='Confirmed'
+                                        variant='tag'
+                                        size='md'
+                                        status='success'
+                                        iconLeft={<CircleCheckBig />}>
+                                    </Button>
+                                </div>
+
+                            </div>
+                            <div className='flex justify-end '>
+                                <Button text=' Details'
+                                    variant='cta'
+                                    iconLeft={<Eye />}>
                                 </Button>
+                            </div>
+                        </div>
+
+
+                        {/* card 4 */}
+                        <div className='p-4 w-full md:max-w-[580px]  border border-brown-normal rounded-xl space-y-1'>
+                            <div className='flex flex-col lg:flex-row gap-4'>
+                                <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
+
+                                <div className='flex flex-col flex-1 gap-2'>
+                                    <h3 className='font-bold text-lg'>Tech Expo 2024</h3>
+                                    <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
+                                    <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
+                                </div>
+                                <div>
+
+                                    <Button
+                                        text='Error'
+                                        variant='tag'
+                                        size='md'
+                                        status='danger'
+                                        iconLeft={<TriangleAlert />}>
+                                    </Button>
+                                </div>
 
                             </div>
                             <div className='flex justify-end '>
@@ -172,22 +223,22 @@ const page = () => {
 
 
                 {/* sales performance */}
-                <div className='flex flex-row justify-between'>
-                    <div className='border border-brown-normal rounded-xl mt-10 p-4 px-6 py-6 w-[450px] justify-items-center'>
-                        {/* card 1 */}
-                        <div className='flex flex-row justify-between w-[450px] px-6'>
-                            <h2 className='font-dynapuff text-2xl font-medium'>
-                                Sales Performance
-                            </h2>
-                            <Button text='View All'
-                                variant='cta'
-                                iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                            </Button>
-                        </div>
+                <div className='flex flex-col justify-between mt-10'>
 
+                    <div className='flex flex-row items-center justify-between'>
+                        <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
+                            Sales Performance
+                        </h2>
+                        <Button text='View All'
+                            variant='cta'
+                            iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                        </Button>
+                    </div>
+
+                    <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full justify-items-center'>
 
                         {/* card 1 */}
-                        <div className='p-6 w-full'>
+                        <div className='p-4 w-full'>
                             <div className='flex flex-row gap-4  '>
                                 <div className='flex flex-col flex-1 gap-2'>
                                     <h3 className='font-bold text-xl'>Nov 2024</h3>
@@ -282,8 +333,8 @@ const page = () => {
                         </Button>
 
                     </div>
-                </div>
 
+                </div>
             </div>
         </section>
     )

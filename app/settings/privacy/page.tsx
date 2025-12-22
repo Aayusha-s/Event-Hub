@@ -19,11 +19,9 @@ const page = () => {
             <SettingsHeading />
 
             <div className='flex flex-col gap-6 lg:flex-row lg:gap-12'>
-
-                <div className='lg:w-1/4 lg:h-full'>
+                
 
                     <SettingsTab />
-                </div>
 
                 {/* main tab */}
                 <div className='border border-brown-normal rounded-xl p-4 w-full

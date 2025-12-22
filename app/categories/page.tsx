@@ -75,7 +75,12 @@ const page = () => {
 
     ]
     return (
-        <section className='text-text-dark my-10 mx-5 px-4'>
+        <section className='flex flex-col
+            my-4 mx-2 px-4 font-cause text-text-dark 
+            md:my-3 md:mx-3 md:px-3
+            lg:my-4 lg:mx-4 lg:px-4
+            xl:my-6 xl:mx-6 xl:px-6
+            2xl:my-8 2xl:mx-8 2xl:px-8'>
             {/* title */}
             <div className="flex flex-col">
                 
@@ -96,8 +101,12 @@ const page = () => {
                 <i className="fa-solid fa-list text-2xl"></i>
             </div>
 
+            
+
+            
+
             {/* contents */}
-            <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 md:gap-12 lg:grid-cols-3 lg:gap-x-16'>
+            <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 md:gap-12 lg:grid-cols-3 gap-4'>
                 {events.map((event, index) => (
                     <EventCard key={index} {...event} />
                 ))}
