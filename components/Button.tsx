@@ -3,7 +3,7 @@ type ButtonProps = {
     text?: string;
     iconLeft?: React.ReactNode;
     iconRight?: React.ReactNode;
-    variant?: "cta" | "tag";
+    variant?: "cta" | "tag" | "secondary";
     size?: "sm" | "md" | "lg";
     onClick?: () => void;
     isActive?: boolean;
@@ -18,6 +18,7 @@ const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onCli
     const variants = {
         cta: "rounded-[10px]",
         tag: "rounded-[40px] ",
+        secondary: "border-none bg-transparent hover:bg-transparent hover:text-brown-normal-active hover:underline hover:shadow-none hover:translate-none",
     };
 
     const sizes = {
@@ -31,6 +32,11 @@ const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onCli
             md: "px-5 h-8",
             lg: "px-5 h-10",
         },
+        secondary: {
+            sm: "px-3 h-6 text-sm",
+            md: "px-5 h-8",
+            lg: "px-6 h-10",
+        }
     };
 
     const statusStyles = {

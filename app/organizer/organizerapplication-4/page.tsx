@@ -66,11 +66,6 @@ const page = () => {
                     </div>
 
 
-
-
-
-
-
                     {/* divider and steps */}
                     <div className='h-0.5 bg-brown-normal'></div>
                     <div className='flex justify-center gap-4'>
