@@ -310,7 +310,7 @@ const page = () => {
 
                     {/* Date Range Filter */}
                     <div className="flex-1">
-                        <label className="block text-sm font-medium text-text-dark mb-1 flex items-center gap-1">
+                        <label className="text-sm font-medium text-text-dark mb-1 flex items-center gap-1">
                             <Calendar size={14} />
                             Date Range
                         </label>
@@ -333,7 +333,7 @@ const page = () => {
 
                     {/* Time Range Filter */}
                     <div className="flex-1">
-                        <label className="block text-sm font-medium text-text-dark mb-1 flex items-center gap-1">
+                        <label className="text-sm font-medium text-text-dark mb-1 flex items-center gap-1">
                             <Clock size={14} />
                             Time of Day
                         </label>
@@ -355,7 +355,7 @@ const page = () => {
                 <div className="flex flex-col md:flex-row gap-4">
                     {/* Distance Within Filter */}
                     <div className="flex-1">
-                        <label className="block text-sm font-medium text-text-dark mb-1 flex items-center gap-1">
+                        <label className="text-sm font-medium text-text-dark mb-1 flex items-center gap-1">
                             <MapPin size={14} />
                             Distance Within
                         </label>

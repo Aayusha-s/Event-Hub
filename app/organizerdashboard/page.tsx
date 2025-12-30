@@ -38,10 +38,10 @@ const page = () => {
 
 
 
-            {/* upgrade to premium vendor */}
+            {/* upgrade to premium organizer */}
             <div className='w-full border border-brown-normal rounded-xl p-4 mt-6 space-y-4'>
-                <h3 className='font-dynapuff'> <Crown className='inline-block mr-2' />Upgrade to Premium Vendor</h3>
-                <p>Get priority matching, verified badge, unlimited portfolio uploads, direct leads, and business tools for $39/month</p>
+                <h3 className='font-dynapuff'> <Crown className='inline-block mr-2' />Upgrade to Premium Organizer</h3>
+                <p>Get featured placement, advanced analytics, promotion tools, lower fees, and early payouts for $49/month</p>
                 <div className='mt-4 space-y-2 flex flex-row flex-wrap gap-5 font-bold'>
                     <p><Star className='inline-block  mr-1 text-blue-500' />Featured Placement</p>
                     <p><ChartColumn className='inline-block mr-1' />Advanced Analytics</p>
@@ -57,7 +57,7 @@ const page = () => {
 
             <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-4 justify-between'>
 
-                {/* vendor cards */}
+                {/* organizer cards */}
                 <VendorCards
                     icon1={<DollarSign className='text-3xl text-green-500' />}
                     count={"$137500"}
@@ -95,11 +95,11 @@ const page = () => {
 
             <div className='flex flex-col gap-6 justify-between'>
 
-                {/* upcoming booth bookings */}
+                {/* upcoming events */}
                 <div className='flex flex-col justify-between mt-10'>
                     <div className='flex flex-row items-center justify-between'>
                         <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
-                            Upcoming Booth Bookings
+                            Upcoming Events
                         </h2>
                         <Button text='View All'
                             variant='cta'
@@ -107,6 +107,7 @@ const page = () => {
 
                         </Button>
                     </div>
+
                     <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full
                         grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 gap-6 justify-items-center'>
 
@@ -120,8 +121,8 @@ const page = () => {
                                     <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
                                     <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
                                 </div>
+                                
                                 <div>
-
                                     <Button
                                         text='Confirmed'
                                         variant='tag'

@@ -4,7 +4,7 @@ type ButtonProps = {
     iconLeft?: React.ReactNode;
     iconRight?: React.ReactNode;
     variant?: "cta" | "tag" | "secondary";
-    size?: "sm" | "md" | "lg";
+    size?: "vsm"|"sm" | "md" | "lg";
     onClick?: () => void;
     isActive?: boolean;
     status?: "danger" | "success" | "warning";
@@ -23,16 +23,19 @@ const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onCli
 
     const sizes = {
         cta: {
+            vsm: "px-2 h-8 text-sm",
             sm: "px-3 h-10 text-sm",
             md: "px-5 h-10",
             lg: "px-6 h-12",
         },
         tag: {
+            vsm: "px-2 h-6 text-sm",
             sm: "px-3 h-6",
             md: "px-5 h-8",
             lg: "px-5 h-10",
         },
         secondary: {
+            vsm: "px-2 h-6 text-sm",
             sm: "px-3 h-6 text-sm",
             md: "px-5 h-8",
             lg: "px-6 h-10",
