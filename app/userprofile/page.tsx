@@ -168,12 +168,16 @@ const Page = () => {
     ]
 
     return (
-        <section className='max-w-7xl mx-auto p-4 md:p-6 lg:p-8 font-cause text-text-dark'>
+        <section className='my-4 mx-2 px-4 font-cause text-text-dark 
+            md:my-3 md:mx-3 md:px-3
+            lg:my-4 lg:mx-4 lg:px-4
+            xl:my-6 xl:mx-6 xl:px-6
+            2xl:my-8 2xl:mx-8 2xl:px-8'>
             {/* Profile Header */}
             <div className='flex flex-col sm:flex-row items-start sm:items-center gap-6'>
                 <Link href="/user/jane-doe" className='shrink-0'>
-                    <div className='w-24 h-24 md:w-28 md:h-28 rounded-full bg-linear-to-br from-brown-light-hover to-brown-light-active flex items-center justify-center border-4 border-white shadow-lg'>
-                        <span className='text-2xl md:text-3xl font-bold text-white'>JD</span>
+                    <div className='w-24 h-24 md:w-28 md:h-28 rounded-full bg-linear-to-br from-blue-100 to-purple-100 flex items-center justify-center border-4 border-white shadow-lg'>
+                        <span className='text-2xl md:text-3xl font-bold '>JD</span>
                     </div>
                 </Link>
 
@@ -183,18 +187,18 @@ const Page = () => {
                         <p className='text-gray-500 text-lg'>@jane_doe</p>
                     </div>
                     
-                    <div className='flex flex-wrap gap-4 text-base md:text-lg'>
-                        <div className='flex flex-col'>
+                    <div className='flex flex-wrap items-center gap-4 text-base md:text-lg'>
+                        <div className='flex flex-col items-center'>
                             <span className='font-bold text-gray-900'>127</span>
                             <span className='text-gray-500 text-sm'>Events</span>
                         </div>
                         <div className='w-px h-6 bg-gray-300'></div>
-                        <div className='flex flex-col'>
+                        <div className='flex flex-col items-center'>
                             <span className='font-bold text-gray-900'>2,345</span>
                             <span className='text-gray-500 text-sm'>Followers</span>
                         </div>
                         <div className='w-px h-6 bg-gray-300'></div>
-                        <div className='flex flex-col'>
+                        <div className='flex flex-col items-center'>
                             <span className='font-bold text-gray-900'>834</span>
                             <span className='text-gray-500 text-sm'>Following</span>
                         </div>

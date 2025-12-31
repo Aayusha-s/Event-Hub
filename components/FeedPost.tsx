@@ -26,7 +26,7 @@ const FeedPost = ({
     return (
         <div className='bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg transition-shadow '>
             <div className='flex items-start gap-4'>
-                <UserAvatar nameAbv={nameAbv} name={name} />    
+                <UserAvatar nameAbv={nameAbv} name={name} width={16} height={16} />    
 
                 <div className='flex-1'>
                     <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between'>

@@ -227,76 +227,76 @@ const Page = () => {
 
                 {activeTab === 'members' && (
                     <>
-                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6'>
+                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                             <FeaturedMember
-                            name='Alex Turner'
-                            role='Photographer'
-                            tags={['VIP Attendee','Music Lover','Foodie Explorer']}
-                            followersCount={250}
-                            followingCount={158}
+                                name='Alex Turner'
+                                role='Photographer'
+                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
+                                followersCount={250}
+                                followingCount={158}
                             />
                         </div>
 

@@ -4,16 +4,28 @@ type ButtonProps = {
     iconLeft?: React.ReactNode;
     iconRight?: React.ReactNode;
     variant?: "cta" | "tag" | "secondary";
-    size?: "vsm"|"sm" | "md" | "lg";
+    size?: "vsm" | "sm" | "md" | "lg";
     onClick?: () => void;
     isActive?: boolean;
+    className?: string;
     status?: "danger" | "success" | "warning";
 
 };
 
-const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onClick, isActive, status }: ButtonProps) => {
+const Button = (
+    {
+        text,
+        iconLeft,
+        iconRight,
+        variant = "cta",
+        size = "md",
+        onClick,
+        isActive,
+        status,
+        className
+    }: ButtonProps) => {
     const baseStyles =
-        "group font-semibold border border-brown-dark bg-transparent hover:bg-brown-light-active hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
+        "group border border-brown-dark bg-transparent hover:bg-brown-light-active hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
 
     const variants = {
         cta: "rounded-[10px]",
@@ -25,12 +37,12 @@ const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onCli
         cta: {
             vsm: "px-2 h-8 text-sm",
             sm: "px-3 h-10 text-sm",
-            md: "px-5 h-10",
+            md: "px-5 h-10 font-semibold",
             lg: "px-6 h-12",
         },
         tag: {
             vsm: "px-2 h-6 text-sm",
-            sm: "px-3 h-6",
+            sm: "px-3 h-6 text-sm",
             md: "px-5 h-8",
             lg: "px-5 h-10",
         },
@@ -62,6 +74,7 @@ const Button = ({ text, iconLeft, iconRight, variant = "cta", size = "md", onCli
                 ${variants[variant]}
                 ${sizes[variant][size]}
                 ${baseColor}
+                ${className ? className : ""}
                 ${status ? statusStyles[status] : ""}
             `}
             onClick={onClick}>
