@@ -25,7 +25,7 @@ const Button = (
         className
     }: ButtonProps) => {
     const baseStyles =
-        "group border border-brown-dark bg-transparent hover:bg-brown-light-active hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
+        "group border border-brown-dark hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
 
     const variants = {
         cta: "rounded-[10px]",
@@ -60,12 +60,10 @@ const Button = (
         warning: "border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:icon-white",
     };
 
-    const baseColor =
-        status
-            ? "bg-transparent"
-            : isActive
-                ? "bg-brown-dark text-dark"
-                : "bg-white text-text-dark";
+    const baseColor = status ? "bg-transparent" : 
+    isActive
+                ? "bg-brown-normal text-white"
+                : baseStyles;
 
     return (
         <button

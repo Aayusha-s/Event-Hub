@@ -67,34 +67,38 @@ const page = () => {
             <div className='flex flex-row flex-wrap gap-4 mt-4'>
                 <Button
                     text='Challenges'
-                    variant='secondary'
-                    size='md'
+                    variant='cta'
+                    size='sm'
                     iconLeft={<Goal />}
-                    onClick={() => setActiveTab('challenges')}>
+                    onClick={() => setActiveTab('challenges')}
+                    isActive={activeTab === 'challenges'}>
 
                 </Button>
                 <Button
                     text='Badges'
-                    variant='secondary'
-                    size='md'
+                    variant='cta'
+                    size='sm'
                     iconLeft={<Award />}
-                    onClick={() => setActiveTab('badges')}>
+                    onClick={() => setActiveTab('badges')}
+                    isActive={activeTab === 'badges'}>
                 </Button>
 
                 <Button
                     text='Rewards'
-                    variant='secondary'
-                    size='md'
+                    variant='cta'
+                    size='sm'
                     iconLeft={<Gift />}
-                    onClick={() => setActiveTab('rewards')}>
+                    onClick={() => setActiveTab('rewards')}
+                    isActive={activeTab === 'rewards'}>
                 </Button>
 
                 <Button
                     text='Leaderboard'
-                    variant='secondary'
-                    size='md'
+                    variant='cta'
+                    size='sm'
                     iconLeft={<Trophy />}
-                    onClick={() => setActiveTab('leaderboard')}>
+                    onClick={() => setActiveTab('leaderboard')}
+                    isActive={activeTab === 'leaderboard'}>
                 </Button>
             </div>
 

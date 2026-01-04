@@ -6,7 +6,7 @@ type TrendingTopicsProps = {
     hoverColor?: string;
     icon?: React.ReactNode;
     title?: string;
-    postCount?: number;
+    postCount?: string | number;
 
 }
 
@@ -18,7 +18,7 @@ const TrendingTopics = ({
     postCount
 }: TrendingTopicsProps) => {
     return (
-            <div className={`flex flex-row items-center justify-between 
+        <div className={`flex flex-row items-center justify-between 
             border border-brown-normal rounded-xl p-4 ${hoverColor}
             cursor-pointer`}>
             <div className='flex flex-row items-center gap-4'>
@@ -30,9 +30,7 @@ const TrendingTopics = ({
                     <p>{postCount} posts</p>
                 </div>
             </div>
-            <TrendingUp className='text-green-500' />
-
-
+            <TrendingUp className='text-green-500'  />
         </div>
     )
 }

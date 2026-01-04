@@ -6,6 +6,7 @@ import { File } from "lucide-react";
 import { Crown } from "lucide-react";
 import { DollarSign } from "lucide-react";
 import VendorCards from '@/components/VendorCards';
+import Link from 'next/link';
 
 const page = () => {
     return (
@@ -35,9 +36,12 @@ const page = () => {
                 </div>
 
                 <div>
-                    <Button text="Upgrade Now - $39/month" variant="cta" iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                    </Button>
                 </div>
+                <Link href="/premium/vendor">
+                    <Button text="Upgrade Now - $39/month" variant="cta" 
+                    iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                    </Button>
+                </Link>
             </div>
 
             <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-4 justify-between'>
@@ -98,7 +102,7 @@ const page = () => {
                         grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 gap-6 justify-items-center'>
 
                         {/* card 1 */}
-                        <div className='p-4 w-full md:max-w-[580px] border border-brown-normal rounded-xl space-y-1'>
+                        <div className='p-4 w-full border border-brown-normal rounded-xl space-y-1'>
                             <div className='flex flex-col lg:flex-row gap-4  '>
                                 <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
 
@@ -128,7 +132,7 @@ const page = () => {
                         </div>
 
                         {/* card 2 */}
-                        <div className='p-4 w-full md:max-w-[580px] border border-brown-normal rounded-xl space-y-1'>
+                        <div className='p-4 w-full border border-brown-normal rounded-xl space-y-1'>
                             <div className='flex flex-col lg:flex-row gap-4'>
                                 <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
 
@@ -144,7 +148,7 @@ const page = () => {
                                         variant='tag'
                                         size='md'
                                         status='warning'
-                                        iconLeft={<Clock  />} >
+                                        iconLeft={<Clock />} >
                                     </Button>
                                 </div>
 
@@ -158,7 +162,7 @@ const page = () => {
                         </div>
 
                         {/* card 3 */}
-                        <div className='p-4 w-full md:max-w-[580px]  border border-brown-normal rounded-xl space-y-1'>
+                        <div className='p-4 w-full border border-brown-normal rounded-xl space-y-1'>
                             <div className='flex flex-col lg:flex-row gap-4'>
                                 <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
 
@@ -189,7 +193,7 @@ const page = () => {
 
 
                         {/* card 4 */}
-                        <div className='p-4 w-full md:max-w-[580px]  border border-brown-normal rounded-xl space-y-1'>
+                        <div className='p-4 w-full border border-brown-normal rounded-xl space-y-1'>
                             <div className='flex flex-col lg:flex-row gap-4'>
                                 <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
 

@@ -57,9 +57,9 @@ const Page = () => {
                     <Button text='Feed'
                         variant="cta"
                         size="sm"
-                        iconLeft={<Calendar
-                            size={16} />}
+                        iconLeft={<Calendar size={16} />}
                         onClick={() => setActiveTab('feed')}
+                        isActive={activeTab === 'feed'}
                     ></Button>
 
                     <Button
@@ -68,6 +68,7 @@ const Page = () => {
                         size="sm"
                         iconLeft={<TrendingUp size={16} />}
                         onClick={() => setActiveTab('trending')}
+                        isActive={activeTab === 'trending'}
                     ></Button>
 
                     <Button
@@ -76,6 +77,7 @@ const Page = () => {
                         size="sm"
                         iconLeft={<Star size={16} />}
                         onClick={() => setActiveTab('meetups')}
+                        isActive={activeTab === 'meetups'}
                     ></Button>
 
                     <Button
@@ -84,6 +86,7 @@ const Page = () => {
                         size="sm"
                         iconLeft={<Star size={16} />}
                         onClick={() => setActiveTab('members')}
+                        isActive={activeTab === 'members'}
                     ></Button>
 
                 </div>
