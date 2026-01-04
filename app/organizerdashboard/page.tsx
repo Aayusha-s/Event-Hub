@@ -1,28 +1,33 @@
+'use client';
 import DashboardBox from '../../components/DashboardBox';
 import Button from '../../components/Button';
 import {
-    Award,
     Calendar,
     Goal,
     Star,
     TrendingUp,
     MapPin,
-    Eye,
-    CircleCheckBig,
     Clock,
-    TrendingDown,
     Crown,
     DollarSign,
     Zap,
     ChartColumn,
     Megaphone,
     Ticket,
-    TriangleAlert
+    Plus,
+    SquarePen,
+    Users,
+    ArrowRight,
+    CircleCheck,
+    CircleCheckBig
 } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 import VendorCards from '@/components/VendorCards';
 
 const page = () => {
+
+    const router = useRouter();
     return (
         <section className='flex flex-col
         my-4 mx-2 px-4 font-cause text-text-dark 
@@ -30,11 +35,19 @@ const page = () => {
             lg:my-4 lg:mx-4 lg:px-4
             xl:my-6 xl:mx-6 xl:px-6
             2xl:my-8 2xl:mx-8 2xl:px-8'>
-            {/*  */}
+
+
             <DashboardBox
                 title="Organizer Dashboard"
-                description="Managing 3 upcoming events with 1,170 tickets sold">
+                description="Managing 3 upcoming events with 1,170 tickets sold"
+                buttonText="Create New Events"
+                buttonIcon={<Plus />}
+                buttonLink="/createnewevent"
+
+            >
             </DashboardBox>
+
+
 
 
 
@@ -98,253 +111,420 @@ const page = () => {
                 {/* upcoming events */}
                 <div className='flex flex-col justify-between mt-10'>
                     <div className='flex flex-row items-center justify-between'>
-                        <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
+                        <h2 className=' text-xl md:text-xl lg:text-2xl font-bold'>
                             Upcoming Events
                         </h2>
                         <Button text='View All'
-                            variant='cta'
-                            iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                            variant='secondary'
+                            size='sm'
+                            iconRight={<ArrowRight size={18} />}>
 
                         </Button>
                     </div>
 
+
+
+
                     <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full
-                        grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 gap-6 justify-items-center'>
+                        grid grid-cols-1 xl:grid-cols-2 gap-4'>
 
                         {/* card 1 */}
-                        <div className='p-4 w-full md:max-w-[580px] border border-brown-normal rounded-xl space-y-1'>
-                            <div className='flex flex-col lg:flex-row gap-4  '>
-                                <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
+                        <div className='p-4 w-full border border-brown-normal rounded-xl space-y-1'>
+                            <div className='flex flex-col md:flex-row gap-4 w-full'>
+                                <img src="/images/party.png" className='rounded-2xl w-[200px] h-auto object-cover ' />
 
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-lg'>Tech Expo 2024</h3>
-                                    <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
-                                    <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
-                                </div>
-                                
-                                <div>
-                                    <Button
-                                        text='Confirmed'
-                                        variant='tag'
-                                        size='md'
-                                        status='success'
-                                        iconLeft={<CircleCheckBig />} >
-                                    </Button>
-                                </div>
+                                <div className='flex-1'>
+                                    <div className='flex flex-col gap-4'>
+                                        <div className='flex flex-row gap-4'>
+                                            <h3 className='font-bold text-lg'>Summer Music Festival</h3>
+                                            
+                                            <div className={`flex items-center gap-1 bg-green-100 px-2 py-1 rounded-full text-xs font-medium`}>
+                                                <CircleCheckBig size={14} className='text-green-700' /> 
+                                                <p className='text-green-700'>Active</p>
+                                            </div>
+                                        </div>
 
-                            </div>
-                            <div className='flex justify-end'>
-                                <Button text=' Details'
-                                    variant='cta'
-                                    iconLeft={<Eye />}>
-                                </Button>
+                                        <div className='flex flex-col md:flex-row gap-4'>
+                                            <p className='text-sm'><Calendar className='inline mr-1' size={18} /> March 15-17, 2024 at 6:00 PM</p>
+                                            <p className='text-sm'><MapPin className='inline mr-1' size={18} /> San Francisco, CA</p>
+                                        </div>
+                                    </div>
+
+                                    <div className='flex flex-row justify-between mt-4'>
+                                        <p className='text-sm'> 850/1000 tickets sold</p>
+                                        <p className='text-sm'>85%</p>
+                                    </div>
+
+                                    <div className='h-2 bg-gray-300 w-full rounded-full mt-1'>
+                                        <div className='bg-green-500 h-2 w-[85%] rounded-full' >
+                                        </div>
+                                    </div>
+
+                                    <div className='mt-4 flex flex-col md:flex-row gap-4 justify-between items-center'>
+                                        <p className='text-lg font-bold'><DollarSign className='inline text-green-500' size={18} /> 42,500</p>
+                                        <div className='flex flex-row gap-2 justify-between items-center '>
+                                            <Button text='Analytics' variant='cta' size='sm' iconLeft={<TrendingUp size={18} />} onClick={() => router.push('/analytics')}></Button>
+                                            <Button text='Promote' variant='cta' size='sm' iconLeft={<Megaphone size={18} />} onClick={() => router.push('')}></Button>
+                                            <Button text='Edit' variant='cta' size='sm' iconLeft={<SquarePen size={18} />} onClick={() => router.push('')}></Button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
 
                         {/* card 2 */}
-                        <div className='p-4 w-full md:max-w-[580px] border border-brown-normal rounded-xl space-y-1'>
-                            <div className='flex flex-col lg:flex-row gap-4'>
-                                <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
+                        <div className='p-4 w-full border border-brown-normal rounded-xl space-y-1'>
+                            <div className='flex flex-col md:flex-row gap-4 w-full'>
+                                <img src="/images/party.png" className='rounded-2xl w-[200px] h-auto object-cover overflow-x-auto' />
 
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-lg'>Tech Expo 2024</h3>
-                                    <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
-                                    <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
+                                <div className='flex-1'>
+                                    <div className='flex flex-col gap-4'>
+                                        <div className='flex flex-row gap-4'>
+                                            <h3 className='font-bold text-lg'>Summer Music Festival</h3>
+                                            
+                                            <div className={`flex items-center gap-1 bg-gray-200 px-2 py-1 rounded-full text-xs font-medium`}>
+                                                <Clock size={14} className='text-gray-700' /> 
+                                                <p className='text-gray-700'>Draft</p>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex flex-col md:flex-row gap-4'>
+                                            <p className='text-sm'><Calendar className='inline mr-1' size={18} /> March 15-17, 2024 at 6:00 PM</p>
+                                            <p className='text-sm'><MapPin className='inline mr-1' size={18} /> San Francisco, CA</p>
+                                        </div>
+                                    </div>
+
+                                    <div className='flex flex-row justify-between mt-4'>
+                                        <p className='text-sm'> 0/700 tickets sold</p>
+                                        <p className='text-sm'>0%</p>
+                                    </div>
+
+                                    <div className='h-2 bg-gray-300 w-full rounded-full mt-1'>
+                                        <div className='bg-green-300 h-2 w-[0%] rounded-full' >
+                                        </div>
+                                    </div>
+
+                                    <div className='mt-4 flex flex-col md:flex-row gap-4 justify-between items-center'>
+                                        <p className='text-lg font-bold'><DollarSign className='inline text-green-500' size={18} /> 0</p>
+                                        <div className='flex flex-row gap-2 justify-between items-center '>
+                                            <Button text='Analytics' variant='cta' size='sm' iconLeft={<TrendingUp size={18} />} onClick={() => router.push('/analytics')}></Button>
+                                            <Button text='Promote' variant='cta' size='sm' iconLeft={<Megaphone size={18} />} onClick={() => router.push('')}></Button>
+                                            <Button text='Edit' variant='cta' size='sm' iconLeft={<SquarePen size={18} />} onClick={() => router.push('')}></Button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-
-                                    <Button
-                                        text='Pending'
-                                        variant='tag'
-                                        size='md'
-                                        status='warning'
-                                        iconLeft={<Clock />} >
-                                    </Button>
-                                </div>
-
                             </div>
-                            <div className='flex justify-end '>
-                                <Button text=' Details'
-                                    variant='cta'
-                                    iconLeft={<Eye />}>
-                                </Button>
-                            </div>
+
+
+
+
                         </div>
 
-                        {/* card 3 */}
-                        <div className='p-4 w-full md:max-w-[580px]  border border-brown-normal rounded-xl space-y-1'>
-                            <div className='flex flex-col lg:flex-row gap-4'>
-                                <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
-
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-lg'>Tech Expo 2024</h3>
-                                    <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
-                                    <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
-                                </div>
-                                <div>
-
-                                    <Button
-                                        text='Confirmed'
-                                        variant='tag'
-                                        size='md'
-                                        status='success'
-                                        iconLeft={<CircleCheckBig />}>
-                                    </Button>
-                                </div>
-
-                            </div>
-                            <div className='flex justify-end '>
-                                <Button text=' Details'
-                                    variant='cta'
-                                    iconLeft={<Eye />}>
-                                </Button>
-                            </div>
-                        </div>
-
-
-                        {/* card 4 */}
-                        <div className='p-4 w-full md:max-w-[580px]  border border-brown-normal rounded-xl space-y-1'>
-                            <div className='flex flex-col lg:flex-row gap-4'>
-                                <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
-
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-lg'>Tech Expo 2024</h3>
-                                    <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
-                                    <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
-                                </div>
-                                <div>
-
-                                    <Button
-                                        text='Error'
-                                        variant='tag'
-                                        size='md'
-                                        status='danger'
-                                        iconLeft={<TriangleAlert />}>
-                                    </Button>
-                                </div>
-
-                            </div>
-                            <div className='flex justify-end '>
-                                <Button text=' Details'
-                                    variant='cta'
-                                    iconLeft={<Eye />}>
-                                </Button>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
 
 
-                {/* sales performance */}
-                <div className='flex flex-col justify-between mt-10'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 
-                    <div className='flex flex-row items-center justify-between'>
-                        <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
-                            Sales Performance
-                        </h2>
-                        <Button text='View All'
-                            variant='cta'
-                            iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                        </Button>
+
+                    {/* past events  performance */}
+                    <div className='flex flex-col mt-10'>
+
+                        {/* title and button */}
+                        <div className='flex flex-row items-center justify-between'>
+                            <h2 className='text-lg md:text-xl lg:text-2xl font-bold'>
+                                Sales Performance
+                            </h2>
+                            <Button text='View All'
+                                variant='secondary'
+                                size='sm'
+                                iconRight={<ArrowRight size={18} />}>
+                            </Button>
+                        </div>
+
+                        <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full justify-items-center'>
+
+                            {/* card 1 */}
+                            <div className='w-full'>
+                                <div className='flex flex-row gap-4 justify-between items-center'>
+                                    <h3 className='text-lg font-bold'>Jazz Night Live</h3>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <h3>4.8 (89)</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-sm'>Nov 2024</h3>
+
+                                </div>
+
+
+                                <div className='flex flex-row justify-between mt-4'>
+                                    {/* attendees */}
+                                    <div>
+                                        <h3>Attendees</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <Users size={18} />
+                                            <p>750</p>
+                                        </div>
+                                    </div>
+
+                                    {/* revenue */}
+                                    <div>
+                                        <h3>Revenue</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <DollarSign size={18} className='text-green-500' />
+                                            <p>18,000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover mb-6 mt-4'></div>
+
+
+                            {/* card 2 */}
+                            <div className='w-full'>
+                                <div className='flex flex-row gap-4 justify-between items-center'>
+                                    <h3 className='text-lg font-bold'>Jazz Night Live</h3>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <h3>4.8 (89)</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-sm'>Nov 2024</h3>
+
+                                </div>
+
+
+                                <div className='flex flex-row justify-between mt-4'>
+                                    {/* attendees */}
+                                    <div>
+                                        <h3>Attendees</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <Users size={18} />
+                                            <p>750</p>
+                                        </div>
+                                    </div>
+
+                                    {/* revenue */}
+                                    <div>
+                                        <h3>Revenue</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <DollarSign size={18} className='text-green-500' />
+                                            <p>18,000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover mb-6 mt-4'></div>
+
+                            {/* card 3 */}
+                            <div className='w-full'>
+                                <div className='flex flex-row gap-4 justify-between items-center'>
+                                    <h3 className='text-lg font-bold'>Jazz Night Live</h3>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <h3>4.8 (89)</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-sm'>Nov 2024</h3>
+
+                                </div>
+
+
+                                <div className='flex flex-row justify-between mt-4'>
+                                    {/* attendees */}
+                                    <div>
+                                        <h3>Attendees</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <Users size={18} />
+                                            <p>750</p>
+                                        </div>
+                                    </div>
+
+                                    {/* revenue */}
+                                    <div>
+                                        <h3>Revenue</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <DollarSign size={18} className='text-green-500' />
+                                            <p>18,000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover mb-6 mt-4'></div>
+
+                            {/* card 4 */}
+                            <div className='w-full'>
+                                <div className='flex flex-row gap-4 justify-between items-center'>
+                                    <h3 className='text-lg font-bold'>Jazz Night Live</h3>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <h3>4.8 (89)</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-sm'>Nov 2024</h3>
+
+                                </div>
+
+
+                                <div className='flex flex-row justify-between mt-4'>
+                                    {/* attendees */}
+                                    <div>
+                                        <h3>Attendees</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <Users size={18} />
+                                            <p>750</p>
+                                        </div>
+                                    </div>
+
+                                    {/* revenue */}
+                                    <div>
+                                        <h3>Revenue</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <DollarSign size={18} className='text-green-500' />
+                                            <p>18,000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover mb-6 mt-4'></div>
+
+
+                            <Button
+                                text='View All Past Events'
+                                variant='cta'>
+                            </Button>
+
+                        </div>
+
                     </div>
 
-                    <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full justify-items-center'>
 
-                        {/* card 1 */}
-                        <div className='p-4 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
-                                </div>
-                                <div>
-                                    <TrendingUp className='text-green-500 inline' />
-                                    <p>+12%</p>
-                                </div>
-                            </div>
+
+
+                    {/* recent activity */}
+
+                    <div className='flex flex-col  mt-10'>
+
+                        <div className='flex flex-row items-center justify-between'>
+                            <h2 className='text-lg md:text-xl lg:text-2xl font-bold'>
+                                Recent Activity
+                            </h2>
+                            <Button text='View All'
+                                variant='secondary'
+                                size='sm'
+                                iconRight={<ArrowRight size={18} />}>
+                            </Button>
                         </div>
 
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
 
-                        {/* card 2 */}
-                        <div className='p-6 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
+                        <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full justify-items-center'>
+
+                            {/* card 1 */}
+                            <div className='w-full flex flex-row gap-4 items-center'>
+                                <div className='w-10 h-10 bg-green-50 rounded-[50px] flex items-center justify-center'>
+                                    <Ticket className='text-green-500' size={18} />
                                 </div>
-                                <div>
-                                    <TrendingUp className='text-green-500 inline' />
-                                    <p>+12%</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
+                                <div className='flex flex-col'>
+                                    <p className='font-semibold'>12 tickets sold for Summer Music Festival</p>
+                                    <p className='text-sm text-gray-500'>5 minutes ago</p>
 
-
-                        {/* card 3 */}
-                        <div className='p-6 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
-                                </div>
-                                <div>
-                                    <TrendingDown className='text-red-500 inline' />
-                                    <p>-12%</p>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
 
-                        {/* card 4 */}
-                        <div className='p-6 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
+
+                            {/* card 2 */}
+                            <div className='w-full flex flex-row gap-4 items-center'>
+                                <div className='w-10 h-10 bg-yellow-50 rounded-[50px] flex items-center justify-center'>
+                                    <Star className='text-yellow-500' size={18} />
                                 </div>
-                                <div>
-                                    <TrendingUp className='text-green-500 inline' />
-                                    <p>+12%</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
+                                <div className='flex flex-col'>
+                                    <p className='font-semibold'>New 5-star review for Jazz Night Live</p>
+                                    <p className='text-sm text-gray-500'>2 hours ago</p>
 
-                        {/* card 5 */}
-                        <div className='p-6 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
-                                </div>
-                                <div>
-                                    <TrendingUp className='text-green-500 inline' />
-                                    <p>+12%</p>
                                 </div>
                             </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
+
+
+                            {/* card 3 */}
+                            <div className='w-full flex flex-row gap-4 items-center'>
+                                <div className='w-10 h-10 bg-blue-50 rounded-[50px] flex items-center justify-center'>
+                                    <Users className='text-blue-500' size={18} />
+                                </div>
+
+                                <div className='flex flex-col'>
+                                    <p className='font-semibold'>New vendor application for Tech Summit</p>
+                                    <p className='text-sm text-gray-500'>5 hours ago</p>
+
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
+
+
+                            {/* card 4 */}
+                            <div className='w-full flex flex-row gap-4 items-center'>
+                                <div className='w-10 h-10 bg-green-50 rounded-[50px] flex items-center justify-center'>
+                                    <Ticket className='text-green-500' size={18} />
+                                </div>
+
+                                <div className='flex flex-col'>
+                                    <p className='font-semibold'>8 tickets sold for Tech Summit 2025</p>
+                                    <p className='text-sm text-gray-500'>3 days ago</p>
+
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
+
+
+                            {/* card 5 */}
+                            <div className='w-full flex flex-row gap-4 items-center'>
+                                <div className='w-10 h-10 bg-yellow-50 rounded-[50px] flex items-center justify-center'>
+                                    <Star className='text-yellow-500' size={18} />
+                                </div>
+
+                                <div className='flex flex-col'>
+                                    <p className='font-semibold'>New 5-star review for Jazz Night Live</p>
+                                    <p className='text-sm text-gray-500'>1 week ago</p>
+
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
+
+
+
+                            <Button text='View All Activities'
+                                variant='cta'>
+                            </Button>
+
                         </div>
-
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active mb-6'></div>
-
-                        <Button text='View Detailed Analytics'
-                            variant='cta'>
-                        </Button>
 
                     </div>
 

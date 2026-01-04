@@ -77,7 +77,7 @@ const page = () => {
                         <Link href='/organizer/organizerapplication-2' >
                             <Button text="Previous Step" variant='cta' size='sm'></Button>
                         </Link>
-                        <Link href='/organizer/organizerapplication-4'>
+                        <Link href=''>
                             <Button text="Submit Application" variant='cta' size='sm'></Button>
                         </Link>
                     </div>

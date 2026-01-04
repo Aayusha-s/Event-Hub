@@ -20,8 +20,11 @@ const page = () => {
             {/*  */}
             <DashboardBox
                 title="Vendor Dashboard"
-                description="You have 3 upcoming booth bookings and 3 new leads">
+                description="You have 3 upcoming booth bookings and 3 new leads"
+                buttonText="Explore New Events"
+            >
             </DashboardBox>
+            
 
 
             {/* upgrade to premium vendor */}
@@ -99,11 +102,11 @@ const page = () => {
                         </Button>
                     </div>
                     <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full
-                        grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 gap-6 justify-items-center'>
+                        grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-2 gap-6 justify-items-center'>
 
                         {/* card 1 */}
                         <div className='p-4 w-full border border-brown-normal rounded-xl space-y-1'>
-                            <div className='flex flex-col lg:flex-row gap-4  '>
+                            <div className='flex flex-col lg:flex-row gap-4'>
                                 <img src="/images/party.png" className='w-full h-auto lg:max-w-[200px] rounded-2xl' />
 
                                 <div className='flex flex-col flex-1 gap-2'>
@@ -111,20 +114,20 @@ const page = () => {
                                     <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
                                     <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
                                 </div>
+                                
                                 <div>
-
                                     <Button
                                         text='Confirmed'
                                         variant='tag'
-                                        size='md'
+                                        size='sm'
                                         status='success'
-                                        iconLeft={<CircleCheckBig />} >
+                                        iconLeft={<CircleCheckBig size={18}/>} >
                                     </Button>
                                 </div>
 
                             </div>
                             <div className='flex justify-end'>
-                                <Button text=' Details'
+                                <Button text='Details'
                                     variant='cta'
                                     iconLeft={<Eye />}>
                                 </Button>
@@ -146,15 +149,15 @@ const page = () => {
                                     <Button
                                         text='Pending'
                                         variant='tag'
-                                        size='md'
+                                        size='sm'
                                         status='warning'
-                                        iconLeft={<Clock />} >
+                                        iconLeft={<Clock size={18} />} >
                                     </Button>
                                 </div>
 
                             </div>
                             <div className='flex justify-end '>
-                                <Button text=' Details'
+                                <Button text='Details'
                                     variant='cta'
                                     iconLeft={<Eye />}>
                                 </Button>
@@ -176,9 +179,9 @@ const page = () => {
                                     <Button
                                         text='Confirmed'
                                         variant='tag'
-                                        size='md'
+                                        size='sm'
                                         status='success'
-                                        iconLeft={<CircleCheckBig />}>
+                                        iconLeft={<CircleCheckBig size={18} />}>
                                     </Button>
                                 </div>
 
@@ -207,9 +210,9 @@ const page = () => {
                                     <Button
                                         text='Error'
                                         variant='tag'
-                                        size='md'
+                                        size='sm'
                                         status='danger'
-                                        iconLeft={<TriangleAlert />}>
+                                        iconLeft={<TriangleAlert size={18} />}>
                                     </Button>
                                 </div>
 

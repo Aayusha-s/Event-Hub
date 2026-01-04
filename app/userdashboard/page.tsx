@@ -16,7 +16,9 @@ const page = () => {
             {/* welcome message */}
             <DashboardBox
                 title='Welcome to your dashboard'
-                description='You have 5 upcoming events and 4 saved favorites'>
+                description='You have 5 upcoming events and 4 saved favorites'
+                buttonText='Explore New Events'
+            >
             </DashboardBox>
 
             {/* 4 cards */}

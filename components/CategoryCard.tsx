@@ -1,4 +1,5 @@
 import Button from "./Button";
+import Link from "next/link";
 
 type CategoryCardProps = {
     title: string;
@@ -13,7 +14,7 @@ const CategoryCard = ({ title, icon, description }: CategoryCardProps) => {
             w-full h-auto min-h-[180px] md:min-h-[200px]
             hover:shadow-md hover:border-brown-dark transition-all duration-300
             bg-white">
-            
+
             {/* Title and icon */}
             <div className="flex flex-row items-center justify-between mb-3 md:mb-4">
                 <h3 className="text-base md:text-lg font-semibold truncate pr-2">
@@ -32,12 +33,14 @@ const CategoryCard = ({ title, icon, description }: CategoryCardProps) => {
             </p>
 
             {/* Button  */}
-            <Button
-                text="Explore Now"
-                variant="cta"
-                size="sm"
-                iconRight={<i className="fa-solid fa-arrow-right ml-2"></i>}
-            />
+            <Link href="/categories">
+                <Button
+                    text="Explore Now"
+                    variant="cta"
+                    size="sm"
+                    iconRight={<i className="fa-solid fa-arrow-right ml-2"></i>}
+                />
+            </Link>
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from './Button'
+import { ArrowRight, ChevronRight } from 'lucide-react'
 
 const Pagination = () => {
     return (
@@ -24,7 +25,7 @@ const Pagination = () => {
             />
 
             <Button 
-            icon={<i className="fa-solid fa-angle-right"></i>}
+            iconRight={<ChevronRight />}
             variant='cta'
             size='sm'
             />

@@ -1,6 +1,6 @@
 
 type ButtonProps = {
-    text?: string;
+    text?: string | number;
     iconLeft?: React.ReactNode;
     iconRight?: React.ReactNode;
     variant?: "cta" | "tag" | "secondary";
@@ -47,8 +47,8 @@ const Button = (
             lg: "px-5 h-10",
         },
         secondary: {
-            vsm: "px-2 h-6 text-sm",
-            sm: "px-3 h-6 text-sm",
+            vsm: " h-6 text-sm",
+            sm: " h-6 text-sm",
             md: "px-5 h-8",
             lg: "px-6 h-10",
         }

@@ -1,17 +1,29 @@
+'use client';
+
 import Button from './Button';
+import { useRouter } from 'next/navigation';
 
 type DashboardBoxProps = {
     title?: string;
-    description?: string;   
+    description?: string;
+    buttonText?: string;
+    buttonIcon?: React.ReactNode;
+    buttonLink?: string;
 }
 
 const DashboardBox = (
     {
         title,
-        description
+        description,
+        buttonText,
+        buttonIcon,
+        buttonLink
     }: DashboardBoxProps
-    
+
 ) => {
+
+    const router = useRouter();
+
     return (
         <div className='w-full border border-brown-normal bg-brown-light rounded-xl 
         p-4 space-y-1 flex flex-col justify-start gap-4 shadow-md'>
@@ -22,8 +34,7 @@ const DashboardBox = (
                 {description}
             </p>
             <div>
-                
-                <Button text="Explore New Events" variant="cta" iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                <Button text={buttonText} variant="cta" iconLeft={buttonIcon} onClick={() => router.push(buttonLink!)}>
                 </Button>
             </div>
         </div>

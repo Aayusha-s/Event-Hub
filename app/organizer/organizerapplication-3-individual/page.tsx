@@ -95,10 +95,10 @@ const page = () => {
 
                     {/* next button */}
                     <div className='flex justify-between'>
-                        <Link href='/organizerapplication-2' >
+                        <Link href='/organizer/organizerapplication-2' >
                             <Button text="Previous Step" variant='cta' size='sm'></Button>
                         </Link>
-                        <Link href='/organizerapplication-4'>
+                        <Link href='/organizer/organizerapplication-4'>
                             <Button text="Next Step" variant='cta' size='sm'></Button>
                         </Link>
                     </div>

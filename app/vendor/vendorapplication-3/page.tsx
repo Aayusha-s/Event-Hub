@@ -139,8 +139,8 @@ const page = () => {
                         <Link href='/vendor/vendorapplication-2' >
                             <Button text="Previous Step" variant='cta' size='sm'></Button>
                         </Link>
-                        <Link href='/vendor/vendorapplication-4'>
-                            <Button text="Next Step" variant='cta' size='sm'></Button>
+                        <Link href=''>
+                            <Button text="Submit Application" variant='cta' size='sm'></Button>
                         </Link>
                     </div>
                 </div>
