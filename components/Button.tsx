@@ -47,8 +47,8 @@ const Button = (
             lg: "px-5 h-10",
         },
         secondary: {
-            vsm: " h-6 text-sm",
-            sm: " h-6 text-sm",
+            vsm: "p-1 h-6 text-sm",
+            sm: "p-1 h-6 text-sm",
             md: "px-5 h-8",
             lg: "px-6 h-10",
         }

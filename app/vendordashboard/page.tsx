@@ -1,6 +1,6 @@
 import DashboardBox from '../../components/DashboardBox';
 import Button from '../../components/Button';
-import { Award, Calendar, Goal, Star, TrendingUp, MapPin, Eye, CircleCheckBig, Clock, TrendingDown, TriangleAlert } from "lucide-react";
+import { Award, Calendar, Goal, Star, TrendingUp, MapPin, Eye, CircleCheckBig, Clock, TrendingDown, TriangleAlert, ArrowRight, Ticket, Users } from "lucide-react";
 import { Camera } from "lucide-react";
 import { File } from "lucide-react";
 import { Crown } from "lucide-react";
@@ -24,7 +24,7 @@ const page = () => {
                 buttonText="Explore New Events"
             >
             </DashboardBox>
-            
+
 
 
             {/* upgrade to premium vendor */}
@@ -41,8 +41,8 @@ const page = () => {
                 <div>
                 </div>
                 <Link href="/premium/vendor">
-                    <Button text="Upgrade Now - $39/month" variant="cta" 
-                    iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                    <Button text="Upgrade Now - $39/month" variant="cta"
+                        iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
                     </Button>
                 </Link>
             </div>
@@ -92,13 +92,13 @@ const page = () => {
                 {/* upcoming booth bookings */}
                 <div className='flex flex-col justify-between mt-10'>
                     <div className='flex flex-row items-center justify-between'>
-                        <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
+                        <h2 className=' text-xl md:text-xl lg:text-2xl font-bold'>
                             Upcoming Booth Bookings
                         </h2>
                         <Button text='View All'
-                            variant='cta'
-                            iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-
+                            variant='secondary'
+                            size='sm'
+                            iconRight={<ArrowRight size={18} />}>
                         </Button>
                     </div>
                     <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full
@@ -114,14 +114,14 @@ const page = () => {
                                     <p className='text-md'><Calendar className='inline mr-1' /> March 15-17, 2024</p>
                                     <p className='text-md'><MapPin className='inline mr-1' /> San Francisco, CA</p>
                                 </div>
-                                
+
                                 <div>
                                     <Button
                                         text='Confirmed'
                                         variant='tag'
                                         size='sm'
                                         status='success'
-                                        iconLeft={<CircleCheckBig size={18}/>} >
+                                        iconLeft={<CircleCheckBig size={18} />} >
                                     </Button>
                                 </div>
 
@@ -229,115 +229,318 @@ const page = () => {
 
 
 
-                {/* sales performance */}
-                <div className='flex flex-col justify-between mt-10'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 
-                    <div className='flex flex-row items-center justify-between'>
-                        <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
-                            Sales Performance
-                        </h2>
-                        <Button text='View All'
-                            variant='cta'
-                            iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                        </Button>
+
+                    {/* sales performance */}
+                    <div className='flex flex-col mt-10'>
+
+                        {/* title and button */}
+                        <div className='flex flex-row items-center justify-between'>
+                            <h2 className='text-lg md:text-xl lg:text-2xl font-bold'>
+                                Sales Performance
+                            </h2>
+                            <Button text='View All'
+                                variant='secondary'
+                                size='sm'
+                                iconRight={<ArrowRight size={18} />}>
+                            </Button>
+                        </div>
+
+                        <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full justify-items-center'>
+
+                            {/* card 1 */}
+                            <div className='w-full'>
+                                <div className='flex flex-row gap-4 justify-between items-center'>
+                                    <h3 className='text-lg font-bold'>Jazz Night Live</h3>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <h3>4.8 (89)</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-sm'>Nov 2024</h3>
+
+                                </div>
+
+
+                                <div className='flex flex-row justify-between mt-4'>
+                                    {/* attendees */}
+                                    <div>
+                                        <h3>Attendees</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <Users size={18} />
+                                            <p>750</p>
+                                        </div>
+                                    </div>
+
+                                    {/* revenue */}
+                                    <div>
+                                        <h3>Revenue</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <DollarSign size={18} className='text-green-500' />
+                                            <p>18,000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover mb-6 mt-4'></div>
+
+
+                            {/* card 2 */}
+                            <div className='w-full'>
+                                <div className='flex flex-row gap-4 justify-between items-center'>
+                                    <h3 className='text-lg font-bold'>Jazz Night Live</h3>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <h3>4.8 (89)</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-sm'>Nov 2024</h3>
+
+                                </div>
+
+
+                                <div className='flex flex-row justify-between mt-4'>
+                                    {/* attendees */}
+                                    <div>
+                                        <h3>Attendees</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <Users size={18} />
+                                            <p>750</p>
+                                        </div>
+                                    </div>
+
+                                    {/* revenue */}
+                                    <div>
+                                        <h3>Revenue</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <DollarSign size={18} className='text-green-500' />
+                                            <p>18,000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover mb-6 mt-4'></div>
+
+                            {/* card 3 */}
+                            <div className='w-full'>
+                                <div className='flex flex-row gap-4 justify-between items-center'>
+                                    <h3 className='text-lg font-bold'>Jazz Night Live</h3>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <h3>4.8 (89)</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-sm'>Nov 2024</h3>
+
+                                </div>
+
+
+                                <div className='flex flex-row justify-between mt-4'>
+                                    {/* attendees */}
+                                    <div>
+                                        <h3>Attendees</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <Users size={18} />
+                                            <p>750</p>
+                                        </div>
+                                    </div>
+
+                                    {/* revenue */}
+                                    <div>
+                                        <h3>Revenue</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <DollarSign size={18} className='text-green-500' />
+                                            <p>18,000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover mb-6 mt-4'></div>
+
+                            {/* card 4 */}
+                            <div className='w-full'>
+                                <div className='flex flex-row gap-4 justify-between items-center'>
+                                    <h3 className='text-lg font-bold'>Jazz Night Live</h3>
+                                    <div className='flex flex-row items-center gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <h3>4.8 (89)</h3>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className='text-sm'>Nov 2024</h3>
+
+                                </div>
+
+
+                                <div className='flex flex-row justify-between mt-4'>
+                                    {/* attendees */}
+                                    <div>
+                                        <h3>Attendees</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <Users size={18} />
+                                            <p>750</p>
+                                        </div>
+                                    </div>
+
+                                    {/* revenue */}
+                                    <div>
+                                        <h3>Revenue</h3>
+                                        <div className='flex flex-row items-center gap-2'>
+                                            <DollarSign size={18} className='text-green-500' />
+                                            <p>18,000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover mb-6 mt-4'></div>
+
+
+                            <Button
+                                text='View All Past Events'
+                                variant='cta'>
+                            </Button>
+
+                        </div>
+
                     </div>
 
-                    <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full justify-items-center'>
 
-                        {/* card 1 */}
-                        <div className='p-4 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
-                                </div>
-                                <div>
-                                    <TrendingUp className='text-green-500 inline' />
-                                    <p>+12%</p>
-                                </div>
-                            </div>
+
+
+                    {/* recent activity */}
+
+                    <div className='flex flex-col  mt-10'>
+
+                        <div className='flex flex-row items-center justify-between'>
+                            <h2 className='text-lg md:text-xl lg:text-2xl font-bold'>
+                                Recent Reviews
+                            </h2>
+                            <Button text='View All'
+                                variant='secondary'
+                                size='sm'
+                                iconRight={<ArrowRight size={18} />}>
+                            </Button>
                         </div>
 
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
 
-                        {/* card 2 */}
-                        <div className='p-6 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
+                        <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full justify-items-center'>
+
+                            {/* card 1 */}
+                            <div className='w-full flex flex-col'>
+                                <div className='flex flex-row justify-between'>
+                                    <p className='font-semibold text-lg'>Summer Events LLC</p>
+                                    <div className=' flex flex-row gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                    </div>
                                 </div>
-                                <div>
-                                    <TrendingUp className='text-green-500 inline' />
-                                    <p>+12%</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
+                                <div className='flex flex-col'>
+                                    <p className='text-md'>Jazz Festival 2024</p>
+                                    <p className=''>Excellent vendor! Professional setup and great products.</p>
+                                    <p className='text-sm text-gray-500'>Nov 2024</p>
 
-
-                        {/* card 3 */}
-                        <div className='p-6 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
-                                </div>
-                                <div>
-                                    <TrendingDown className='text-red-500 inline' />
-                                    <p>-12%</p>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
 
-                        {/* card 4 */}
-                        <div className='p-6 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
+
+                            {/* card 2 */}
+                            <div className='w-full flex flex-col'>
+                                <div className='flex flex-row justify-between'>
+                                    <p className='font-semibold text-lg'>City Markets</p>
+                                    <div className=' flex flex-row gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                    </div>
                                 </div>
-                                <div>
-                                    <TrendingUp className='text-green-500 inline' />
-                                    <p>+12%</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
+                                <div className='flex flex-col'>
+                                    <p className='text-md'>Food Truck Rally</p>
+                                    <p className=''>Very reliable and attendees loved their offerings.</p>
+                                    <p className='text-sm text-gray-500'>Oct 2024</p>
 
-                        {/* card 5 */}
-                        <div className='p-6 w-full'>
-                            <div className='flex flex-row gap-4  '>
-                                <div className='flex flex-col flex-1 gap-2'>
-                                    <h3 className='font-bold text-xl'>Nov 2024</h3>
-                                    <p className='text-lg'> $ 8,500</p>
-                                    <p className='text-lg'>2 events</p>
-                                </div>
-                                <div>
-                                    <TrendingUp className='text-green-500 inline' />
-                                    <p>+12%</p>
                                 </div>
                             </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
+
+
+                            {/* card 3 */}
+                            <div className='w-full flex flex-col'>
+                                <div className='flex flex-row justify-between'>
+                                    <p className='font-semibold text-lg'>Tech Events Co</p>
+                                    <div className=' flex flex-row gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col'>
+                                    <p className='text-md'>Innovation Expo</p>
+                                    <p className=''>Good service, would work with again.</p>
+                                    <p className='text-sm text-gray-500'>Sep 2024</p>
+
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
+
+
+                            {/* card 4 */}
+                            <div className='w-full flex flex-col'>
+                                <div className='flex flex-row justify-between'>
+                                    <p className='font-semibold text-lg'>Summer Events LLC</p>
+                                    <div className=' flex flex-row gap-1'>
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-yellow-500' size={18} />
+                                        <Star className='text-gray-500' size={18} />
+                                    </div>
+                                </div>
+
+                                <div className='flex flex-col'>
+                                    <p className='text-md'>Jazz Festival 2024</p>
+                                    <p className=''>Excellent vendor! Professional setup and great products.</p>
+                                    <p className='text-sm text-gray-500'>Nov 2024</p>
+
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className='w-full h-0.5 bg-brown-light-hover my-4'></div>
+
+                            <Button text='View All Activities'
+                                variant='cta'>
+                            </Button>
+
                         </div>
-
-                        {/* divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active mb-6'></div>
-
-                        <Button text='View Detailed Analytics'
-                            variant='cta'>
-                        </Button>
 
                     </div>
 

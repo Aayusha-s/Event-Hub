@@ -118,7 +118,6 @@ const page = () => {
                             variant='secondary'
                             size='sm'
                             iconRight={<ArrowRight size={18} />}>
-
                         </Button>
                     </div>
 
