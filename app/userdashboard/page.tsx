@@ -4,6 +4,7 @@ import DashboardBox from '@/components/DashboardBox';
 import PastEventsCard from '@/components/PastEventsCard';
 import ReviewPopup from '@/components/ReviewPopup';
 import SavedEventsCard from '@/components/SavedEventsCard';
+import SharePopup from '@/components/SharePopup';
 import TicketPopup from '@/components/TicketPopup';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
 import UserCards from '@/components/UserCards';
@@ -128,6 +129,7 @@ const page = () => {
 
                 >
                 </UpcomingEventCard>
+                
                 
                 <TicketPopup
                     isOpen={viewTicket}

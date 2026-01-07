@@ -1,5 +1,8 @@
+'use client';
 import { Calendar, Cross, Download, MapPin, QrCode, Share2, X } from "lucide-react";
 import Button from "./Button";
+import { useState } from "react";
+import SharePopup from "./SharePopup";
 
 type TicketPopupProps = {
     isOpen: boolean;
@@ -13,6 +16,17 @@ export default function TicketPopup(
     }: TicketPopupProps
 ) {
     if (!isOpen) return null;
+    const [sharePopupOpen, setSharePopupOpen] = useState(false);
+
+    if (sharePopupOpen) {
+        return (
+            <SharePopup
+                isOpen={sharePopupOpen}
+                onClose={() => setSharePopupOpen(false)}
+            />
+        )
+    }
+
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -61,8 +75,10 @@ export default function TicketPopup(
                                 size="vsm" />
 
                             <Button text='Share'
+                                onClick={() => setSharePopupOpen(true)}
                                 iconLeft={<Share2 size={18} />}
                                 size="vsm" />
+                            
                         </div>
 
                         <Button text='View QR Code'

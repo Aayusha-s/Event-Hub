@@ -325,7 +325,7 @@ const Page = () => {
                                         <div className='flex flex-col md:flex-row md:items-start justify-between'>
                                             <div>
                                                 <h3 className='font-bold text-gray-900'>{review.eventName}</h3>
-                                                <div className='flex items-center gap-2 mt-1'>
+                                                <div className='flex flex-wrap  items-center gap-2 mt-1'>
                                                     <div className='flex'>
                                                         {[...Array(5)].map((_, i) => (
                                                             <Star 
@@ -338,8 +338,6 @@ const Page = () => {
                                                             />
                                                         ))}
                                                     </div>
-                                                    <span className='text-sm text-gray-600 ml-2'>{review.rating}</span>
-                                                    <span className='text-gray-300 mx-1'>•</span>
                                                     <span className='text-sm text-gray-500'>{review.date}</span>
                                                     <span className='text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full ml-2'>
                                                         {review.category}

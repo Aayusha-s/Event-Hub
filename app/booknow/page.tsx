@@ -7,6 +7,7 @@ import React, { useState } from 'react'
 
 const page = () => {
     const [step, setStep] = useState<"tickets" | "details" | "payments" | "confirmBooking">("tickets");
+    
     return (
         <section className='flex flex-col
             my-4 mx-2 px-4 font-cause text-text-dark 
