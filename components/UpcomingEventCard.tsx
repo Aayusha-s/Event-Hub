@@ -8,6 +8,7 @@ type UpcomingEventCardProps = {
     location: string;
     time: string;
     tickets: string;
+    onOpen: () => void;
 }
 const UpcomingEventCard = (
     {
@@ -17,9 +18,13 @@ const UpcomingEventCard = (
         date,
         location,
         time,
-        tickets
+        tickets,
+        onOpen
     }: UpcomingEventCardProps
+    
 ) => {
+
+
     return (
         <div  className="border border-brown-normal bg-brown-light rounded-xl p-4 w-full md:max-w-[535px] cursor-pointer
         transform transition-all duration-300 ease-in-out  hover:scale-103 hover:shadow-lg">
@@ -38,6 +43,7 @@ const UpcomingEventCard = (
 
             <div className="flex justify-end mt-3">
                 <Button
+                onClick={onOpen}
                     text="View Ticket"
                     variant="cta">
                 </Button>

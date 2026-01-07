@@ -1,10 +1,19 @@
+'use client'
 import Button from '@/components/Button';
 import DashboardBox from '@/components/DashboardBox';
 import PastEventsCard from '@/components/PastEventsCard';
+import ReviewPopup from '@/components/ReviewPopup';
 import SavedEventsCard from '@/components/SavedEventsCard';
+import TicketPopup from '@/components/TicketPopup';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
 import UserCards from '@/components/UserCards';
+import { useState } from 'react';
 const page = () => {
+
+    const [viewTicket, setViewTicket] = useState(false)
+    const [viewReview, setViewReview] = useState(false)
+
+
     return (
         <section className='flex flex-col
             my-4 mx-2 px-4 font-cause text-text-dark 
@@ -77,6 +86,8 @@ const page = () => {
                     location='Central Park, New York'
                     time='6:00 PM - 11:00 PM'
                     tickets='2 x VIP Pass'
+                    onOpen={() => setViewTicket(true)}
+
                 >
                 </UpcomingEventCard>
 
@@ -89,6 +100,7 @@ const page = () => {
                     location='Central Park, New York'
                     time='6:00 PM - 11:00 PM'
                     tickets='2 x VIP Pass'
+                    onOpen={() => setViewTicket(true)}
                 >
                 </UpcomingEventCard>
 
@@ -100,6 +112,7 @@ const page = () => {
                     location='Central Park, New York'
                     time='6:00 PM - 11:00 PM'
                     tickets='2 x VIP Pass'
+                    onOpen={() => setViewTicket(true)}
                 >
                 </UpcomingEventCard>
 
@@ -111,107 +124,125 @@ const page = () => {
                     location='Central Park, New York'
                     time='6:00 PM - 11:00 PM'
                     tickets='2 x VIP Pass'
+                    onOpen={() => setViewTicket(true)}
+
                 >
                 </UpcomingEventCard>
+                
+                <TicketPopup
+                    isOpen={viewTicket}
+                    onClose={() => setViewTicket(false)}
+                />
 
             </div>
 
 
             {/* past events */}
-                <div className='flex flex-row justify-between items-center mt-10'>
-                    <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
-                        Past Events
-                    </h2>
-                    <Button text='View All'
-                        variant='cta'
-                        iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+            <div className='flex flex-row justify-between items-center mt-10'>
+                <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
+                    Past Events
+                </h2>
+                <Button text='View All'
+                    variant='cta'
+                    iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
 
-                    </Button>
-                </div>
-                <div className='border border-brown-normal rounded-xl mt-6 p-4 
+                </Button>
+            </div>
+            <div className='border border-brown-normal rounded-xl mt-6 p-4 
                     grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 justify-items-center'>
 
-                    <PastEventsCard
-                        title='Summer Music Festival'
-                        date='July 24, 2024'
-                        location='Central Park, New York'
-                        rating={4.5}
-                    >
-                    </PastEventsCard>
+                <PastEventsCard
+                    title='Summer Music Festival'
+                    date='July 24, 2024'
+                    location='Central Park, New York'
+                    rating={4.5}
+                    onOpen={() => setViewReview(true)}
+                >
+                </PastEventsCard>
 
-                    <PastEventsCard
-                        title='Summer Music Festival'
-                        date='July 24, 2024'
-                        location='Central Park, New York'
-                        rating={4.5}
-                    >
-                    </PastEventsCard>
-                    <PastEventsCard
-                        title='Summer Music Festival'
-                        date='July 24, 2024'
-                        location='Central Park, New York'
-                        rating={4.5}
-                    >
-                    </PastEventsCard>
-                    <PastEventsCard
-                        title='Summer Music Festival'
-                        date='July 24, 2024'
-                        location='Central Park, New York'
-                        rating={4.5}
-                    >
-                    </PastEventsCard>
+                <PastEventsCard
+                    title='Summer Music Festival'
+                    date='July 24, 2024'
+                    location='Central Park, New York'
+                    rating={4.5}
+                    onOpen={() => setViewReview(true)}
+                >
+                </PastEventsCard>
+                <PastEventsCard
+                    title='Summer Music Festival'
+                    date='July 24, 2024'
+                    location='Central Park, New York'
+                    rating={4.5}
+                    onOpen={() => setViewReview(true)}
 
-                </div>
+                >
+                </PastEventsCard>
+                <PastEventsCard
+                    title='Summer Music Festival'
+                    date='July 24, 2024'
+                    location='Central Park, New York'
+                    rating={4.5}
+                    onOpen={() => setViewReview(true)}
+
+                >
+                </PastEventsCard>
+
+                <ReviewPopup
+                    isOpen={viewReview}
+                    onclose={() => setViewReview(false)}
+                />
+
+            </div>
 
 
-                {/* SAVED EVENTS */}
-                <div className='flex flex-row justify-between items-center mt-10'>
-                    <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
-                        Saved Events
-                    </h2>
-                    <Button text='View All'
-                        variant='cta'
-                        iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
-                    </Button>
-                </div>
+            {/* SAVED EVENTS */}
+            <div className='flex flex-row justify-between items-center mt-10'>
+                <h2 className='font-dynapuff text-xl md:text-xl lg:text-2xl font-semibold'>
+                    Saved Events
+                </h2>
+                <Button text='View All'
+                    variant='cta'
+                    iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}>
+                </Button>
+            </div>
 
-                <div className='border border-brown-normal  rounded-xl mt-6 p-4 px-6 py-6
+            <div className='border border-brown-normal  rounded-xl mt-6 p-4 px-6 py-6
                     grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 justify-items-center'>
-                    {/* card 1 */}
+                {/* card 1 */}
 
-                    <SavedEventsCard
-                        title='Summer Music Festival'
-                        date='July 24, 2024'
-                        location='Central Park, New York'
-                        rating={4.5}
-                    >
-                    </SavedEventsCard>
+                <SavedEventsCard
+                    title='Summer Music Festival'
+                    date='July 24, 2024'
+                    location='Central Park, New York'
+                    price={400}
+                >
+                </SavedEventsCard>
 
-                    <SavedEventsCard
-                        title='Summer Music Festival'
-                        date='July 24, 2024'
-                        location='Central Park, New York'
-                        rating={4.5}
-                    >
-                    </SavedEventsCard>
+                <SavedEventsCard
+                    title='Summer Music Festival'
+                    date='July 24, 2024'
+                    location='Central Park, New York'
+                    price={375}
+                >
+                </SavedEventsCard>
 
-                    <SavedEventsCard
-                        title='Summer Music Festival'
-                        date='July 24, 2024'
-                        location='Central Park, New York'
-                        rating={4.5}
-                    >
-                    </SavedEventsCard>
+                <SavedEventsCard
+                    title='Summer Music Festival'
+                    date='July 24, 2024'
+                    location='Central Park, New York'
+                    price={350}
+                >
+                </SavedEventsCard>
 
-                    <SavedEventsCard
-                        title='Summer Music Festival'
-                        date='July 24, 2024'
-                        location='Central Park, New York'
-                        rating={4.5}
-                    >
-                    </SavedEventsCard>
-                </div>
-            
+                <SavedEventsCard
+                    title='Summer Music Festival'
+                    date='July 24, 2024'
+                    location='Central Park, New York'
+                    price={800}
+                >
+                </SavedEventsCard>
+            </div>
+
         </section>
 
     )

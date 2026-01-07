@@ -5,13 +5,15 @@ type PastEventsCardProps = {
     date:string;
     location:string;
     rating:number;
+    onOpen?: () => void;    
 }
 const PastEventsCard = (
     {
         title,
         date,
         location,
-        rating
+        rating,
+        onOpen
     }: PastEventsCardProps
 ) => {
     return (
@@ -29,6 +31,7 @@ const PastEventsCard = (
 
             <div className="flex justify-end -mt-4">
                 <Button
+                onClick={onOpen}
                     text="Write Review"
                     variant="cta"
                     size="sm">

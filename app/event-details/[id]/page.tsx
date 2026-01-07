@@ -115,12 +115,12 @@ const page = () => {
                     </div>
 
                     <div className='mt-4'>
-                        <Button
+                        <Link href="/booknow"><Button
                             text="Book Now"
                             iconRight={<i className="fa-solid fa-arrow-right"></i>}
                             variant="cta"
                             size="lg"
-                        />
+                        /></Link>
                     </div>
                 </div>
             </div>
@@ -169,12 +169,12 @@ const page = () => {
                         </h2>
                         <div className='flex flex-wrap gap-2'>
                             {["Concert", "Festivals", "Music", "Live Performance", "Outdoor", "Summer", "Entertainment", "Party"].map((tag, index) => (
-                                <Button
+                                <Link href='/event-tags'><Button
                                     key={index}
                                     text={tag}
                                     variant='tag'
                                     size='sm'
-                                />
+                                /></Link>
                             ))}
                         </div>
                     </div>

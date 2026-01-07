@@ -1,19 +1,20 @@
 import React from 'react'
 import Button from "./Button";
 import { Heart } from 'lucide-react';
+import Link from 'next/link';
 
 type SavedEventsCardProps = {
     title: string;
     date: string;
     location: string;
-    rating: number;
+    price?: number;
 }
 const SavedEventsCard = (
     {
         title,
         date,
         location,
-        rating
+        price
     }: SavedEventsCardProps
 ) => {
     return (
@@ -33,12 +34,15 @@ const SavedEventsCard = (
             </div>
 
             <div className="flex justify-between items-center mt-4">
-                <p>From Rs. 400</p>
-                <Button
-                    text="Book Now"
-                    variant="cta"
-                    size="sm">
-                </Button>
+                <p>From Rs. {price}</p>
+                <Link href='/booknow'>
+                    <Button
+                        text="Book Now"
+                        variant="cta"
+                        size="sm"
+                    >
+                    </Button>
+                </Link>
             </div>
         </div>
     )
