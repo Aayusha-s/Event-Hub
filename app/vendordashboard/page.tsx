@@ -339,7 +339,6 @@ const page = () => {
                                 </div>
                                 <div>
                                     <h3 className='text-sm'>Nov 2024</h3>
-
                                 </div>
 
 

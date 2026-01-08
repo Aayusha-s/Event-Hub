@@ -32,7 +32,6 @@ const SharePopup = (
                             className='text-blue-700'
                             onClick={() => {
                                 alert('Shared on Facebook!');
-                                onClose();
                             }}
                             iconLeft={<Facebook size={18} />}
                         />
@@ -41,7 +40,6 @@ const SharePopup = (
                             className='text-blue-400'
                             onClick={() => {
                                 alert('Shared on Twitter!');
-                                onClose();
                             }}
                             iconLeft={<Twitter size={18} />}
                         />
@@ -50,7 +48,6 @@ const SharePopup = (
                             className='text-green-500'
                             onClick={() => {
                                 alert('Shared on Whatsapp!');
-                                onClose();
                             }}
                             iconLeft={<MessageCircle size={18} />}
                         />
@@ -59,7 +56,6 @@ const SharePopup = (
                             className='text-red-500'
                             onClick={() => {
                                 alert('Shared on Email!');
-                                onClose();
                             }}
                             iconLeft={<Mail size={18} />}
                         />
