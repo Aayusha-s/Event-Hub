@@ -68,7 +68,7 @@ const page = () => {
                 </div>
             </div>
 
-            <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-4 justify-between'>
+            <div className='flex flex-col md:flex-row md:gap-4 lg:gap-6 justify-between'>
 
                 {/* organizer cards */}
                 <VendorCards
@@ -163,7 +163,7 @@ const page = () => {
                                         <p className='text-lg font-bold'><DollarSign className='inline text-green-500' size={18} /> 42,500</p>
                                         <div className='flex flex-row gap-2 justify-between items-center '>
                                             <Button text='Analytics' variant='cta' size='sm' iconLeft={<TrendingUp size={18} />} onClick={() => router.push('/analytics')}></Button>
-                                            <Button text='Promote' variant='cta' size='sm' iconLeft={<Megaphone size={18} />} onClick={() => router.push('')}></Button>
+                                            {/* <Button text='Promote' variant='cta' size='sm' iconLeft={<Megaphone size={18} />} onClick={() => router.push('')}></Button> */}
                                             <Button text='Edit' variant='cta' size='sm' iconLeft={<SquarePen size={18} />} onClick={() => router.push('')}></Button>
                                         </div>
                                     </div>
@@ -208,7 +208,7 @@ const page = () => {
                                         <p className='text-lg font-bold'><DollarSign className='inline text-green-500' size={18} /> 0</p>
                                         <div className='flex flex-row gap-2 justify-between items-center '>
                                             <Button text='Analytics' variant='cta' size='sm' iconLeft={<TrendingUp size={18} />} onClick={() => router.push('/analytics')}></Button>
-                                            <Button text='Promote' variant='cta' size='sm' iconLeft={<Megaphone size={18} />} onClick={() => router.push('')}></Button>
+                                            {/* <Button text='Promote' variant='cta' size='sm' iconLeft={<Megaphone size={18} />} onClick={() => router.push('')}></Button> */}
                                             <Button text='Edit' variant='cta' size='sm' iconLeft={<SquarePen size={18} />} onClick={() => router.push('')}></Button>
                                         </div>
                                     </div>

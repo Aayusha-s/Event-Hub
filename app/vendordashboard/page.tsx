@@ -47,7 +47,7 @@ const page = () => {
                 </Link>
             </div>
 
-            <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-4 justify-between'>
+            <div className='flex flex-col md:flex-row md:gap-4 lg:gap-6 justify-between'>
 
                 {/* vendor cards */}
                 <VendorCards

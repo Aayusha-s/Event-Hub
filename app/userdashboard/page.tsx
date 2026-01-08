@@ -8,6 +8,8 @@ import SharePopup from '@/components/SharePopup';
 import TicketPopup from '@/components/TicketPopup';
 import UpcomingEventCard from '@/components/UpcomingEventCard';
 import UserCards from '@/components/UserCards';
+import VendorCards from '@/components/VendorCards';
+import { Calendar, Heart, Star, Ticket, History, CalendarCheck, Bookmark, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 const page = () => {
 
@@ -32,37 +34,44 @@ const page = () => {
             </DashboardBox>
 
             {/* 4 cards */}
-            <div className='grid grid-cols-2 gap-4 mt-10
-            md:grid-cols-4'>
+            <div className='flex flex-col gap-2 md:flex-row md:gap-4 lg:gap-6 justify-between mt-10'>
+                
                 {/* card 1 */}
-                <UserCards
-                    icon={<i className="fa-solid fa-ticket text-3xl"></i>}
-                    count={12}
-                    label="Total Events Attended">
-                </UserCards>
+                <VendorCards
+                    icon1={<Ticket className=' text-green-500' />}
+                    count={"12"}
+                    label="Total Events Attended"
+                    subLabel='All-time attendance'
+                    icon2={<History className='inline mr-2 text-blue-500' />}
+                />
 
                 {/* card 2 */}
-                <UserCards
-                    icon={<i className="fa-solid fa-calendar text-3xl"></i>}
-                    count={12}
-                    label="Upcoming Events">
-                </UserCards>
-
+                <VendorCards
+                    icon1={<Calendar className=' text-blue-500' />}
+                    count={"3"}
+                    label="Upcoming Events"
+                    subLabel='Booked & Confirmed'
+                    icon2={<CalendarCheck className='inline mr-2 text-purple-500' />}
+                />
 
                 {/* card 3 */}
-                <UserCards
-                    icon={<i className="fa-solid fa-heart text-3xl"></i>}
-                    count={12}
-                    label="Favourite Events">
-                </UserCards>
+                <VendorCards
+                    icon1={<Heart className=' text-red-500' />}
+                    count={"8"}
+                    label="Favourite Events"
+                    subLabel='Saved by You'
+                    icon2={<Bookmark className='inline mr-2 text-yellow-500' />}
+                />
 
                 {/* card 4 */}
-                <UserCards
-                    icon={<i className="fa-solid fa-star text-3xl"></i>}
-                    count={4.5}
+                <VendorCards
+                    icon1={<Star className=' text-yellow-500' />}
+                    count={"4.8"}
                     label="Average Rating"
-                >
-                </UserCards>
+                    subLabel='Based on Reviews'
+                    icon2={<MessageSquare className='inline mr-2 text-green-500' />}
+                />
+                
             </div>
 
             {/* upcoming events */}
@@ -129,8 +138,8 @@ const page = () => {
 
                 >
                 </UpcomingEventCard>
-                
-                
+
+
                 <TicketPopup
                     isOpen={viewTicket}
                     onClose={() => setViewTicket(false)}
