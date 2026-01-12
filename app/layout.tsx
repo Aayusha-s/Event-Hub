@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import HeaderLoggedIn from "@/components/HeaderLoggedIn";
 
 
 
@@ -36,7 +37,7 @@ export default function RootLayout({
       <body className="font-cause">
 
 
-        <Header />
+        <HeaderLoggedIn />
         {children}
         <Footer />
       </body>

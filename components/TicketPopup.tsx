@@ -27,10 +27,9 @@ export default function TicketPopup(
         )
     }
 
-
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-4 m-2 rounded-lg ">
+            <div className="bg-white p-4 m-2 rounded-lg">
                 <div >
                     <div className="grid grid-cols-[3fr_1fr] gap-2">
                         <div className="space-y-3">
@@ -51,7 +50,6 @@ export default function TicketPopup(
                             <QrCode size={100} className="text-gray-500" />
                         </div>
                     </div>
-
 
 
                     <div className="flex flex-row gap-4 mt-2">
