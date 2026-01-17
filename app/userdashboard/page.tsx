@@ -11,7 +11,7 @@ import UserCards from '@/components/UserCards';
 import VendorCards from '@/components/VendorCards';
 import { Calendar, Heart, Star, Ticket, History, CalendarCheck, Bookmark, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
-const page = () => {
+const Page = () => {
 
     const [viewTicket, setViewTicket] = useState(false)
     const [viewReview, setViewReview] = useState(false)
@@ -259,4 +259,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

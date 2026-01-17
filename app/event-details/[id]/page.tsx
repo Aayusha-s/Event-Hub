@@ -2,6 +2,7 @@
 import Button from '@/components/Button';
 import EventCard from '@/components/EventCard';
 import Map from '@/components/Map';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const page = () => {
@@ -168,9 +169,8 @@ const page = () => {
                             Tags
                         </h2>
                         <div className='flex flex-wrap gap-2'>
-                            {["Concert", "Festivals", "Music", "Live Performance", "Outdoor", "Summer", "Entertainment", "Party"].map((tag, index) => (
-                                <Link href='/event-tags'><Button
-                                    key={index}
+                            {["Concert", "Festivals", "Music", "Live Performance", "Outdoor", "Summer", "Entertainment", "Party"].map((tag) => (
+                                <Link href='/event-tags' key={tag}><Button
                                     text={tag}
                                     variant='tag'
                                     size='sm'
@@ -190,7 +190,7 @@ const page = () => {
                             Join us for the biggest summer music festival of the year! Experience an unforgettable evening filled with incredible performances from top artists, amazing food vendors, and a vibrant atmosphere.
                         </p>
                         <p className='leading-relaxed text-base md:text-lg'>
-                            This year's lineup features chart-topping artists and emerging talents across multiple genres. From pop to rock, electronic to indie, there's something for every music lover.
+                            This year is lineup features chart-topping artists and emerging talents across multiple genres. From pop to rock, electronic to indie, there is something for every music lover.
                         </p>
                         <p className='leading-relaxed text-base md:text-lg font-semibold'>What to Expect</p>
                         <ul className='list-disc list-inside space-y-2 text-base md:text-lg'>

@@ -61,7 +61,7 @@ const page = () => {
 
 
                     <div className="mt-4 flex justify-center text-md gap-1">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/signup" className="text-brown-normal font-semibold">
                             Register
                         </Link>

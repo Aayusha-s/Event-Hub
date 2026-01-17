@@ -5,7 +5,7 @@ import Pagination from '@/components/Pagination'
 import Button from '@/components/Button';
 import { ListFilter, MapPin, Clock, Calendar, X } from 'lucide-react'
 
-const page = () => {
+const Page = () => {
     const [selectedFilters, setSelectedFilters] = useState({
         category: '',
         dateRange: '',
@@ -462,4 +462,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

@@ -1,17 +1,16 @@
 'use client'
 import React, { useState } from 'react'
-import DashboardBox from '@/components/DashboardBox'
-import { Award, Badge, Calendar, Circle, CheckCircle, Zap, CircleCheckBig, Crown, Flame, Gift, Timer, Trophy, Target, Music, Utensils } from 'lucide-react'
+import { Award, Calendar, Circle, CheckCircle, Zap, Flame, Gift, Trophy, Target, Music, Utensils } from 'lucide-react'
 import Button from '@/components/Button'
 import VendorCards from '@/components/VendorCards'
-import { DollarSign, Goal, Star, Ticket, TrendingUp } from 'lucide-react'
+import { Goal, Star, TrendingUp } from 'lucide-react'
 import DailyChallengeCard from '@/components/DailyChallengeCard'
 import ActiveChallenges from '@/components/ActiveChallenges'
 import BadgeCard from '@/components/BadgeCard'
 import RewardCard from '@/components/RewardCard'
 import Leaderboard from '@/components/Leaderboard'
 
-const page = () => {
+const Page = () => {
 
     const [activeTab, setActiveTab] = useState('challenges');
 
@@ -465,4 +464,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

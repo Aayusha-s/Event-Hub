@@ -7,7 +7,7 @@ import React, { use } from 'react'
 import { useState } from 'react'
 
 
-const page = () => {
+const Page = () => {
     const [activeTab, setActiveTab] = useState('monthly');
     return (
         <section className='flex flex-col
@@ -142,4 +142,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
