@@ -12,6 +12,7 @@ const HeaderLoggedIn = () => {
     const [open, setOpen] = useState(false);
     const [isRolePopupOpen, setIsRolePopupOpen] = useState(false);
     const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
     return (
         <header className='fixed top-0 left-0 right-0 w-full bg-brown-light z-50 shadow-sm text-text-dark'>
@@ -61,14 +62,79 @@ const HeaderLoggedIn = () => {
 
 
                 <div className='nav-right flex items-center gap-4 text-brown-dark cursor-pointer'>
-                    <CirclePlus />
-                    <Bell />
+
+                    {/* create event */}
+                    <Link href="/create-event/step-1"><CirclePlus /></Link>
+
+                    {/* notification */}
+                    <Bell onClick={() => setIsNotificationOpen(!isNotificationOpen)} />
+
+                    {/* user avatar and dropdown */}
                     <div className='flex flex-row items-center gap-1' onClick={() => setOpen(!open)}>
                         <CircleUserRound size={32} strokeWidth={1.3} />
                         <ChevronDown size={18} />
                     </div>
 
                 </div>
+
+                {isNotificationOpen && (
+                    <>
+
+                        <div className="absolute top-15 right-6 md:right-20 bg-white border rounded-lg w-80 z-50">
+                            <div className='px-4 pt-4'>
+                                <p className="font-bold text-lg mb-2">Notifications</p>
+                                <div className="border-t border-brown-light-active"></div>
+                            </div>
+
+
+                            <div className='p-4  overflow-y-auto max-h-70 '>
+                                {/* notification 1 */}
+                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-2 rounded-lg transition duration-300 ease-in-out'>
+                                    <p className="text-md ">Your ticket for Summer Music Festival is confirmed.</p>
+                                    <p className="text-sm text-gray-500 mt-2">2 hours ago</p>
+                                </div>
+
+                                {/* divider */}
+                                <div className="border-t border-brown-light my-2"></div>
+
+                                {/* notification 2 */}
+                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-2 rounded-lg transition duration-300 ease-in-out'>
+                                    <p className="text-md ">New Event: Tech Summit 2025</p>
+                                    <p className="text-sm text-gray-500 mt-2">5 hours ago</p>
+                                </div>
+
+                                {/* divider */}
+                                <div className="border-t border-brown-light my-2"></div>
+
+                                {/* notification 3 */}
+                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-2 rounded-lg transition duration-300 ease-in-out'>
+                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
+                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
+                                </div>
+
+                                {/* divider */}
+                                <div className="border-t border-brown-light my-2"></div>
+
+                                {/* notification 4 */}
+                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-2 rounded-lg transition duration-300 ease-in-out'>
+                                    <p className="text-md ">Check out this new event happening near you!</p>
+                                    <p className="text-sm text-gray-500 mt-2">2 days ago</p>
+                                </div>
+                            </div>
+
+                            {/* divider */}
+                            <div className="border-t border-brown-light-active mx-4"></div>
+
+                            {/* view all notification button */}
+
+                            <div className='px-4 pt-4 flex justify-center cursor-pointer hover:underline p-2 rounded-lg transition duration-300 ease-in-out'>
+                                <p className="font-bold text-md mb-2">View All Notifications</p>
+                                <div className="border-t border-brown-light-active"></div>
+                            </div>
+                        </div>
+
+                    </>
+                )}
 
                 {open && (
                     <div className="absolute top-15 right-5 bg-white border rounded-lg w-45">
@@ -88,9 +154,7 @@ const HeaderLoggedIn = () => {
                         </div>
 
 
-
-
-                        <Link href="/settings/account" onClick={() => setOpen(false)}><div className='px-4 py-3 flex flex-row items-center gap-1 hover:bg-gray-100 cursor-pointer transition 3s ease-in-out'>
+                        <Link href="/settings/profile" onClick={() => setOpen(false)}><div className='px-4 py-3 flex flex-row items-center gap-1 hover:bg-gray-100 cursor-pointer transition 3s ease-in-out'>
                             <Settings size={18} />
                             <p>Settings</p>
                         </div>
@@ -111,7 +175,7 @@ const HeaderLoggedIn = () => {
 
                 )}
 
-                
+
                 <Logout
                     isOpen={isLogoutOpen}
                     onClose={() => {
