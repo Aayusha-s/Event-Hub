@@ -110,7 +110,7 @@ const HowItWorks = () => {
             </div>
 
             {/* Steps */}
-            <div className="relative mt-10 flex justify-center">
+            <div className="relative mt-10 flex items-center justify-center">
                 
                 <div className="lg:block absolute
                     top-12 left-1/4 right-1/4
@@ -121,10 +121,7 @@ const HowItWorks = () => {
 
                 <div className="
                     grid grid-cols-3
-                    sm:grid-cols-3
-                    md:grid-cols-3
-                    lg:grid-cols-3
-                    gap-8
+                    gap-4
                     max-w-6xl"
                 >
                     {stepsMaps[activeTab].map((step, index) => (

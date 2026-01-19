@@ -36,7 +36,7 @@ const Footer = () => {
         { name: 'YouTube', href: 'https://youtube.com', icon: <i className="fa-brands fa-youtube"></i> }
     ]
     return (
-        <footer className='w-full bg-brown-light text-text-dark py-12 mt-20 border-t border-brown-normal'>
+        <footer className='w-full bg-brown-light text-text-dark py-5 mt-10 border-t border-brown-normal'>
             <div className='mx-5 px-4 grid lg:grid-cols-6 gap-8 '>
 
                 {/* Logo & Description */}
