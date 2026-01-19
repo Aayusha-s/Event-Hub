@@ -11,14 +11,14 @@ const page = () => {
             xl:my-6 xl:mx-6 xl:px-6
             2xl:my-8 2xl:mx-8 2xl:px-8">
 
-            <div className="w-full max-w-4xl border border-brown-normal rounded-xl p-4 flex gap-10 bg-brown-light">
+            <div className="w-full max-w-4xl border border-brown-light-active shadow-xl rounded-xl grid md:grid-cols-2 gap-2 bg-brown-light">
 
                 {/* LEFT SIDE */}
-                <div className="flex-1">
+                <div className="flex-1 items-center justify-center p-4 md:pr-2">
                     {/* logo + text */}
                     <div className="flex flex-col gap-4 mb-6 justify-center items-center">
                         <Link href="/">
-                            <div className="relative w-[140px] h-[80px] flex items-center justify-center cursor-pointer">
+                            <div className="relative w-[140px] h-20 flex items-center justify-center cursor-pointer">
                                 <Image
                                     src="/images/logo.png"
                                     alt="EventHub Logo"
@@ -32,9 +32,33 @@ const page = () => {
                         <h3 className="font-dynapuff text-2xl sm:text-3xl md:text-3xl lg:text-3xl font-semibold">
                             Welcome Back
                         </h3>
-                        <p className="text-md sm:text-base md:text-base lg:text-base font-bold">
+                        <p className="text-md sm:text-base text-center font-bold">
                             Sign in to discover and manage your events
                         </p>
+                    </div>
+
+                    <div className="flex flex-col gap-3 mb-4">
+                        <Button
+                            text="Continue with Google"
+                            variant="cta"
+                            size="md"
+                            className="w-full"
+                            iconLeft={<i className="fa-brands fa-google"></i>}
+                        />
+                        <Button
+                            text="Continue with GitHub"
+                            variant="cta"
+                            size="md"
+                            className="w-full"
+                            iconLeft={<i className="fa-brands fa-github"></i>}
+                        />
+
+                        <div className="flex items-center justify-between">
+                            <hr className="border border-brown-normal mt-2 w-23 md:w-15 lg:w-25 " />
+                            <p className="text-center text-sm mt-2"> or continue with email</p>
+
+                            <hr className="border border-brown-normal mt-2 w-23 md:w-15 lg:w-25 " />
+                        </div>
                     </div>
 
                     {/* form */}
@@ -56,6 +80,24 @@ const page = () => {
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                             />
                         </div>
+
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <input type="checkbox" id="rememberMe" name="rememberMe" />
+                                <label htmlFor="rememberMe" className="text-sm cursor-pointer">Remember Me</label>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    text="Forgot Password?"
+                                    variant="secondary"
+                                    size="sm"
+                                    className="text-lg"
+                                />
+                            </div>
+                        </div>
+
+
                         <Button text="Login" variant="cta" size="md" />
                     </div>
 
@@ -68,20 +110,36 @@ const page = () => {
                     </div>
                 </div>
 
+
                 {/* DIVIDER */}
-                <div className="hidden md:block lg:block border border-brown-normal"></div>
+
+                {/* <div className="hidden md:block border-l border-brown-normal"></div> */}
 
                 {/* RIGHT SIDE */}
-                <div className="hidden flex-1 md:flex md:flex-col lg:flex lg:flex-col justify-center items-center 
-                p-6 rounded-lg bg-linear-to-b from-gray-300 to-brown-400 text-center">
-                    <h3 className="font-dynapuff font-bold text-3xl">
-                        Discover Amazing Events
-                    </h3>
-                    <p className="font-semibold text-lg mt-4">
-                        Join millions of people finding and creating unforgettable
-                        experiences every day.
-                    </p>
+                <div className="hidden flex-1 md:flex md:flex-col lg:flex lg:flex-col 
+                    justify-center items-center p-4 rounded-lg text-center 
+                    relative h-full w-full overflow-hidden">
+
+                    {/* background layer */}
+                    <div
+                        className="absolute inset-0 
+                        bg-[url('/images/doodle1.webp')] 
+                        bg-center bg-repeat-y opacity-30
+                        hidden md:block border-l-2 border-brown-normal">
+                    </div>
+
+                    {/* content layer */}
+                    <div className="relative z-10">
+                        <h3 className="font-dynapuff font-bold text-3xl">
+                            Discover Amazing Events
+                        </h3>
+                        <p className="font-semibold text-lg mt-4">
+                            Join millions of people finding and creating unforgettable
+                            experiences every day.
+                        </p>
+                    </div>
                 </div>
+
             </div>
         </section>
     );

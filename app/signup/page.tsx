@@ -1,9 +1,11 @@
-import React from 'react'
+'use client';
+import React, { useState } from 'react'
 import Link from 'next/link';
 import Button from '@/components/Button';
 import Image from 'next/image';
 
-const page = () => {
+const Page = () => {
+    const [activeTab, setActiveTab] = useState<'attend' | 'host' | 'vendor'>('attend');
     return (
         <section className="flex justify-center
         my-4 mx-2 px-4 font-cause text-text-dark 
@@ -12,33 +14,40 @@ const page = () => {
             xl:my-6 xl:mx-6 xl:px-6
             2xl:my-8 2xl:mx-8 2xl:px-8">
 
-            <div className="w-full max-w-4xl border-2 border-brown-normal rounded-xl p-4 flex gap-10 bg-brown-light">
+            <div className="w-full max-w-4xl border border-brown-light-active shadow-xl rounded-xl grid md:grid-cols-2 gap-2 bg-brown-light">
 
                 {/* RIGHT SIDE */}
-                <div className="hidden flex-1 md:flex md:flex-col lg:flex lg:flex-col justify-center items-center 
-                p-6 rounded-lg bg-linear-to-b from-gray-300 to-brown-400 text-center">
-                    <h3 className="font-dynapuff font-bold text-3xl">
-                        Discover Amazing Events
-                    </h3>
-                    <p className="font-semibold text-lg mt-4">
-                        Join millions of people finding and creating unforgettable
-                        experiences every day.
-                    </p>
+                <div className="hidden flex-1 md:flex md:flex-col lg:flex lg:flex-col 
+                    justify-center items-center p-4 rounded-lg text-center 
+                    relative h-full w-full overflow-hidden">
+
+                    {/* background layer */}
+                    <div
+                        className="absolute inset-0 
+                            bg-[url('/images/doodle1.webp')] 
+                            bg-center bg-repeat-y opacity-30
+                            hidden md:block border-r-2 border-brown-normal">
+                    </div>
+
+                    {/* content layer */}
+                    <div className="relative z-10">
+                        <h3 className="font-dynapuff font-bold text-3xl">
+                            Discover Amazing Events
+                        </h3>
+                        <p className="font-semibold text-lg mt-4">
+                            Join millions of people finding and creating unforgettable
+                            experiences every day.
+                        </p>
+                    </div>
                 </div>
 
 
-
-
-                {/* DIVIDER */}
-                <div className="hidden md:block lg:block border border-brown-normal"></div>
-
-
                 {/* LEFT SIDE */}
-                <div className="flex-1">
+                <div className="flex-1 items-center justify-center p-4">
                     {/* logo + text */}
                     <div className="flex flex-col gap-4 mb-6 justify-center items-center">
                         <Link href="/">
-                            <div className="relative w-[140px] h-[80px] flex items-center justify-center cursor-pointer">
+                            <div className="relative w-[140px] h-20 flex items-center justify-center cursor-pointer">
                                 <Image
                                     src="/images/logo.png"
                                     alt="EventHub Logo"
@@ -55,6 +64,61 @@ const page = () => {
                         <p className="text-md sm:text-base md:text-base lg:text-base font-bold">
                             Join the community and start exploring
                         </p>
+                    </div>
+
+
+                    {/* options to choose as a attendee, vendor, or organizer */}
+                    <div>
+                        <p className='font-bold'>I want to...</p>
+                        <div className="flex justify-between gap-2 mt-2 mb-4">
+                            <Button
+                                onClick={() => setActiveTab('attend')}
+                                text="Attend Events"
+                                variant="cta"
+                                size="sm"
+                                isActive={activeTab === 'attend'}
+                            />
+                            <Button
+                                onClick={() => setActiveTab('host')}
+                                text="Host Events"
+                                variant="cta"
+                                size="sm"
+                                isActive={activeTab === 'host'}
+                            />
+                            <Button
+                                onClick={() => setActiveTab('vendor')}
+                                text='Be a Vendor'
+                                variant="cta"
+                                size="sm"
+                                isActive={activeTab === 'vendor'}
+                            />
+                        </div>
+
+                    </div>
+
+                    {/*continue with google or github */}
+                    <div className="flex flex-col gap-3 mb-4">
+                        <Button
+                            text="Continue with Google"
+                            variant="cta"
+                            size="md"
+                            className="w-full"
+                            iconLeft={<i className="fa-brands fa-google"></i>}
+                        />
+                        <Button
+                            text="Continue with GitHub"
+                            variant="cta"
+                            size="md"
+                            className="w-full"
+                            iconLeft={<i className="fa-brands fa-github"></i>}
+                        />
+
+                        <div className="flex items-center gap-3 mt-2">
+                            <hr className="flex-1 border border-brown-normal" />
+                            <p className="text-sm">or</p>
+                            <hr className="flex-1 border border-brown-normal" />
+                        </div>
+
                     </div>
 
                     {/* form */}
@@ -87,16 +151,18 @@ const page = () => {
                             />
                         </div>
 
-                        <div className='flex items-center gap-2 mt-2'>
+                        <div className='flex items-center gap-2'>
                             <input
                                 type="checkbox"
+                                id='terms-condition'
+                                name='terms-condition'
                                 className="border border-brown-normal rounded-md "
                             />
-                            <label>I agree to the Terms and Conditions</label>
+                            <label htmlFor="terms-condition">I agree to the Terms and Conditions</label>
                         </div>
                         <Button text="Register" variant="cta" />
                     </div>
-                    
+
 
                     <div className="mt-4 flex justify-center text-md gap-1">
                         Already have an account?{" "}
@@ -111,4 +177,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
