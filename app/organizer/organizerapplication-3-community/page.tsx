@@ -50,33 +50,69 @@ const page = () => {
                         <p className='text-sm md:text-md lg:text-md'>Please provide the following documents</p>
                     </div>
 
+
+
                     {/* upload id proof */}
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">Upload ID Proof *</label>
-                        <div className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer"
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Upload ID Proof *
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="id-proof"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="id-proof"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
                         >
                             <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload government-issued ID</p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">PDF, JPG, or PNG (Max 5MB)</p>
-                        </div>
-
-
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload government-issued ID
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                PDF, JPG, or PNG (Max 5MB)
+                            </p>
+                        </label>
                     </div>
 
 
 
+
+                    {/* upload previous event photos */}
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">Previous Event Photos (3+) *</label>
-                        <div
-                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer"
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Previous Event Photos (3+) *
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="previous-event-photos"
+                            accept=".jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="previous-event-photos"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
                         >
                             <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload at least 3 photos from past events</p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">Multiple files accepted (JPG or PNG)</p>
-                        </div>
-
-
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload at least 3 photos from past events 
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                Multiple files accepted (JPG or PNG)
+                            </p>
+                        </label>
                     </div>
+
 
                     <div>
                         <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">References (Optional)</label>
@@ -86,6 +122,8 @@ const page = () => {
                             placeholder="Provide contact information for references who can vouch for your event organizing experience..."
                         />
                     </div>
+
+                    
 
                     {/* divider and steps */}
                     <div className='h-0.5 bg-brown-normal'></div>

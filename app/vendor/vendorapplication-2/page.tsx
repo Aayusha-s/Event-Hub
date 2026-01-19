@@ -97,13 +97,31 @@ const page = () => {
 
                     {/* booth photos */}
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">Booth Photos (Optional) *</label>
-                        <div
-                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer">
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Booth Photos (Optional)
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="booth-photos"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="booth-photos"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
+                        >
                             <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload photos of your booth setup or products</p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">PDF, JPG, or PNG (Max 5 images)</p>
-                        </div>
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload photos of your booth setup or products
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                PDF, JPG, or PNG (Max 5 images)
+                            </p>
+                        </label>
                     </div>
 
 

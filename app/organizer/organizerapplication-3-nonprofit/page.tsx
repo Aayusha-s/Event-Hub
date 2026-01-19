@@ -51,31 +51,67 @@ const page = () => {
                     </div>
 
                     {/* registration certificate */}
+
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md"> Registration Certificate *</label>
-                        <div className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer"
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Registration Certificate *
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="registration-certificate"
+                            accept=".jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="registration-certificate"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
                         >
-                            <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2"/>
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload non-profit registration certificate</p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">PDF, JPG, or PNG (Max 5MB)</p>
-                        </div>
-
-
+                            <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload non-profit registration certificate
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                PDF, JPG, or PNG (Max 5MB)
+                            </p>
+                        </label>
                     </div>
 
 
                     {/* tax exemption certificate */}
+
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">Tax Exemption Certificate *</label>
-                        <div
-                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer"
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Tax Exemption Certificate *
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="tax-exemption-certificate"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="tax-exemption-certificate"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
                         >
                             <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload 501(c)(3) or tax exemption certificate</p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">PDF, JPG, or PNG (Max 5MB)</p>
-                        </div>
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload 501(c)(3) or tax exemption certificate
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                PDF, JPG, or PNG (Max 5MB)
+                            </p>
+                        </label>
                     </div>
                     
+
                     {/* divider and steps */}
                     <div className='h-0.5 bg-brown-normal'></div>
                     <div className='flex justify-center gap-4'>

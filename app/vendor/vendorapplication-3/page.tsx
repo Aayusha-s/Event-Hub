@@ -52,48 +52,122 @@ const page = () => {
 
                     {/* business registration */}
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">Upload Business Registration *</label>
-                        <div className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer">
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Upload Business Registration *
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="business-registration"
+                            accept=".jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="business-registration"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
+                        >
                             <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload business registration certificate</p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">PDF, JPG, or PNG (Max 5MB)</p>
-                        </div>
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload business registration certificate
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                PDF, JPG, or PNG (Max 5MB)
+                            </p>
+                        </label>
                     </div>
 
 
                     {/* tax certificate */}
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">Business License *</label>
-                        <div
-                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer"
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Tax Certificate *
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="tax-certificate"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="tax-certificate"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
                         >
                             <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload business license</p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">PDF, JPG, or PNG (Max 5MB)</p>
-                        </div>
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload tax certificate or EIN document
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                PDF, JPG, or PNG (Max 5MB)
+                            </p>
+                        </label>
                     </div>
+
 
                     {/* insurance  */}
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">Insurance Certificate *</label>
-                        <div
-                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer">
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Insurance *
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="insurance"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="insurance"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
+                        >
                             <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload proof of liability insurance </p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">PDF, JPG, or PNG (Max 5MB)</p>
-                        </div>
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload liability insurance certificate
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                PDF, JPG, or PNG (Max 5MB)
+                            </p>
+                        </label>
                     </div>
 
 
                     {/* health permits  */}
+
                     <div>
-                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">Health Permits (if applicable) *</label>
-                        <div
-                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer">
+                        <label className="block text-brown-dark mb-2 font-bold text-sm md:text-md lg:text-md">
+                            Health Permits (if Applicable) *
+                        </label>
+
+                        {/* Hidden file input */}
+                        <input
+                            type="file"
+                            id="health-permits"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            className="hidden"
+                        />
+
+                        {/* Clickable upload box */}
+                        <label
+                            htmlFor="health-permits"
+                            className="border-2 border-dashed border-brown-normal rounded-lg p-6 text-center hover:border-brown-dark transition-colors cursor-pointer block"
+                        >
                             <Upload className="w-8 h-8 text-brown-dark mx-auto mb-2" />
-                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">Upload health department permits </p>
-                            <p className="text-brown-dark text-sm md:text-md lg:text-md">PDF, JPG, or PNG (Max 5MB)</p>
-                        </div>
+                            <p className="text-brown-dark mb-1 text-sm md:text-md lg:text-md">
+                                Upload health department permits
+                            </p>
+                            <p className="text-brown-dark text-sm md:text-md lg:text-md">
+                                PDF, JPG, or PNG (Max 5MB)
+                            </p>
+                        </label>
                     </div>
 
 
@@ -111,7 +185,7 @@ const page = () => {
                     <div className='flex flex-col border border-brown-normal rounded-md'>
                         <label className="block text-brown-dark mb-2 pl-2 pt-4 font-bold text-sm md:text-md lg:text-md">Review & Agreement *</label>
 
-                        
+
                         <div className=" flex items-center gap-2 w-full p-3  cursor-pointer">
                             <input type="checkbox" id="term2" value="term2" />
                             <label htmlFor="term2" className='cursor-pointer'>I confirm that all information provided is accurate and complete *</label>
@@ -119,7 +193,7 @@ const page = () => {
 
                         <div className=" flex items-center gap-2 w-full p-3  cursor-pointer">
                             <input type="checkbox" id="term3" value="term3" />
-                            <label htmlFor="term3" className='cursor-pointer'>I agree to EventHub's Vendor Terms & Conditions *</label>
+                            <label htmlFor="term3" className='cursor-pointer'>I agree to EventHub &apos;s Vendor Terms & Conditions *</label>
                         </div>
                         <div className=" flex items-center gap-2 w-full p-3  cursor-pointer">
                             <input type="checkbox" id="term4" value="term4" />
