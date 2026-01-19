@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 const SettingsTab = () => {
     return (
-        <div className='lg:flex flex-col gap-4 border border-brown-normal rounded-xl p-4 hidden h-full'>
+        <div className='lg:flex flex-col gap-4 border border-brown-normal rounded-xl p-4 hidden h-full sticky top-20'>
             <Link href="/settings/profile">
                 <div className='flex flex-row items-center justify-start gap-4 font-bold text-lg cursor-pointer transform transition duration-300 hover:bg-brown-light hover:scale-105 rounded-md p-1'>
                     <UserRound />

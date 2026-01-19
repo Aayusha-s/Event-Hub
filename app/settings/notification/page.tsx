@@ -31,7 +31,7 @@ const page = () => {
                     {/* titles */}
                     <div className='space-y-2'>
                         <h3 className='font-dynapuff text-xl'>Notification</h3>
-                        <p className='text-lg font-bold'>Choose how you want to be notified anout events and updates</p>
+                        <p className='text-lg font-bold'>Choose how you want to be notified about events and updates</p>
                     </div>
 
 

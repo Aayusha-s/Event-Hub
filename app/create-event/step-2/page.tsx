@@ -106,6 +106,7 @@ const page = () => {
                                 required
                             />
                         </div>
+
                         {/* Event Capacity*/}
                         <div>
                             <h2 className="font-bold">Event Capacity *</h2>

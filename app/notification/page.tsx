@@ -1,13 +1,13 @@
 'use client';
 import Button from '@/components/Button';
 import NotificationCard from '@/components/NotificationCard';
-import { Award, Badge, Bell, Calendar, CircleAlert, CreditCard, DollarSign, EllipsisVertical, Filter, Gift, ListFilter, MapPin, MessageSquare, Settings, Star, Ticket, TrendingUp, Users } from 'lucide-react'
+import { Award, Badge, Bell, Calendar, CheckCheck, CircleAlert, CreditCard, DollarSign, EllipsisVertical, Filter, Gift, ListFilter, MapPin, MessageSquare, Settings, Star, Ticket, TrendingUp, Users } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
 
 const Page = () => {
 
-    const [isFilterOpen, setFilterOpen] = useState(false);
+    const [isFilterOpen, setFilterOpen] = useState(true);
     const [activeFilter, setActiveFilter] = useState<'all' | 'event-reminders' | 'bookings' | 'messages' | 'event-updates' | 'reviews' | 'payments' | 'booth-updates' | 'ticket-sales' | 'achievements' | 'community' | 'promotions'>('all');
     return (
         <section className='flex flex-col
@@ -18,7 +18,8 @@ const Page = () => {
             2xl:my-8 2xl:mx-8 2xl:px-8'>
 
             {/* heading and sub-heading */}
-            <div className='space-y-2 mb-4'>
+            <div className='flex-wrap md:flex items-center justify-between mb-4'>
+                <div className='space-y-2 mb-4'>
                 <h1 className='font-dynapuff text-2xl md:text-3xl font-bold flex items-center gap-2'>
                     <Bell strokeWidth={3} /> Notification
                 </h1>
@@ -27,7 +28,22 @@ const Page = () => {
                 </p>
             </div>
 
-            <div className='grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-6'>
+            <div className='flex items-center gap-2'>
+                <Button
+                text='Select'
+                size='sm'
+                variant='cta'
+                />
+
+                <Button
+                text='Mark all as read'
+                size='sm'
+                variant='cta'
+                iconLeft={<CheckCheck size={18} />}
+                />
+            </div></div>
+
+            <div className='grid grid-cols-1 md:grid-cols-[2fr_3fr] lg:grid-cols-[1.5fr_3fr] gap-6'>
                 <div className='md:sticky md:top-10'>
                     {/* search bar and filter */}
                     <div className='flex items-center justify-between gap-4 mb-4'>
@@ -427,7 +443,19 @@ const Page = () => {
                         <>
                             {/* notification list for bookings */}
                             <div className='flex flex-col space-y-4'>
-
+                                <NotificationCard
+                                    title="Booking Confirmed"
+                                    time="1 hour"
+                                    tag="Booking Confirmed"
+                                    message="Your VIP ticket for Summer Music Festival is confirmed."
+                                    subtitle="Summer Music Festival"
+                                    subtitleIcon={<Calendar size={20} />}
+                                    icon={<Ticket size={18} className='text-green-700' />}
+                                    iconColor='bg-green-100'
+                                    buttonText="View Ticket"
+                                    unread='block'
+                                    unreadStyle='border-l-4 border-l-brown-normal'
+                                />
                             </div>
 
                         </>
@@ -438,10 +466,18 @@ const Page = () => {
                         <>
                             {/* notification list for messages */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                <NotificationCard
+                                    title="New Message"
+                                    time="15 min"
+                                    tag="Message"
+                                    message="Sarah Johnson sent you a message about booth setup."
+                                    subtitle="Sarah Johnson"
+                                    icon={<MessageSquare size={18} className='text-blue-700' />}
+                                    iconColor='bg-blue-100'
+                                    buttonText="Reply"
+                                    unread='block'
+                                    unreadStyle='border-l-4 border-l-brown-normal'
+                                />
                             </div>
 
                         </>
@@ -451,10 +487,20 @@ const Page = () => {
                         <>
                             {/* notification list for event updates */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                {/* notification 7 */}
+                                <NotificationCard
+                                    title="Event Update"
+                                    time="1 day"
+                                    tag="Event Update"
+                                    message="The venue for Web Dev Conference has been changed to Grand Hall."
+                                    subtitle="Web Dev Conference"
+                                    subtitleIcon={<Calendar size={20} />}
+                                    icon={<CircleAlert size={18} className='text-orange-700' />}
+                                    iconColor='bg-orange-100'
+                                    buttonText="View Details"
+                                    unread='hidden'
+                                    unreadStyle='border-gray-200'
+                                />
                             </div>
 
                         </>
@@ -464,10 +510,19 @@ const Page = () => {
                         <>
                             {/* notification list for reviews */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                <NotificationCard
+                                    title="New Review"
+                                    time="5 hours"
+                                    tag="Review"
+                                    message="Someone left a 5-star review for your booth at Marketing Expo"
+                                    subtitle="Marketing Expo"
+                                    subtitleIcon={<Calendar size={20} />}
+                                    icon={<Star size={18} className='text-yellow-700' />}
+                                    iconColor='bg-yellow-100'
+                                    buttonText="Read Review"
+                                    unread='hidden'
+                                    unreadStyle='border-gray-200'
+                                />
                             </div>
 
                         </>
@@ -477,10 +532,20 @@ const Page = () => {
                         <>
                             {/* notification list for payments */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                <NotificationCard
+                                    title="Payment Received"
+                                    time="2 days"
+                                    tag="Payment"
+                                    message="Payment of $500 received for your booth booking at Tech Summit."
+                                    subtitle="$150"
+                                    subtitleIcon={<DollarSign size={20} />}
+
+                                    icon={<DollarSign size={18} className='text-green-700' />}
+                                    iconColor='bg-green-100'
+                                    buttonText="View Receipt"
+                                    unread='hidden'
+                                    unreadStyle='border-gray-200'
+                                />
                             </div>
 
                         </>
@@ -490,10 +555,19 @@ const Page = () => {
                         <>
                             {/* notification list for booth updates */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                <NotificationCard
+                                    title="Booth Application Approved"
+                                    time="1 day"
+                                    tag="Booth Approved"
+                                    message="Your booth application for Food & Wine Festival has been approved."
+                                    subtitle="Food & Wine Festival"
+                                    subtitleIcon={<Calendar size={20} />}
+                                    icon={<MapPin size={18} className='text-green-700' />}
+                                    iconColor='bg-green-100'
+                                    buttonText="Setup Booth"
+                                    unread='hidden'
+                                    unreadStyle='border-gray-200'
+                                />
                             </div>
 
                         </>
@@ -503,10 +577,19 @@ const Page = () => {
                         <>
                             {/* notification list for ticket sales */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                <NotificationCard
+                                    title="Ticket Sold"
+                                    time="3 hours"
+                                    tag="Ticket Sold"
+                                    message="5 new tickets sold for your event 'Tech Innovators Conference'."
+                                    subtitle="Tech Innovators Conference"
+                                    subtitleIcon={<Calendar size={20} />}
+                                    icon={<TrendingUp size={18} className='text-blue-700' />}
+                                    iconColor='bg-blue-100'
+                                    buttonText="View Sales"
+                                    unread='hidden'
+                                    unreadStyle='border-gray-200'
+                                />
                             </div>
 
                         </>
@@ -516,10 +599,17 @@ const Page = () => {
                         <>
                             {/* notification list for achievements */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                <NotificationCard
+                                    title="Achievement Unlocked!"
+                                    time="2 hours"
+                                    tag="Achievement"
+                                    message="You've earned the 'Event Enthusiast' badge for attending 10 events!"
+                                    icon={<Award size={18} className='text-red-700' />}
+                                    iconColor='bg-red-100'
+                                    buttonText="View Achievements"
+                                    unread='hidden'
+                                    unreadStyle='border-gray-200'
+                                />
                             </div>
 
                         </>
@@ -529,10 +619,17 @@ const Page = () => {
                         <>
                             {/* notification list for community */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                <NotificationCard
+                                    title="Community Challenge"
+                                    time="2 days"
+                                    tag="Community"
+                                    message="Join the 'Summer Events Explorer' challenge and win exclusive rewards!"
+                                    icon={<Users size={18} className='text-green-700' />}
+                                    iconColor='bg-green-100'
+                                    buttonText="Join Challenge"
+                                    unread='hidden'
+                                    unreadStyle='border-gray-200'
+                                />
                             </div>
 
                         </>
@@ -542,10 +639,17 @@ const Page = () => {
                         <>
                             {/* notification list for promotions */}
                             <div className='flex flex-col space-y-4'>
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-4 rounded-lg transition duration-300 ease-in-out border border-brown-light-active'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
+                                <NotificationCard
+                                    title="Special Offer"
+                                    time="3 days"
+                                    tag="Promotion"
+                                    message="Upgrade to Premium and get 20% off your first month!"
+                                    icon={<Gift size={18} className='text-red-700' />}
+                                    iconColor='bg-red-100'
+                                    buttonText="Learn More"
+                                    unread='hidden'
+                                    unreadStyle='border-gray-200'
+                                />
                             </div>
 
                         </>

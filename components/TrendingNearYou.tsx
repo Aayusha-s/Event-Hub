@@ -1,5 +1,6 @@
 import EventCard from "./EventCard"
 import Button from "./Button"
+import Link from "next/link"
 
 const TrendingNearYou = () => {
 
@@ -95,11 +96,11 @@ const TrendingNearYou = () => {
             </div>
 
             <div className="flex justify-center mx-5 mt-7 px-4  ">
-                <Button
+                <Link href="/explore-events"><Button
                     text="View All Events"
                     iconRight={<i className="fa-solid fa-arrow-right ml-2 "></i>}
                     variant="cta"
-                />
+                /></Link>
             </div>
         </section>
     )
