@@ -54,14 +54,10 @@ const page = () => {
                 </div>
 
 
-                {/* acceptance of terms */}
-                <h2 className="text-xl font-bold mt-4 my-2">1. Acceptance of Terms</h2>
-                <p className="mb-4 text-justify">
-                    By accessing and using EventHub (&apos;the Service&apos;), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use the Service.
-                </p>
+        
 
-                {/* use of license */}
-                <h2 className="text-xl font-bold mb-2">2. Information We Collect</h2>
+                {/* Information we collect */}
+                <h2 className="text-xl font-bold mb-2">1. Information We Collect</h2>
                 <p className="mb-4 text-justify">
                     We collect several types of information  from and about users of our Service:
                     <ul className="list-disc list-inside mt-2 space-y-2 ml-4">
@@ -93,8 +89,8 @@ const page = () => {
                     </ul>
                 </p>
 
-                {/* how we use your information */}
-                <h2 className="text-xl font-bold mb-2">2. Sharing of Information</h2>
+                {/* sharing of information */}
+                <h2 className="text-xl font-bold mb-2">3. Sharing of Information</h2>
                 <p className="mb-4 text-justify">
                     We may share your information in the following situations:
                     <ul className="list-disc list-inside mt-2 space-y-2 ml-4">
@@ -110,13 +106,13 @@ const page = () => {
 
 
                 {/*  data security */}
-                <h2 className="text-xl font-bold mb-2">3. Data Security</h2>
+                <h2 className="text-xl font-bold mb-2">4. Data Security</h2>
                 <p className="mb-4 text-justify">
                     We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or electronic storage is 100% secure.
                 </p>
 
                 {/* your rights */}
-                <h2 className="text-xl font-bold mb-2">4. Your Rights</h2>
+                <h2 className="text-xl font-bold mb-2">5. Your Rights</h2>
                 <p className="mb-4 text-justify">
                     You have the following rights rrgarding your personal information:
                     <ul className="list-disc list-inside mt-2 space-y-2 ml-4">
@@ -133,35 +129,35 @@ const page = () => {
 
 
                 {/* data retention */}
-                <h2 className="text-xl font-bold mb-2">5. Data Retention</h2>
+                <h2 className="text-xl font-bold mb-2">6. Data Retention</h2>
                 <p className="mb-4 text-justify">
                     We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law.
                 </p>
 
 
                 {/* International Data Transfers */}
-                <h2 className="text-xl font-bold mb-2">5. International Data Transfers</h2>
+                <h2 className="text-xl font-bold mb-2">7. International Data Transfers</h2>
                 <p className="mb-4 text-justify">
                     Your information may be transferred to and maintained on computers located outside of your state, province, country, or other governmental jurisdiction where data protection laws may differ.
                 </p>
 
 
-                {/* intellectual property  */}
-                <h2 className="text-xl font-bold mb-2">5. Children&apos;s Privacy</h2>
+                {/* children privacy  */}
+                <h2 className="text-xl font-bold mb-2">8. Children&apos;s Privacy</h2>
                 <p className="mb-4 text-justify">
                     Our Service is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.
                 </p>
 
 
                 {/* changes to the policy */}
-                <h2 className="text-xl font-bold mb-2">6. Changes to This Policy</h2>
+                <h2 className="text-xl font-bold mb-2">9. Changes to This Policy</h2>
                 <p className="mb-4 text-justify">
                     We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &apos;Last Updated&apos; date.
                 </p>
 
 
-
-                <h2 className="text-xl font-bold mb-2">9. Contact Us</h2>
+                {/* contact us */}
+                <h2 className="text-xl font-bold mb-2">10. Contact Us</h2>
                 <p className="mb-4 text-justify">
                     If you have any questions about this Privacy Policy, please contact us at
                     <a href="mailto:privacy@eventhub.com" className='font-bold ml-1 hover:underline'>privacy@eventhub.com</a>.
