@@ -29,7 +29,7 @@ const page = () => {
                         <h1 className="text-xl font-bold">Terms of Service</h1>
                         <p className='text-justify'>Please read these terms and conditions carefully before using our service.</p>
 
-                        <div className='flex gap-2 items-center'>
+                        <div className='flex gap-2 items-center font-bold'>
                             <Calendar size={18} />
                             <p>Effective: January 15, 2026</p>
                         </div>
