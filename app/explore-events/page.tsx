@@ -280,7 +280,7 @@ const Page = () => {
 
             {/* view style */}
             <div className='flex justify-end gap-4 mb-4 mt-2 cursor-pointer'>
-                <ListFilter onClick={() => setShowFilterBar(true)} />
+                <ListFilter onClick={() => setShowFilterBar(!showFilterBar)} />
                 {/* <i className="fa-solid fa-table-cells text-2xl"></i>
                 <i className="fa-solid fa-list text-2xl"></i> */}
             </div>
