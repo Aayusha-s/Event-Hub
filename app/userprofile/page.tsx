@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { 
     Calendar, MapPin, Share2, Link2, Mail, Sparkles, Star, Utensils, 
     Music, Laptop, Crown, MessageCircle, Heart, Camera, Users, 
-    ThumbsUp, Map, BookOpen, TrendingUp, Clock, Image, Award, 
+    ThumbsUp, Map, BookOpen, TrendingUp, Clock, Award, 
     MessageSquare, CheckCircle, Plus
 } from 'lucide-react'
 import Button from '@/components/Button'
@@ -316,8 +316,8 @@ const Page = () => {
                         {reviews.map((review) => (
                             <div key={review.id} className='border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow'>
                                 <div className='flex gap-4'>
-                                    <img 
-                                        src={review.eventImage} 
+                                    <img
+                                        src={review.eventImage}
                                         alt={review.eventName}
                                         className='w-20 h-20 md:w-24 md:h-24 rounded-lg object-cover shrink-0'
                                     />

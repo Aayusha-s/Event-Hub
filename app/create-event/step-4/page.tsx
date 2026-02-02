@@ -1,8 +1,43 @@
-import React from 'react'
+'use client';
 import Button from '@/components/Button';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-const page = () => {
+const Page = () => {
+
+    const [basicInformation, setBasicInformation] = useState<any>(null);
+    const [eventDetails, setEventDetails] = useState<any>(null);
+    const [eventInfo, setEventInfo] = useState<any>(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        const savedBasicInformation = localStorage.getItem('BasicInformation');
+        if (savedBasicInformation) {
+            setBasicInformation(JSON.parse(savedBasicInformation));
+        }
+        const savedEventDetails = localStorage.getItem('EventDetails');
+        if (savedEventDetails) {
+            setEventDetails(JSON.parse(savedEventDetails));
+        }
+        const savedEventInfo = localStorage.getItem('EventInfo');
+        if (savedEventInfo) {
+            setEventInfo(JSON.parse(savedEventInfo));
+        }
+    }, []);
+
+    const handlePublish = () => {
+
+        alert('Event Published Successfully!');
+
+        localStorage.removeItem('BasicInformation');
+        localStorage.removeItem('EventDetails');
+        localStorage.removeItem('EventInfo');
+
+        router.push('/event-details/[id]');
+
+    }
+
     return (
         <div>
             <section className='flex flex-col'>
@@ -17,9 +52,9 @@ const page = () => {
                     {/* event information */}
                     <h3 className='font-bold'>Event Information</h3>
                     <div className='border bg-gray-100 rounded-xl p-2 flex flex-col gap-2'>
-                        <p><strong>Title:</strong></p>
-                        <p><strong>Category:</strong> </p>
-                        <p><strong>Description:</strong></p>
+                        <p><strong>Title:</strong> {basicInformation?.title || ''}</p>
+                        <p><strong>Category:</strong> {basicInformation?.category || ''}</p>
+                        <p><strong>Description:</strong> {basicInformation?.description || ''}</p>
 
                     </div>
 
@@ -27,41 +62,23 @@ const page = () => {
                     {/* date and location */}
                     <h3 className='font-bold'>Date and Location </h3>
                     <div className='border bg-gray-100 rounded-xl p-2 flex flex-col gap-2'>
-                        <p><strong>Start Time:</strong></p>
-                        <p><strong>End Time:</strong> </p>
-                        <p><strong>Venue:</strong></p>
-                        <p><strong>Capacity:</strong></p>
+                        <p><strong>Start Time:</strong> {eventDetails?.startTime || ''}</p>
+                        <p><strong>End Time:</strong> {eventDetails?.endTime || ''}</p>
+                        <p><strong>Venue:</strong> {eventDetails?.venueName || ''}</p>
+                        <p><strong>Capacity:</strong> {eventDetails?.eventCapacity || ''}</p>
 
                     </div>
 
 
                     {/* ticket */}
                     <h3 className='font-bold'>Tickets (2)</h3>
+
+                    <div className='border bg-gray-100 rounded-xl p-2 flex flex-col gap-2'>
+                        <p><strong>{eventInfo?.ticketName}</strong></p>
+                        <p>Quantity: {eventInfo?.quantity || ''}</p>
+                        <p>Price: {eventInfo?.price || ''}</p>
+                    </div>
                     
-                        <div className='border bg-gray-100 rounded-xl p-2 flex flex-col gap-2'>
-                            <p><strong>General Admission</strong></p>
-                            <p>Quantity: 100</p>
-                            <p>Price: $50.00</p>
-                        </div>
-                        <div className='border bg-gray-100 rounded-xl p-2 flex flex-col gap-2'>
-                            <p><strong>VIP</strong></p>
-                            <p>Quantity: 50</p>
-                            <p>Price: $150.00</p>
-                        </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                     {/* steps */}
@@ -74,7 +91,7 @@ const page = () => {
                     <div className='flex justify-between'>
                         {/* previous button */}
                         <div className='flex justify-end'>
-                            <Link href='/create-event/step-1'>
+                            <Link href='/create-event/step-3'>
                                 <Button text="Previous Step" variant='cta' size='sm'></Button>
                             </Link>
                         </div>
@@ -82,9 +99,9 @@ const page = () => {
 
                         {/* next button */}
                         <div className='flex justify-end'>
-                            <Link href=''>
-                                <Button text="Publish Event" variant='cta' size='sm'></Button>
-                            </Link>
+
+                            <Button text="Publish Event" variant='cta' size='sm' onClick={handlePublish}></Button>
+
                         </div></div>
                 </div>
             </section>
@@ -92,4 +109,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

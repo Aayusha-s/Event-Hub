@@ -31,7 +31,7 @@ const Tickets = ({
             setQuantity(quantity - 1);
         }
     }
-    
+
 
     return (
         <div className='border border-brown-normal p-2 rounded-xl space-y-2'>
@@ -72,7 +72,8 @@ const Tickets = ({
                     <div className='w-8 h-8 flex items-center bg-gray-100 hover:bg-gray-300 transition ease-in-out rounded-[50px] justify-center cursor-pointer'>
                         <Minus size={18} onClick={decreaseQuantity} />
                     </div>
-                    <span className='mx-4'>{quantity}</span>
+                    <input type="number" min={1} name="no-of-tickets" id="no-of-tickets"
+                        className='p-2 focus:outline-none focus:ring-1 focus:ring-brown-light w-10' />
                     <div className='w-8 h-8 flex items-center bg-gray-100 hover:bg-gray-300 transition ease-in-out rounded-[50px] justify-center cursor-pointer'>
                         <Plus size={18} onClick={increaseQuantity} />
                     </div>

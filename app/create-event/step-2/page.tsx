@@ -1,8 +1,66 @@
-import React from 'react'
+'use client';
+import React, { useState, useEffect } from 'react'
 import Button from '@/components/Button';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-const page = () => {
+const Page = () => {
+    
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const [venueName, setVenueName] = useState('');
+    const [streetAddress, setStreetAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [eventCapacity, setEventCapacity] = useState('');
+    const router = useRouter();
+
+    useEffect(()=> {
+        const savedEventDetails = localStorage.getItem('EventDetails');
+
+        if (savedEventDetails) {
+            const data = JSON.parse(savedEventDetails);
+            setStartDate(data.startDate || '');
+            setEndDate(data.endDate || '');
+            setStartTime(data.startTime || '');
+            setEndTime(data.endTime || '');
+            setVenueName(data.venueName || '');
+            setStreetAddress(data.streetAddress || '');
+            setCity(data.city || '');
+            setState(data.state || '');
+            setEventCapacity(data.eventCapacity || '');
+        }
+    },[])
+
+    const handleNext = () => {
+        if (!startDate || !endDate || !startTime || !endTime || !venueName || !streetAddress || !city || !state || !eventCapacity) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+        const EventDetails = {
+            startDate,
+            endDate,
+            startTime,
+            endTime,
+            venueName,
+            streetAddress,
+            city,
+            state,
+            eventCapacity,
+        }
+
+        localStorage.setItem(
+            'EventDetails',
+            JSON.stringify(EventDetails)
+        )
+
+        router.push('/create-event/step-3');
+
+    }
+
+
     return (
         <div>
             <section className='flex flex-col'>
@@ -23,6 +81,8 @@ const page = () => {
                                 type="date"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
                             />
                         </div>
 
@@ -33,6 +93,8 @@ const page = () => {
                                 type="date"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
                             />
                         </div>
 
@@ -45,6 +107,8 @@ const page = () => {
                                 type="time"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
                             />
                         </div>
 
@@ -56,6 +120,8 @@ const page = () => {
                                 type="time"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
                             />
                         </div>
                     </div>
@@ -69,6 +135,8 @@ const page = () => {
                                 placeholder="e.g., Central Park"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={venueName}
+                                onChange={(e) => setVenueName(e.target.value)}
                             />
                         </div>
 
@@ -81,11 +149,15 @@ const page = () => {
                                 placeholder="e.g., 123 Main Street"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={streetAddress}
+                                onChange={(e) => setStreetAddress(e.target.value)}
                             />
                         </div>
                     </div>
 
                     <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>{/* City*/}
+
+                        {/* city */}
                         <div>
                             <h2 className="font-bold">City *</h2>
                             <input
@@ -93,6 +165,8 @@ const page = () => {
                                 placeholder="e.g., New York"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
                             />
                         </div>
 
@@ -104,6 +178,8 @@ const page = () => {
                                 placeholder="e.g., NY"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={state}
+                                onChange={(e) => setState(e.target.value)}
                             />
                         </div>
 
@@ -116,10 +192,11 @@ const page = () => {
                                 placeholder="e.g., 500"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
                                 required
+                                value={eventCapacity}
+                                onChange={(e) => setEventCapacity(e.target.value)}
                             />
                         </div>
                     </div>
-
 
 
 
@@ -141,9 +218,13 @@ const page = () => {
 
                         {/* next button */}
                         <div className='flex justify-end'>
-                            <Link href='/create-event/step-3'>
-                                <Button text="Next Step" variant='cta' size='sm'></Button>
-                            </Link>
+
+                            <Button 
+                            text="Next Step" 
+                            variant='cta' 
+                            size='sm'
+                            onClick={handleNext}></Button>
+
                         </div></div>
                 </div>
             </section>
@@ -151,4 +232,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

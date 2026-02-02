@@ -108,7 +108,7 @@ const page = () => {
                         <div className='mt-4'>
                             <h2 className="font-bold">Category *</h2>
                             <select name="category" id="category" className="w-full border border-brown-normal rounded-md p-3 mt-1">
-                                <option value="">Select a category</option>
+                                <option value="" disabled selected>Select a category</option>
                                 <option value="general-inquiry">General Inquiry</option>
                                 <option value="technical-support">Technical Support</option>
                                 <option value="billing-payments">Billing & Payments</option>

@@ -25,7 +25,7 @@ const Page = () => {
 
                     <div className='border border-brown-normal rounded-xl p-4 flex flex-col gap-4 md:flex-row'>
                         <div className="w-full md:w-[200px] md:h-[130px] lg:w-[300px] lg:h-[200px] overflow-hidden rounded-2xl">
-                            <Image
+                            <img
                                 src="/images/business.png"
                                 alt="Business"
                                 className="w-full h-full object-cover"

@@ -1,9 +1,48 @@
-import React from 'react'
+'use client';
+import React, { useState, useEffect } from 'react'
 import { Upload } from 'lucide-react';
 import Button from '@/components/Button';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-const page = () => {
+
+const Page = () => {
+    const [title, setTitle] = useState('');
+    const [category, setCategory] = useState('');
+    const [description, setDescription] = useState('');
+    const router = useRouter();
+
+    useEffect(() => {
+        const savedBasicInformation = localStorage.getItem('BasicInformation');
+        if (savedBasicInformation) {
+
+            const data = JSON.parse(savedBasicInformation);
+            setTitle(data.title ?? '');
+            setCategory(data.category || '');
+            setDescription(data.description || '');
+
+        }
+    }, [])
+
+    const handleNext = () => {
+        if (!title || !category || !description) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        const BasicInformation = {
+            title,
+            category,
+            description,
+        }
+
+        localStorage.setItem(
+            'BasicInformation',
+            JSON.stringify(BasicInformation)
+        );
+
+        router.push('/create-event/step-2');
+
+    }
     return (
         <div>
             <section className='flex flex-col'>
@@ -14,14 +53,14 @@ const page = () => {
                         Basic  Information
                     </h2>
 
-
-
                     {/* email */}
                     <div>
                         <h2 className="font-bold">Event Title *</h2>
                         <input
                             type="text"
                             placeholder="e.g., Summer Music Festival 2025"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
                             className="w-full border border-brown-normal rounded-md p-2 mt-1"
                             required
                         />
@@ -31,8 +70,14 @@ const page = () => {
                     {/* category */}
                     <div>
                         <h2 className="font-bold">Category *</h2>
-                        <select name="category" id="category" className="overflow-auto w-full border border-brown-normal rounded-lg p-3 mt-1" required>
-                            <option value="">Select an option</option>
+                        <select name="category" id="category"
+                            className="w-full border border-brown-normal rounded-lg p-3 mt-1"
+                            required
+
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            <option value="" disabled>Select an option</option>
                             <option value="music">Music</option>
                             <option value="art_theater">Art & Theater</option>
                             <option value="food_drinks">Food & Drinks</option>
@@ -46,7 +91,6 @@ const page = () => {
                             <option value="social">Social</option>
                             <option value="community">Community</option>
                             <option value="learning_education">Learning and Education</option>
-                            <option value="wellness_health">Wellness and Health</option>
                             <option value="wellness_health">Wellness and Health</option>
                             <option value="gaming_esports">Gaming and Esports</option>
                             <option value="family_kids">Family and Kids</option>
@@ -62,6 +106,8 @@ const page = () => {
                             placeholder='Tell attendess what makes your event special...'
                             className='w-full border border-brown-normal rounded-md p-2 mt-1 h-32 resize-none'
                             required
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                         >
                         </textarea>
                     </div>
@@ -110,14 +156,14 @@ const page = () => {
 
                     {/* next button */}
                     <div className='flex justify-end'>
-                        <Link href='/create-event/step-2'>
-                            <Button text="Next Step" variant='cta' size='sm'></Button>
-                        </Link>
+
+                        <Button text="Next Step" variant='cta' size='sm' onClick={handleNext}></Button>
+
                     </div>
                 </div>
-            </section>
-        </div>
+            </section >
+        </div >
     )
 }
 
-export default page
+export default Page

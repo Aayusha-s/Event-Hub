@@ -1,8 +1,76 @@
+'use client';
 import Link from "next/link";
 import Button from "@/components/Button";
 import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { CircleAlert, Lock, Mail } from "lucide-react";
 
-const page = () => {
+const Page = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const router = useRouter();
+
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+
+
+    // email validation
+    const validateEmail = (value: string): string => {
+        if (!value) {
+            return "Email is required!";
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            return "Invalid email format!";
+        }
+        return "";
+    }
+
+
+    // password validation
+    const validatePassword = (value: string): string => {
+        if (!value) {
+            return "Password is required!";
+        }
+
+        if (value.length < 6) {
+            return "Password must be at least 6 characters long!";
+        }
+        return "";
+    }
+
+
+    // handle login
+    const handleLogin = () => {
+        const emailValidation = validateEmail(email);
+        const passwordValidation = validatePassword(password);
+
+        setEmailError(emailValidation);
+        setPasswordError(passwordValidation);
+
+        if (emailValidation || passwordValidation) {
+            return;
+        }
+
+        const LoginDetail = {
+            email,
+            password
+        }
+
+        localStorage.setItem(
+            'loginDetail',
+            JSON.stringify(LoginDetail)
+        )
+        router.push('/');
+    }
+
+    {/* handle register button */ }
+    const handleRegister = () => {
+        router.push('/signup')
+    }
+
     return (
         <section className="flex justify-center
         my-4 mx-2 px-4 font-cause text-text-dark 
@@ -62,23 +130,56 @@ const page = () => {
                     </div>
 
                     {/* form */}
+
                     <div className="flex flex-col gap-4">
+                        {/* email */}
                         <div>
                             <h2 className="font-bold">Email</h2>
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                            />
+                            <div className="flex items-center gap-2 p-2 border border-brown-normal rounded-md mt-1 focus:outline-brown-normal-active">
+                                <Mail />
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    className="w-full border-none rounded-md focus:outline-none"
+                                    value={email}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value)
+                                        setEmailError(validateEmail(e.target.value))
+                                    }}
+                                /></div>
+
+                            {emailError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{emailError}</p>
+                                </div>
+                            )}
                         </div>
 
+                        {/* password */}
                         <div>
                             <h2 className="font-bold">Password</h2>
-                            <input
-                                type="password"
-                                placeholder="Enter your password"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                            />
+                            <div className="flex items-center gap-2 p-2 border border-brown-normal rounded-md mt-1">
+                                <Lock />
+                                <input
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    className="w-full border-none rounded-md focus:outline-none"
+                                    value={password}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value)
+                                        setPasswordError(validatePassword(e.target.value))
+
+                                    }}
+                                />
+                            </div>
+
+                            {passwordError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{passwordError}</p>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex justify-between items-center">
@@ -98,15 +199,15 @@ const page = () => {
                         </div>
 
 
-                        <Button text="Login" variant="cta" size="md" />
+                        <Button text="Login" variant="cta" size="md" onClick={handleLogin} />
                     </div>
 
 
                     <div className="mt-4 flex justify-center text-md gap-1">
                         Don&apos;t have an account?{" "}
-                        <Link href="/signup" className="text-brown-normal font-semibold">
+                        <div className="text-brown-normal font-semibold hover:underline" onClick={handleRegister}>
                             Register
-                        </Link>
+                        </div>
                     </div>
                 </div>
 
@@ -145,4 +246,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

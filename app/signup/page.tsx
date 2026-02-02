@@ -1,14 +1,117 @@
 'use client';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link';
 import Button from '@/components/Button';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { CircleAlert } from 'lucide-react';
 
 const Page = () => {
     const [activeTab, setActiveTab] = useState<'attend' | 'host' | 'vendor'>('attend');
+
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [terms, setTerms] = useState(false);
+
+    const [fullNameError, setFullNameError] = useState("");
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [termsError, setTermsError] = useState('');
+
+    const router = useRouter();
+
+    const handleSignup = () => {
+        const signupDetail = {
+            fullName,
+            email,
+            password
+
+        }
+
+        localStorage.setItem(
+            'signupDetails',
+            JSON.stringify(signupDetail)
+        )
+
+        const fullNameValidation = validateFullName(fullName);
+        const emailValidation = validateEmail(email);
+        const passwordValidation = validatePassword(password);
+        const termsValidation = validateTerms(terms);
+
+
+        setFullNameError(fullNameValidation)
+        setEmailError(emailValidation)
+        setPasswordError(passwordValidation)
+        setTermsError(termsValidation)
+
+        if (fullNameValidation || emailValidation || passwordValidation || termsValidation) return;
+
+        router.push('/login')
+
+
+    }
+
+    // handle full name
+
+    const validateFullName = (value: string): string => {
+        if (!value) {
+            return "Full Name is required!";
+        }
+
+        if (value.length < 3) {
+            return "Fullname must be at least 3 characters";
+        }
+
+        const nameRegex = /^[A-Za-z\s]+$/;
+
+        if (!nameRegex.test(value)) {
+            return "Fullname can only contain letters";
+        }
+
+        return "";
+
+
+    }
+
+    // handle email validation
+
+    const validateEmail = (value: string): string => {
+        if (!value) {
+            return "Email is required!";
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(value)) {
+            return "Invalid email format!";
+        }
+        return "";
+    }
+
+    // handle password validation
+    const validatePassword = (value: string): string => {
+
+        if (!value) return "Password is required!";
+
+        if (value.length < 6) return "Password must be atleast 6 characters long!";
+
+        return "";
+
+    }
+
+    // handle terms validation 
+
+    const validateTerms = (value: boolean): string => {
+        if (!value) {
+            return "Please agree to the terms & conditions!";
+        }
+        return "";
+    }
+
     return (
         <section className="flex justify-center
-        my-4 mx-2 px-4 font-cause text-text-dark 
+            my-4 mx-2 px-4 font-cause text-text-dark 
             md:my-3 md:mx-3 md:px-3
             lg:my-4 lg:mx-4 lg:px-4
             xl:my-6 xl:mx-6 xl:px-6
@@ -124,43 +227,100 @@ const Page = () => {
                     {/* form */}
                     <div className="flex flex-col gap-4">
 
+
+                        {/* full name */}
                         <div>
                             <h2 className='font-bold'>Full Name</h2>
                             <input
                                 type="text"
                                 placeholder="Enter your full name"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                                value={fullName}
+                                onChange={(e) => {
+                                    setFullName(e.target.value)
+                                    setFullNameError(validateFullName(e.target.value))
+                                }}
                             />
+
+                            {fullNameError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{fullNameError}</p>
+                                </div>
+                            )}
                         </div>
 
+                        {/* email */}
                         <div>
                             <h2 className='font-bold'>Email</h2>
                             <input
                                 type="email"
                                 placeholder="Enter your email"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value)
+                                    setEmailError(validateEmail(e.target.value))
+                                }}
                             />
+                            {emailError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{emailError}</p>
+                                </div>
+                            )}
                         </div>
 
+
+                        {/* password  */}
                         <div>
                             <h2 className='font-bold'>Password</h2>
                             <input
                                 type="password"
                                 placeholder="Enter your password"
                                 className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value)
+                                    setPasswordError(validatePassword(e.target.value))
+                                }}
                             />
+
+                            {passwordError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{passwordError}</p>
+                                </div>
+                            )}
                         </div>
 
-                        <div className='flex items-center gap-2'>
-                            <input
-                                type="checkbox"
-                                id='terms-condition'
-                                name='terms-condition'
-                                className="border border-brown-normal rounded-md "
-                            />
-                            <label htmlFor="terms-condition">I agree to the Terms and Conditions</label>
+                        {/* agree to terms */}
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="terms-condition"
+                                    checked={terms}
+                                    onChange={(e) => {
+                                        setTerms(e.target.checked);
+                                        setTermsError(validateTerms(e.target.checked));
+                                    }}
+                                />
+
+                                <label htmlFor="terms-condition">
+                                    I agree to the Terms and Conditions
+                                </label>
+                            </div>
+
+                            {termsError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500">{termsError}</p>
+                                </div>
+                            )}
                         </div>
-                        <Button text="Register" variant="cta" />
+
+                        <Button text="Register" variant="cta" onClick={handleSignup} />
                     </div>
 
 
