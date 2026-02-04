@@ -1,4 +1,5 @@
-import React from 'react'
+'use client';
+import React, { useState } from 'react'
 import SettingsHeading from '@/components/SettingsHeading'
 import SettingsTab from '../../../components/SettingsTab'
 import Button from '../../../components/Button';
@@ -7,8 +8,22 @@ import {
     Save,
     ToggleRight
 } from 'lucide-react';
+import ToggleSwitch from '@/components/ToggleSwitch';
 
 const page = () => {
+    const [notifications, setNotifications] = useState({
+        email: true,
+        number:false,
+        events:false,
+        messages:true,
+    })
+
+    const toggleNotification =(key: keyof typeof notifications)=>{
+        setNotifications(prev => ({
+            ...prev,
+            [key]: !prev[key]
+        }))
+    }
     return (
         <section className='my-2 mx-2 px-4 font-cause text-text-dark 
             md:my-3 md:mx-3 md:px-3
@@ -98,10 +113,10 @@ const page = () => {
                                 <p className='text-text-dark/70 text-md md:text-base'>Display email on your public profile</p>
                             </div>
                             <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
-                                <ToggleRight
-                                    size={36}
-                                    strokeWidth={1.5}
-                                    className='cursor-pointer text-brown-dark hover:text-brown-darker transition-colors'
+                                
+                                <ToggleSwitch
+                                checked={notifications.email}
+                                onChange={()=> toggleNotification('email')}
                                 />
                             </button>
                         </div>
@@ -116,10 +131,9 @@ const page = () => {
                                 <p className='text-text-dark/70 text-md md:text-base'>Display phone on your public profile</p>
                             </div>
                             <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
-                                <ToggleRight
-                                    size={36}
-                                    strokeWidth={1.5}
-                                    className='cursor-pointer text-brown-dark hover:text-brown-darker transition-colors'
+                                <ToggleSwitch
+                                checked={notifications.number}
+                                onChange={()=> toggleNotification('number')}
                                 />
                             </button>
                         </div>
@@ -134,10 +148,9 @@ const page = () => {
                                 <p className='text-text-dark/70 text-md md:text-base'>Let others see events you're attending</p>
                             </div>
                             <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
-                                <ToggleRight
-                                    size={36}
-                                    strokeWidth={1.5}
-                                    className='cursor-pointer text-brown-dark hover:text-brown-darker transition-colors'
+                                <ToggleSwitch
+                                checked={notifications.events}
+                                onChange={()=> toggleNotification('events')}
                                 />
                             </button>
                         </div>
@@ -152,10 +165,9 @@ const page = () => {
                                 <p className='text-text-dark/70 text-md md:text-base'>Let other users message you</p>
                             </div>
                             <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
-                                <ToggleRight
-                                    size={36}
-                                    strokeWidth={1.5}
-                                    className='cursor-pointer text-brown-dark hover:text-brown-darker transition-colors'
+                                <ToggleSwitch
+                                checked={notifications.messages}
+                                onChange={()=> toggleNotification('messages')}
                                 />
                             </button>
                         </div>

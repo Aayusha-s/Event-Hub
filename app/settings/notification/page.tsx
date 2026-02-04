@@ -1,14 +1,34 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import SettingsHeading from '@/components/SettingsHeading'
 import SettingsTab from '../../../components/SettingsTab'
 import Button from '../../../components/Button';
 
 import {
-    ToggleRight,
-    Save
+    ToggleRight
 } from 'lucide-react';
+import ToggleSwitch from '@/components/ToggleSwitch';
 
-const page = () => {
+const Page = () => {
+    const [notifications, setNotifications] = useState(
+        {
+            email: true,
+            push: false,
+            reminders: true,
+            tickets: false,
+            promotions: false,
+            weekly: true,
+            vendor: false,
+            organizer: true,
+        }
+    )
+
+    const toggleNotification = (key: keyof typeof notifications) => {
+        setNotifications(prev => ({
+            ...prev,
+            [key]: !prev[key],
+        }))
+    }
     return (
         <section className='my-2 mx-2 px-4 font-cause text-text-dark 
             md:my-3 md:mx-3 md:px-3
@@ -42,7 +62,10 @@ const page = () => {
                             <h4 className='font-bold mt-4 mb-2'>Email Notifications</h4>
                             <p>Receive notification via email</p>
                         </div>
-                        <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
+                        <ToggleSwitch
+                            checked={notifications.email}
+                            onChange={() => toggleNotification('email')} />
+
                     </div>
 
                     {/* divider */}
@@ -56,7 +79,9 @@ const page = () => {
                             <h4 className='font-bold mt-4 mb-2'>Push Notifications</h4>
                             <p>Receive push notification on your device</p>
                         </div>
-                        <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
+                        <ToggleSwitch
+                            checked={notifications.push}
+                            onChange={() => toggleNotification('push')} />
                     </div>
 
                     {/* divider */}
@@ -69,8 +94,9 @@ const page = () => {
                             <h4 className='font-bold mt-4 mb-2'>Event Reminders</h4>
                             <p>Get reminded about incoming events</p>
                         </div>
-                        <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
-                    </div>
+                        <ToggleSwitch
+                            checked={notifications.reminders}
+                            onChange={() => toggleNotification('reminders')} />                    </div>
 
                     {/* divider */}
                     <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
@@ -82,8 +108,9 @@ const page = () => {
                             <h4 className='font-bold mt-4 mb-2'>Ticket Updates</h4>
                             <p>Updates about your upcoming events</p>
                         </div>
-                        <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
-                    </div>
+                        <ToggleSwitch
+                            checked={notifications.tickets}
+                            onChange={() => toggleNotification('tickets')} />                    </div>
 
                     {/* divider */}
                     <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
@@ -96,8 +123,9 @@ const page = () => {
                             <h4 className='font-bold mt-4 mb-2'>Promotions & Offers</h4>
                             <p>Special deals and promotional emails</p>
                         </div>
-                        <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
-                    </div>
+                        <ToggleSwitch
+                            checked={notifications.promotions}
+                            onChange={() => toggleNotification('promotions')} />                    </div>
 
                     {/* divider */}
                     <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
@@ -110,8 +138,9 @@ const page = () => {
                             <h4 className='font-bold mt-4 mb-2'>Weekly Digest</h4>
                             <p>Weekly summary of new events</p>
                         </div>
-                        <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
-                    </div>
+                        <ToggleSwitch
+                            checked={notifications.weekly}
+                            onChange={() => toggleNotification('weekly')} />                    </div>
 
                     {/* divider */}
                     <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
@@ -124,8 +153,9 @@ const page = () => {
                             <h4 className='font-bold mt-4 mb-2'>Vendor Updates</h4>
                             <p>Notifications about your vendor activities</p>
                         </div>
-                        <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
-                    </div>
+                        <ToggleSwitch
+                            checked={notifications.vendor}
+                            onChange={() => toggleNotification('vendor')} />                    </div>
 
                     {/* divider */}
                     <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
@@ -138,8 +168,9 @@ const page = () => {
                             <h4 className='font-bold mt-4 mb-2'>Organizer News</h4>
                             <p>Updates for event organizers</p>
                         </div>
-                        <ToggleRight size={32} strokeWidth={1.5} className='cursor-pointer' />
-                    </div>
+                        <ToggleSwitch
+                            checked={notifications.organizer}
+                            onChange={() => toggleNotification('organizer')} />                    </div>
 
                     {/* divider */}
                     <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
@@ -157,4 +188,5 @@ const page = () => {
     )
 }
 
-export default page
+
+export default Page
