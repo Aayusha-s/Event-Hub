@@ -1,9 +1,54 @@
-import React from 'react'
-import { ArrowLeft, Check, Upload } from 'lucide-react';
+'use client';
+import  { useState } from 'react'
+import { ArrowLeft, Check } from 'lucide-react';
 import Button from '@/components/Button';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-const page = () => {
+const Page = () => {
+    const router = useRouter();
+
+    const [terms, setTerms] = useState<string[]>([]);
+    const [termsError, setTermsError] = useState('');
+
+    
+    const handlePrevious = () => {
+        const savedStep1 = localStorage.getItem('organizerStep1');
+
+        if (!savedStep1) {
+            router.push('/organizer/organizerapplication-1');
+            return;
+        }
+
+        const { orgType } = JSON.parse(savedStep1);
+
+        switch (orgType) {
+            case 'individual':
+                router.push('/organizer/organizerapplication-3-individual');
+                break;
+            case 'business':
+                router.push('/organizer/organizerapplication-3-business');
+                break;
+            case 'nonprofit':
+                router.push('/organizer/organizerapplication-3-nonprofit');
+                break;
+            case 'agency':
+                router.push('/organizer/organizerapplication-3-professional');
+                break;
+            default:
+                router.push('/organizer/organizerapplication-3');
+        }
+    };
+
+    const handleSubmit = () => {
+
+        localStorage.setItem(
+            'organizerStep4',
+            JSON.stringify({ terms })
+        );
+
+        alert('Application Submitted 🎉');
+    };
+    
     return (
         <div>
             <section className='flex flex-col
@@ -46,7 +91,8 @@ const page = () => {
                     {/* terms and conditions box */}
                     <div className='flex flex-col border border-brown-normal rounded-md'>
                         <div className=" flex items-center gap-2 w-full p-3  cursor-pointer">
-                            <input type="checkbox" id="term1" value="term1" />
+                            <input type="checkbox" id="term1" value="term1"
+                                />
                             <label htmlFor="term1" className='cursor-pointer'>I agree to Platform Terms*</label>
                         </div>
 
@@ -74,12 +120,11 @@ const page = () => {
 
                     {/* next button */}
                     <div className='flex justify-between'>
-                        <Link href='/organizer/organizerapplication-2' >
-                            <Button text="Previous Step" variant='cta' size='sm'></Button>
-                        </Link>
-                        <Link href=''>
-                            <Button text="Submit Application" variant='cta' size='sm'></Button>
-                        </Link>
+
+                        <Button text="Previous Step" variant='cta' size='sm' onClick={handlePrevious}></Button>
+
+                        <Button text="Submit Application" variant='cta' size='sm' onClick={handleSubmit}></Button>
+
                     </div>
                 </div>
             </section>
@@ -87,4 +132,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

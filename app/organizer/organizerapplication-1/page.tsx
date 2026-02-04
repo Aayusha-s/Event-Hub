@@ -1,8 +1,8 @@
-'use client'
-import React, { useState } from 'react'
+'use client';
+import { useEffect, useState } from 'react'
 import { ArrowLeft, Check, CircleAlert, Globe, Mail, Phone } from 'lucide-react';
 import Button from '@/components/Button';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
 
@@ -12,9 +12,25 @@ const Page = () => {
     const [eventType, setEventType] = useState('');
     const [description, setDescription] = useState('');
     const [website, setWebsite] = useState('');
-    const [businessAddress, setBusinessAddress] = useState('');
+    const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
+
+    useEffect(() => {
+        const savedOrganizerStep1 = localStorage.getItem('organizerStep1')
+        if (savedOrganizerStep1){
+            const data = JSON.parse(savedOrganizerStep1)
+            setOrgType(data.orgType ?? '')    
+            setEmail(data.email ?? '')    
+            setContactPerson(data.contactPerson ?? '')    
+            setEventType(data.eventType ?? '')
+            setDescription(data.description ?? '')
+            setWebsite(data.website ?? '')
+            setAddress(data.address ?? '')
+            setCity(data.city ?? '')
+            setState(data.state ?? '')
+        }
+    },[])
 
     const [orgTypeError, setOrgTypeError] = useState('');
     const [emailError, setEmailError] = useState('');
@@ -22,24 +38,57 @@ const Page = () => {
     const [eventTypeError, setEventTypeError] = useState('');
     const [descriptionError, setDescriptionError] = useState('');
     const [websiteError, setWebsiteError] = useState('');
-    const [businessAddressError, setBusinessAddressError] = useState('');
+    const [addressError, setAddressError] = useState('');
     const [cityError, setCityError] = useState('');
     const [stateError, setStateError] = useState('');
 
-    const handleNext = ()=> {
-        const organizerStep1={
+    const router = useRouter();
+
+    const handleNext = () => {
+        if (!orgType || !email || !description || !contactPerson || !eventType || !website || !address || !city || !state) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+        const organizerStep1 = {
             orgType,
             email,
             contactPerson,
             eventType,
             description,
             website,
-            businessAddress,
+            address,
             city,
             state
         }
 
-        localStorage.setItem('organizerStep1',JSON.stringify('organizerStep1'))
+        localStorage.setItem('organizerStep1', JSON.stringify(organizerStep1))
+
+        const orgTypevalidation = validateOrgType(orgType);
+        const emailValidation = validateEmail(email)
+        const contactPersonValidation = validateContactPerson(contactPerson)
+        const eventTypeValidation = validateEventType(eventType)
+        const descriptionValidation = validateDescription(description)
+        const websiteValidation = validateWebsite(website)
+        const addressValidation = validateAddress(address)
+        const cityValidation = validateCity(city)
+        const stateValidation = validateState(state)
+
+        setOrgTypeError(orgTypevalidation);
+        setEmailError(emailValidation)
+        setContactPersonError(contactPersonValidation)
+        setEventTypeError(eventTypeValidation)
+        setDescriptionError(descriptionValidation)
+        setWebsiteError(websiteValidation)
+        setAddressError(addressValidation)
+        setCityError(cityValidation) 
+        setStateError(stateValidation)
+
+        if (orgTypevalidation || emailValidation || contactPersonValidation || eventTypeValidation || descriptionValidation || websiteValidation || addressValidation || cityValidation || stateValidation) return;
+
+        router.push('/organizer/organizerapplication-2')
+
+
+
     }
 
     const validateOrgType = (value: string): string => {
@@ -88,12 +137,36 @@ const Page = () => {
         return '';
     }
 
-    const handlenext = () => {
+    const validateWebsite = (value: string): string => {
+        const pattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/i;
 
+        if (!pattern.test(value)) {
+            return 'Please enter a valid website URL';
+        }
+        return '';
     }
 
 
+    const validateAddress = (value: string): string => {
+        if (!value) {
+            return "Address is required! "
+        }
+        return '';
+    }
 
+    const validateCity = (value: string): string => {
+        if (!value) {
+            return "City is required! "
+        }
+        return '';
+    }
+
+    const validateState = (value: string): string => {
+        if (!value) {
+            return "State is required! "
+        }
+        return '';
+    }
 
     return (
 
@@ -145,8 +218,15 @@ const Page = () => {
                                 type="radio"
                                 id="individual"
                                 name="org_type"
+                                value="individual"
+                                checked={orgType === 'individual'}
+                                onChange={(e) => {
+                                    setOrgType(e.target.value)
+                                    setOrgTypeError(validateOrgType(e.target.value))
+                                }}
                             />
                             <label htmlFor="individual" className='cursor-pointer'>Individual Hosting Events</label>
+
 
                         </div>
 
@@ -154,26 +234,59 @@ const Page = () => {
                             <input
                                 type="radio"
                                 id="community"
-
                                 name="org_type"
-                                value="community" />
+                                value="community"
+                                checked={orgType === 'community'}
+                                onChange={(e) => {
+                                    setOrgType(e.target.value)
+                                    setOrgTypeError(validateOrgType(e.target.value))
+
+                                }}
+                            />
                             <label htmlFor="community" className='cursor-pointer'>Community / Group / Club</label>
                         </div>
 
                         <div className=" flex items-center gap-2 w-full p-3 border border-brown-normal rounded-md cursor-pointer">
-                            <input type="radio" id="business" name="org_type" value="business" />
+                            <input type="radio" id="business" name="org_type"
+                                value="business"
+                                checked={orgType === 'business'}
+                                onChange={(e) => {
+                                    setOrgType(e.target.value)
+                                    setOrgTypeError(validateOrgType(e.target.value))
+                                }}
+                            />
                             <label htmlFor="business" className='cursor-pointer'>Business / Company</label>
                         </div>
 
                         <div className=" flex items-center gap-2 w-full p-3 border border-brown-normal rounded-md cursor-pointer">
-                            <input type="radio" id="agency" name="org_type" value="agency" />
+                            <input type="radio" id="agency" name="org_type"
+                                value="agency"
+                                checked={orgType === 'agency'}
+                                onChange={(e) => {
+                                    setOrgType(e.target.value)
+                                    setOrgTypeError(validateOrgType(e.target.value))
+                                }}
+                            />
                             <label htmlFor="agency" className='cursor-pointer'>Professional Event Agency</label>
                         </div>
 
                         <div className=" flex items-center gap-2 w-full border border-brown-normal rounded-md p-3 cursor-pointer">
-                            <input type="radio" id="nonprofit" name="org_type" value="nonprofit" />
+                            <input type="radio" id="nonprofit" name="org_type" value="nonprofit"
+                                checked={orgType === 'nonprofit'}
+                                onChange={(e) => {
+                                    setOrgType(e.target.value)
+                                    setOrgTypeError(validateOrgType(e.target.value))
+                                }}
+                            />
                             <label htmlFor="nonprofit" className='cursor-pointer'>Non-Profit/ Charity</label>
                         </div>
+
+                        {orgTypeError && (
+                            <div className="mt-2 flex items-center gap-1">
+                                <CircleAlert className="text-red-500" />
+                                <p className="text-sm text-red-500 ">{orgTypeError}</p>
+                            </div>
+                        )}
                     </div>
 
 
@@ -196,13 +309,13 @@ const Page = () => {
                                 }}
 
                             />
-                            {emailError && (
-                                <div className="mt-2 flex items-center gap-1">
-                                    <CircleAlert className="text-red-500" />
-                                    <p className="text-sm text-red-500 ">{emailError}</p>
-                                </div>
-                            )}
                         </div>
+                        {emailError && (
+                            <div className="mt-2 flex items-center gap-1">
+                                <CircleAlert className="text-red-500" />
+                                <p className="text-sm text-red-500 ">{emailError}</p>
+                            </div>
+                        )}
                     </div>
 
 
@@ -224,13 +337,13 @@ const Page = () => {
                                     }}
                                 />
 
-                                {contactPersonError && (
-                                    <div className="mt-2 flex items-center gap-1">
-                                        <CircleAlert className="text-red-500" />
-                                        <p className="text-sm text-red-500 ">{contactPersonError}</p>
-                                    </div>
-                                )}
                             </div>
+                            {contactPersonError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{contactPersonError}</p>
+                                </div>
+                            )}
                         </div>
 
 
@@ -258,14 +371,14 @@ const Page = () => {
                                 <option value="charity_nonprofit_events">Charity/Non-Profit Events</option>
                                 <option value="other">Other</option>
                             </select>
+                            {eventTypeError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{eventTypeError}</p>
+                                </div>
+                            )}
                         </div>
 
-                        {eventTypeError && (
-                            <div className="mt-2 flex items-center gap-1">
-                                <CircleAlert className="text-red-500" />
-                                <p className="text-sm text-red-500 ">{contactPersonError}</p>
-                            </div>
-                        )}
                     </div>
 
 
@@ -274,12 +387,25 @@ const Page = () => {
                         <h3 className='font-bold'>Organization Description *</h3>
                         <textarea
                             placeholder='Describe your business, what you offer, and what makes you unique...'
-                            className='w-full border border-brown-normal rounded-md p-2 mt-1 h-32 resize-none'>
+                            className='w-full border border-brown-normal rounded-md p-2 mt-1 h-32 resize-none'
+                            value={description}
+                            onChange={(e) => {
+                                setDescription(e.target.value)
+                                setDescriptionError(validateDescription(e.target.value))
+                            }}>
                         </textarea>
+
+                        {descriptionError && (
+                            <div className="mt-2 flex items-center gap-1">
+                                <CircleAlert className="text-red-500" />
+                                <p className="text-sm text-red-500 ">{descriptionError}</p>
+                            </div>
+                        )}
                     </div>
 
                     {/* website and bsuiness address */}
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+
 
                         {/* website */}
                         <div>
@@ -290,9 +416,20 @@ const Page = () => {
                                     type="url"
                                     placeholder="Enter your website"
                                     className="w-full border-none focus:outline-none"
-
+                                    value={website}
+                                    onChange={(e) => {
+                                        setWebsite(e.target.value)
+                                        setWebsiteError(validateWebsite(e.target.value))
+                                    }}
                                 />
                             </div>
+
+                            {websiteError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{websiteError}</p>
+                                </div>
+                            )}
                         </div>
 
 
@@ -302,14 +439,27 @@ const Page = () => {
                             <input
                                 type="text"
                                 placeholder="Enter your business address"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1" />
+                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                                value={address}
+                                onChange={(e) => {
+                                    setAddress(e.target.value)
+                                    setAddressError(validateAddress(e.target.value))
+                                }}
+                            />
+                            {addressError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{addressError}</p>
+                                </div>
+                            )}
                         </div>
+
                     </div>
 
 
 
                     {/* city and state */}
-                    <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 
                         {/* city */}
                         <div>
@@ -319,8 +469,20 @@ const Page = () => {
                                     type="text"
                                     placeholder="Enter your city"
                                     className="w-full border-none focus:outline-none"
+                                    value={city}
+                                    onChange={(e) => {
+                                        setCity(e.target.value)
+                                        setCityError(validateCity(e.target.value))
+                                    }}
                                 />
                             </div>
+
+                            {cityError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{cityError}</p>
+                                </div>
+                            )}
                         </div>
 
                         {/* state */}
@@ -332,9 +494,21 @@ const Page = () => {
                                     type="email"
                                     placeholder="Enter your state"
                                     className="w-full border-none focus:outline-none"
+                                    value={state}
+                                    onChange={(e) => {
+                                        setState(e.target.value)
+                                        setStateError(validateState(e.target.value))
+                                    }}
 
                                 />
                             </div>
+
+                            {stateError && (
+                                <div className="mt-2 flex items-center gap-1">
+                                    <CircleAlert className="text-red-500" />
+                                    <p className="text-sm text-red-500 ">{stateError}</p>
+                                </div>
+                            )}
                         </div>
 
 
@@ -349,9 +523,7 @@ const Page = () => {
 
                     {/* next button */}
                     <div className='flex justify-end'>
-                        <Link href='/organizer/organizerapplication-2'>
-                            <Button text="Next Step" variant='cta' size='sm'></Button>
-                        </Link>
+                        <Button text="Next Step" variant='cta' size='sm' onClick={handleNext}></Button>
                     </div>
                 </div>
             </section>

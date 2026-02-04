@@ -14,7 +14,6 @@ const Page = () => {
     useEffect(() => {
         const savedBasicInformation = localStorage.getItem('BasicInformation');
         if (savedBasicInformation) {
-
             const data = JSON.parse(savedBasicInformation);
             setTitle(data.title ?? '');
             setCategory(data.category || '');
