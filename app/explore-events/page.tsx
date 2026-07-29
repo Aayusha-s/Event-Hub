@@ -1,11 +1,16 @@
 "use client";
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import EventCard from '@/components/EventCard'
 import Pagination from '@/components/Pagination'
 import Button from '@/components/Button';
 import { ListFilter, MapPin, Clock, Calendar, X } from 'lucide-react'
 
 const Page = () => {
+    const searchParams = useSearchParams();
+    const searchQuery = searchParams.get('query')?.trim().toLowerCase() ?? '';
+    const searchLocation = searchParams.get('location')?.trim().toLowerCase() ?? '';
+
     const [selectedFilters, setSelectedFilters] = useState({
         category: '',
         dateRange: '',
@@ -33,7 +38,7 @@ const Page = () => {
         });
     };
 
-    const events = [
+    const events = useMemo(() => [
         {
             eventId: 1,
             tags: ["Music", "Trending"],
@@ -265,9 +270,34 @@ const Page = () => {
             location: "Business Center, Kathmandu",
             price: "Rs.400",
         }
-    ]
+    ], [])
 
-    const [showFilterBar, setShowFilterBar] = useState(false);
+    const [showFilterBar, setShowFilterBar] = useState(() => searchParams.get('filters') === 'open');
+
+    const filteredEvents = useMemo(() => {
+        return events.filter((event) => {
+            const matchesQuery = !searchQuery || [
+                event.title,
+                event.organizer,
+                event.location,
+                ...event.tags,
+                ...event.descriptions,
+            ]
+                .join(' ')
+                .toLowerCase()
+                .includes(searchQuery);
+
+            const matchesLocation = !searchLocation || event.location.toLowerCase().includes(searchLocation);
+
+            const matchesSelectedLocation =
+                !selectedFilters.location || event.location.toLowerCase().includes(selectedFilters.location);
+
+            const matchesCategory =
+                !selectedFilters.category || event.tags.join(' ').toLowerCase().includes(selectedFilters.category);
+
+            return matchesQuery && matchesLocation && matchesSelectedLocation && matchesCategory;
+        });
+    }, [events, searchLocation, searchQuery, selectedFilters.category, selectedFilters.location]);
     
     return (
         <section className='text-text-dark my-10 mx-5 px-4'>
@@ -424,7 +454,7 @@ const Page = () => {
                             {/* Active Filters Display */}
                             <div className="flex flex-wrap gap-2">
                                 {Object.entries(selectedFilters)
-                                    .filter(([_, value]) => value !== '')
+                                    .filter(([, value]) => value !== '')
                                     .map(([key, value]) => (
                                         <span
                                             key={key}
@@ -455,7 +485,7 @@ const Page = () => {
             )}
             {/* contents */}
             <div className='grid grid-cols-1 gap-y-9 gap-x-17 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:grid-cols-4 2xl:grid-cols-4'>
-                {events.map((event, index) => (
+                {filteredEvents.map((event, index) => (
                     <EventCard key={index} {...event} />
                 ))}
             </div>

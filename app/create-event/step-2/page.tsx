@@ -1,38 +1,49 @@
 'use client';
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react';
 import Button from '@/components/Button';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import CreateEventStepShell from '@/components/CreateEventStepShell';
+import { saveDraft } from '@/lib/createEventDraft';
 
 const Page = () => {
     
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
-    const [venueName, setVenueName] = useState('');
-    const [streetAddress, setStreetAddress] = useState('');
-    const [city, setCity] = useState('');
-    const [state, setState] = useState('');
-    const [eventCapacity, setEventCapacity] = useState('');
+    const [startDate, setStartDate] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.startDate ?? ''; } catch { return ''; }
+    });
+    const [endDate, setEndDate] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.endDate ?? ''; } catch { return ''; }
+    });
+    const [startTime, setStartTime] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.startTime ?? ''; } catch { return ''; }
+    });
+    const [endTime, setEndTime] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.endTime ?? ''; } catch { return ''; }
+    });
+    const [venueName, setVenueName] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.venueName ?? ''; } catch { return ''; }
+    });
+    const [streetAddress, setStreetAddress] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.streetAddress ?? ''; } catch { return ''; }
+    });
+    const [city, setCity] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.city ?? ''; } catch { return ''; }
+    });
+    const [state, setState] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.state ?? ''; } catch { return ''; }
+    });
+    const [eventCapacity, setEventCapacity] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.eventCapacity ?? ''; } catch { return ''; }
+    });
     const router = useRouter();
-
-    useEffect(()=> {
-        const savedEventDetails = localStorage.getItem('EventDetails');
-
-        if (savedEventDetails) {
-            const data = JSON.parse(savedEventDetails);
-            setStartDate(data.startDate || '');
-            setEndDate(data.endDate || '');
-            setStartTime(data.startTime || '');
-            setEndTime(data.endTime || '');
-            setVenueName(data.venueName || '');
-            setStreetAddress(data.streetAddress || '');
-            setCity(data.city || '');
-            setState(data.state || '');
-            setEventCapacity(data.eventCapacity || '');
-        }
-    },[])
 
     const handleNext = () => {
         if (!startDate || !endDate || !startTime || !endTime || !venueName || !streetAddress || !city || !state || !eventCapacity) {
@@ -51,10 +62,7 @@ const Page = () => {
             eventCapacity,
         }
 
-        localStorage.setItem(
-            'EventDetails',
-            JSON.stringify(EventDetails)
-        )
+        saveDraft("eventDetails", EventDetails);
 
         router.push('/create-event/step-3');
 
@@ -62,173 +70,62 @@ const Page = () => {
 
 
     return (
-        <div>
-            <section className='flex flex-col'>
-
-
-                {/* main form */}
-                <div className='border border-brown-normal rounded-xl p-4 flex flex-col gap-4 bg-brown-light'>
-                    <h2 className='text-lg md:text-xl lg:text-xl font-bold'>
-                        Event Details
-                    </h2>
-
-
-                    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                        {/* Start Date */}
-                        <div>
-                            <h2 className="font-bold">Start Date *</h2>
-                            <input
-                                type="date"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                            />
-                        </div>
-
-                        {/* End Date */}
-                        <div>
-                            <h2 className="font-bold">End Date *</h2>
-                            <input
-                                type="date"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                            />
-                        </div>
-
-
-
-                        {/* Start Time */}
-                        <div>
-                            <h2 className="font-bold">Start Time *</h2>
-                            <input
-                                type="time"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)}
-                            />
-                        </div>
-
-
-                        {/* End Time */}
-                        <div>
-                            <h2 className="font-bold">End Time *</h2>
-                            <input
-                                type="time"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={endTime}
-                                onChange={(e) => setEndTime(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        {/* Venue Name */}
-                        <div>
-                            <h2 className="font-bold">Venue Name *</h2>
-                            <input
-                                type="text"
-                                placeholder="e.g., Central Park"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={venueName}
-                                onChange={(e) => setVenueName(e.target.value)}
-                            />
-                        </div>
-
-
-                        {/* Street Address*/}
-                        <div>
-                            <h2 className="font-bold">Street Address *</h2>
-                            <input
-                                type="text"
-                                placeholder="e.g., 123 Main Street"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={streetAddress}
-                                onChange={(e) => setStreetAddress(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>{/* City*/}
-
-                        {/* city */}
-                        <div>
-                            <h2 className="font-bold">City *</h2>
-                            <input
-                                type="text"
-                                placeholder="e.g., New York"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
-                            />
-                        </div>
-
-                        {/*State*/}
-                        <div>
-                            <h2 className="font-bold">State *</h2>
-                            <input
-                                type="text"
-                                placeholder="e.g., NY"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={state}
-                                onChange={(e) => setState(e.target.value)}
-                            />
-                        </div>
-
-                        {/* Event Capacity*/}
-                        <div>
-                            <h2 className="font-bold">Event Capacity *</h2>
-                            <input
-                                type='number'
-                                min={1}
-                                placeholder="e.g., 500"
-                                className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                                required
-                                value={eventCapacity}
-                                onChange={(e) => setEventCapacity(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-
-
-                    {/* steps */}
-                    <div className='h-0.5 bg-brown-normal'></div>
-                    <div className='flex justify-center gap-4'>
-                        <p>Step 2 of 4</p>
-                    </div>
-
-
-                    <div className='flex justify-between'>
-                        {/* previous button */}
-                        <div className='flex justify-end'>
-                            <Link href='/create-event/step-1'>
-                                <Button text="Previous Step" variant='cta' size='sm'></Button>
-                            </Link>
-                        </div>
-
-
-                        {/* next button */}
-                        <div className='flex justify-end'>
-
-                            <Button 
-                            text="Next Step" 
-                            variant='cta' 
-                            size='sm'
-                            onClick={handleNext}></Button>
-
-                        </div></div>
+        <CreateEventStepShell
+            stepLabel="Step 2 of 4"
+            title="Event Details"
+            description="Add the timing, venue, and capacity so guests know exactly where and when to join."
+            footer={(
+                <div className='flex items-center justify-between gap-3'>
+                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push('/create-event/step-1')} />
+                    <Button text="Next Step" variant='cta' size='sm' onClick={handleNext} />
                 </div>
-            </section>
-        </div>
+            )}
+        >
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">Start Date *</h2>
+                    <input type="date" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                </div>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">End Date *</h2>
+                    <input type="date" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                </div>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">Start Time *</h2>
+                    <input type="time" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+                </div>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">End Time *</h2>
+                    <input type="time" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+                </div>
+            </div>
+
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">Venue Name *</h2>
+                    <input type="text" placeholder="e.g., Central Park" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={venueName} onChange={(e) => setVenueName(e.target.value)} />
+                </div>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">Street Address *</h2>
+                    <input type="text" placeholder="e.g., 123 Main Street" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} />
+                </div>
+            </div>
+
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">City *</h2>
+                    <input type="text" placeholder="e.g., New York" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={city} onChange={(e) => setCity(e.target.value)} />
+                </div>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">State *</h2>
+                    <input type="text" placeholder="e.g., NY" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={state} onChange={(e) => setState(e.target.value)} />
+                </div>
+                <div>
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">Event Capacity *</h2>
+                    <input type='number' min={1} placeholder="e.g., 500" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={eventCapacity} onChange={(e) => setEventCapacity(e.target.value)} />
+                </div>
+            </div>
+        </CreateEventStepShell>
     )
 }
 

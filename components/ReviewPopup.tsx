@@ -14,13 +14,13 @@ const ReviewPopup = ({
     if (!isOpen) return null;
 
     return (
-        <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
-            <div className='bg-white p-4 m-2 rounded-lg w-full max-w-md'>
-                <h2 className='font-dynapuff text-xl mb-4'>Write a Review</h2>
+        <div className='fixed inset-0 bg-text-dark/20 flex items-center justify-center z-50 p-4'>
+            <div className='surface-card w-full max-w-md p-6 shadow-lg'>
+                <h2 className='text-2xl font-semibold tracking-tight text-text-dark mb-4'>Write a Review</h2>
                 
                 <div>
-                    <label className='block mb-2 font-semibold'>Rating:</label>
-                    <select className='w-full border border-gray-300 rounded-lg p-2 mb-4'>
+                    <label className='block mb-2 text-sm font-medium text-text-dark'>Rating:</label>
+                    <select className='w-full rounded-xl border border-border bg-surface px-3 py-2 mb-4 text-text-dark focus-ring'>
                         <option value='5'>5 - Excellent</option>
                         <option value='4'>4 - Very Good</option>
                         <option value='3'>3 - Good</option>
@@ -30,15 +30,15 @@ const ReviewPopup = ({
                 </div>
                 
                 <textarea
-                    className='w-full border border-gray-300 rounded-lg p-2 mb-4'
+                    className='w-full rounded-xl border border-border bg-surface px-3 py-3 mb-4 text-text-dark focus-ring'
                     rows={5}
                     placeholder='Share your experience...'
                 ></textarea>
 
-                <div className='flex justify-between gap-2'>
+                <div className='flex justify-end gap-2'>
                     <Button
                     text='Cancel'
-                    variant='cta'
+                    variant='secondary'
                     size='md'
                     onClick={onclose}/>
                     

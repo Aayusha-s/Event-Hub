@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import HeaderLoggedIn from "@/components/HeaderLoggedIn";
-import Header from "@/components/Header";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta-sans",
+});
 
 
 export const metadata: Metadata = {
@@ -22,23 +27,13 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
-
-        {/* Dynapuff */}
-        <link href="https://fonts.googleapis.com/css2?family=Chewy&family=DynaPuff:wght@400..700&family=Niconne&display=swap"
-          rel="stylesheet"></link>
-
-        {/* Cause */}
-        <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Cause:wght@400..700&family=Niconne&display=swap" rel="stylesheet"></link>
       </head>
-      <body className="font-cause">
-
-
+      <body className={`${plusJakartaSans.variable} font-cause bg-background text-text-dark antialiased`}>
         <HeaderLoggedIn />
         {/* <Header/> */}
         {children}
         <Footer />
       </body>
     </html>
-
   );
 }

@@ -1,5 +1,7 @@
 import Button from "./Button";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type CategoryCardProps = {
     title: string;
@@ -9,36 +11,31 @@ type CategoryCardProps = {
 
 const CategoryCard = ({ title, icon, description }: CategoryCardProps) => {
     return (
-        <div className="border border-brown-normal rounded-xl p-4 md:p-5 lg:p-6
-            flex flex-col justify-between
-            w-full h-auto min-h-[180px] md:min-h-[200px]
-            hover:shadow-md hover:border-brown-dark transition-all duration-300
-            bg-white">
-
-            {/* Title and icon */}
-            <div className="flex flex-row items-center justify-between mb-3 md:mb-4">
-                <h3 className="text-base md:text-lg font-semibold truncate pr-2">
+        <div
+            className={cn(
+                "group surface-card motion-card-lift flex min-h-[160px] flex-col p-4 md:min-h-[180px] md:p-5"
+            )}
+        >
+            <div className="mb-3 flex items-start justify-between gap-2">
+                <h3 className="text-base font-semibold text-text-dark transition-colors duration-200 group-hover:text-brown-darker md:text-lg">
                     {title}
                 </h3>
-                <div className="text-brown-dark text-lg md:text-xl">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brown-light text-brown-dark transition-colors duration-200 group-hover:bg-brown-light-hover">
                     {icon}
                 </div>
             </div>
 
-            {/* Description */}
-            <p className="text-sm md:text-base text-text-dark/70 
-                leading-relaxed line-clamp-3 md:line-clamp-4 
-                mb-4 md:mb-6 grow">
+            <p className="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-text-light">
                 {description}
             </p>
 
-            {/* Button  */}
-            <Link href="/categories">
+            <Link href="/categories" className="mt-auto">
                 <Button
-                    text="Explore Now"
-                    variant="cta"
+                    text="Explore"
+                    variant="secondary"
                     size="sm"
-                    iconRight={<i className="fa-solid fa-arrow-right ml-2"></i>}
+                    iconRight={<ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />}
+                    className="!h-auto !px-0 !text-sm"
                 />
             </Link>
         </div>

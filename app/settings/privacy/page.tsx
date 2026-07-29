@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import ToggleSwitch from '@/components/ToggleSwitch';
 
-const page = () => {
+const Page = () => {
     const [notifications, setNotifications] = useState({
         email: true,
         number:false,
@@ -189,4 +189,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

@@ -1,6 +1,10 @@
 "use client";
+
 import Button from "./Button";
 import { useRouter } from "next/navigation";
+import { Calendar, ChevronRight, MapPin } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useTilt } from "@/hooks/use-tilt";
 
 type EventCardProps = {
     eventId: number;
@@ -26,6 +30,7 @@ const EventCard = ({
     price,
 }: EventCardProps) => {
     const router = useRouter();
+    const { cardRef, tilt, prefersReducedMotion } = useTilt(3);
 
     const handleCardClick = () => {
         router.push(`/event-details/${eventId}`);
@@ -37,68 +42,84 @@ const EventCard = ({
     };
 
     return (
-        <div
+        <article
+            ref={cardRef}
             onClick={handleCardClick}
-            className="
-                cursor-pointer 
-                text-text-dark
-                border border-brown-normal 
-                rounded-xl 
-                p-4 
-                w-full
-                transition-all duration-300
-                hover:shadow-lg
-                hover:-translate-y-1">
-                    
-            {/* Tag, Image */}
-            <div className="mb-4">
-                {/* Tags */}
-                <div className="flex gap-2 mb-3 flex-wrap">
-                    {tags.slice(0, 2).map((tag, index) => (
-                        <div key={index} onClick={(e) => handleTagClick(e, tag)}>
-                            <Button text={tag} variant="tag" size="sm" />
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleCardClick();
+                }
+            }}
+            role="link"
+            tabIndex={0}
+            aria-label={`View event: ${title}`}
+            style={prefersReducedMotion ? undefined : tilt}
+            className={cn(
+                "group surface-card motion-card-lift flex h-full cursor-pointer flex-col overflow-hidden p-0",
+                "shadow-sm hover:shadow-lg",
+                prefersReducedMotion && "interactive-card"
+            )}
+        >
+            <div className="relative aspect-[16/10] w-full overflow-hidden">
+                <img
+                    src={imageUrl}
+                    alt={imageAlt}
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+                    {tags.slice(0, 2).map((tag) => (
+                        <div
+                            key={tag}
+                            onClick={(e) => handleTagClick(e, tag)}
+                            className="transition-transform duration-200 group-hover:scale-[1.02]"
+                        >
+                            <Button
+                                text={tag}
+                                variant="tag"
+                                size="sm"
+                                className="backdrop-blur-sm transition-all duration-200 group-hover:border-brown-dark group-hover:shadow-sm"
+                            />
                         </div>
                     ))}
                 </div>
+            </div>
 
-                {/* image */}
-                <div className="w-full h-[180px] sm:h-[200px] md:h-[220px] overflow-hidden rounded-md">
-                    <img
-                        src={imageUrl}
-                        alt={imageAlt}
-                        className="w-full h-full object-cover"
-                    />
+            <div className="flex flex-1 flex-col p-4 md:p-5">
+                <div className="mb-3 flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brown-light text-brown-dark transition-colors duration-200 group-hover:bg-brown-light-hover">
+                        <Calendar className="h-5 w-5" aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0">
+                        <h3 className="line-clamp-2 text-base font-semibold leading-snug text-text-dark transition-colors duration-200 group-hover:text-brown-darker">
+                            {title}
+                        </h3>
+                        <p className="mt-0.5 truncate text-sm text-text-muted">{organizer}</p>
+                    </div>
+                </div>
+
+                <ul className="mb-4 space-y-1.5 text-sm text-text-light">
+                    {descriptions.slice(0, 3).map((desc) => (
+                        <li key={desc} className="flex items-start gap-2">
+                            <ChevronRight
+                                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brown-normal transition-transform duration-200 group-hover:translate-x-0.5"
+                                aria-hidden="true"
+                            />
+                            <span>{desc}</span>
+                        </li>
+                    ))}
+                </ul>
+
+                <div className="mt-auto flex items-center justify-between gap-3 border-t border-brown-normal/30 pt-3 text-sm">
+                    <div className="flex min-w-0 items-center gap-1.5 text-text-light">
+                        <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                        <span className="truncate">{location}</span>
+                    </div>
+                    <span className="shrink-0 font-semibold text-brown-darker">{price}</span>
                 </div>
             </div>
-
-            {/* Title,Organizer */}
-            <div className="flex items-center gap-4 mb-4">
-                <i className="fa-regular fa-calendar text-3xl sm:text-4xl"></i>
-                <div>
-                    <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
-                    <p className="text-sm text-text-muted">{organizer}</p>
-                </div>
-            </div>
-
-            {/* Description */}
-            <div className="space-y-1 text-sm mb-4">
-                {descriptions.slice(0, 3).map((desc, index) => (
-                    <p key={index} className="flex items-start gap-2">
-                        <i className="fa-solid fa-angles-right mt-1 text-xs"></i>
-                        <span>{desc}</span>
-                    </p>
-                ))}
-            </div>
-
-            {/* Location, Price */}
-            <div className="flex items-center justify-between text-sm font-medium">
-                <div className="flex items-center gap-2">
-                    <i className="fa-solid fa-location-dot"></i>
-                    <span>{location}</span>
-                </div>
-                <span>{price}</span>
-            </div>
-        </div>
+        </article>
     );
 };
 

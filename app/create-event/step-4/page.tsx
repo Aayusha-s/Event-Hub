@@ -1,111 +1,100 @@
 'use client';
 import Button from '@/components/Button';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import CreateEventStepShell from '@/components/CreateEventStepShell';
+import { clearEventDraft, loadDraft } from '@/lib/createEventDraft';
+
+type TicketDraft = {
+    ticketName: string;
+    quantity: string;
+    price: string;
+    description: string;
+};
+
+type BasicInformationDraft = {
+    title: string;
+    category: string;
+    description: string;
+};
+
+type EventDetailsDraft = {
+    startTime: string;
+    endTime: string;
+    venueName: string;
+    eventCapacity: string;
+};
+
+type EventInfoDraft = {
+    tickets?: TicketDraft[];
+};
 
 const Page = () => {
-
-    const [basicInformation, setBasicInformation] = useState<any>(null);
-    const [eventDetails, setEventDetails] = useState<any>(null);
-    const [eventInfo, setEventInfo] = useState<any>(null);
+    const [basicInformation] = useState<BasicInformationDraft | null>(() => loadDraft<BasicInformationDraft>("basicInformation"));
+    const [eventDetails] = useState<EventDetailsDraft | null>(() => loadDraft<EventDetailsDraft>("eventDetails"));
+    const [eventInfo] = useState<EventInfoDraft | null>(() => loadDraft<EventInfoDraft>("eventInfo"));
     const router = useRouter();
-
-    useEffect(() => {
-        const savedBasicInformation = localStorage.getItem('BasicInformation');
-        if (savedBasicInformation) {
-            setBasicInformation(JSON.parse(savedBasicInformation));
-        }
-        const savedEventDetails = localStorage.getItem('EventDetails');
-        if (savedEventDetails) {
-            setEventDetails(JSON.parse(savedEventDetails));
-        }
-        const savedEventInfo = localStorage.getItem('EventInfo');
-        if (savedEventInfo) {
-            setEventInfo(JSON.parse(savedEventInfo));
-        }
-    }, []);
 
     const handlePublish = () => {
 
         alert('Event Published Successfully!');
 
-        localStorage.removeItem('BasicInformation');
-        localStorage.removeItem('EventDetails');
-        localStorage.removeItem('EventInfo');
+        clearEventDraft();
 
         router.push('/event-details/[id]');
 
     }
 
     return (
-        <div>
-            <section className='flex flex-col'>
-
-
-                {/* main form */}
-                <div className='border border-brown-normal rounded-xl p-4 flex flex-col gap-4 bg-brown-light'>
-                    <h2 className='text-lg md:text-xl lg:text-xl font-bold'>
-                        Review and Publish
-                    </h2>
-
-                    {/* event information */}
-                    <h3 className='font-bold'>Event Information</h3>
-                    <div className='border bg-gray-100 rounded-xl p-2 flex flex-col gap-2'>
-                        <p><strong>Title:</strong> {basicInformation?.title || ''}</p>
-                        <p><strong>Category:</strong> {basicInformation?.category || ''}</p>
-                        <p><strong>Description:</strong> {basicInformation?.description || ''}</p>
-
-                    </div>
-
-
-                    {/* date and location */}
-                    <h3 className='font-bold'>Date and Location </h3>
-                    <div className='border bg-gray-100 rounded-xl p-2 flex flex-col gap-2'>
-                        <p><strong>Start Time:</strong> {eventDetails?.startTime || ''}</p>
-                        <p><strong>End Time:</strong> {eventDetails?.endTime || ''}</p>
-                        <p><strong>Venue:</strong> {eventDetails?.venueName || ''}</p>
-                        <p><strong>Capacity:</strong> {eventDetails?.eventCapacity || ''}</p>
-
-                    </div>
-
-
-                    {/* ticket */}
-                    <h3 className='font-bold'>Tickets (2)</h3>
-
-                    <div className='border bg-gray-100 rounded-xl p-2 flex flex-col gap-2'>
-                        <p><strong>{eventInfo?.ticketName}</strong></p>
-                        <p>Quantity: {eventInfo?.quantity || ''}</p>
-                        <p>Price: {eventInfo?.price || ''}</p>
-                    </div>
-                    
-
-
-                    {/* steps */}
-                    <div className='h-0.5 bg-brown-normal'></div>
-                    <div className='flex justify-center gap-4'>
-                        <p>Step 4 of 4</p>
-                    </div>
-
-
-                    <div className='flex justify-between'>
-                        {/* previous button */}
-                        <div className='flex justify-end'>
-                            <Link href='/create-event/step-3'>
-                                <Button text="Previous Step" variant='cta' size='sm'></Button>
-                            </Link>
-                        </div>
-
-
-                        {/* next button */}
-                        <div className='flex justify-end'>
-
-                            <Button text="Publish Event" variant='cta' size='sm' onClick={handlePublish}></Button>
-
-                        </div></div>
+        <CreateEventStepShell
+            stepLabel="Step 4 of 4"
+            title="Review and Publish"
+            description="Check your event details before publishing. You can still go back and make changes if needed."
+            footer={(
+                <div className='flex items-center justify-between gap-3'>
+                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push('/create-event/step-3')} />
+                    <Button text="Publish Event" variant='cta' size='sm' onClick={handlePublish} />
                 </div>
-            </section>
-        </div>
+            )}
+        >
+            <div className='space-y-4'>
+                <div className='surface-card p-4'>
+                    <h3 className='mb-3 text-sm font-semibold text-text-dark'>Event Information</h3>
+                    <div className='space-y-2 text-sm text-text-light'>
+                        <p><strong className="text-text-dark">Title:</strong> {basicInformation?.title || ''}</p>
+                        <p><strong className="text-text-dark">Category:</strong> {basicInformation?.category || ''}</p>
+                        <p><strong className="text-text-dark">Description:</strong> {basicInformation?.description || ''}</p>
+                    </div>
+                </div>
+
+                <div className='surface-card p-4'>
+                    <h3 className='mb-3 text-sm font-semibold text-text-dark'>Date and Location</h3>
+                    <div className='space-y-2 text-sm text-text-light'>
+                        <p><strong className="text-text-dark">Start Time:</strong> {eventDetails?.startTime || ''}</p>
+                        <p><strong className="text-text-dark">End Time:</strong> {eventDetails?.endTime || ''}</p>
+                        <p><strong className="text-text-dark">Venue:</strong> {eventDetails?.venueName || ''}</p>
+                        <p><strong className="text-text-dark">Capacity:</strong> {eventDetails?.eventCapacity || ''}</p>
+                    </div>
+                </div>
+
+                <div className='surface-card p-4'>
+                    <h3 className='mb-3 text-sm font-semibold text-text-dark'>Tickets</h3>
+                    <div className='space-y-3 text-sm text-text-light'>
+                        {eventInfo?.tickets?.length ? (
+                            eventInfo.tickets.map((ticket, index) => (
+                                <div key={index} className='rounded-xl border border-border bg-surface-hover p-3'>
+                                    <p><strong className="text-text-dark">{ticket.ticketName}</strong></p>
+                                    <p>Quantity: {ticket.quantity || ''}</p>
+                                    <p>Price: {ticket.price || ''}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No tickets added yet.</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </CreateEventStepShell>
     )
 }
 

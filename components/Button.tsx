@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 
 type ButtonProps = {
     text?: string | number;
@@ -9,87 +10,85 @@ type ButtonProps = {
     isActive?: boolean;
     className?: string;
     status?: "danger" | "success" | "warning";
-
 };
 
-const Button = (
-    {
-        text,
-        iconLeft,
-        iconRight,
-        variant = "cta",
-        size = "md",
-        onClick,
-        isActive,
-        status,
-        className
-    }: ButtonProps) => {
+const Button = ({
+    text,
+    iconLeft,
+    iconRight,
+    variant = "cta",
+    size = "md",
+    onClick,
+    isActive,
+    status,
+    className,
+}: ButtonProps) => {
     const baseStyles =
-        "group border border-brown-dark hover:border-brown-dark-hover hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer flex items-center justify-center";
+        "group inline-flex items-center justify-center font-medium transition-all duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50";
 
     const variants = {
-        cta: "rounded-[10px]",
-        tag: "rounded-[40px] ",
-        secondary: "border-none bg-transparent hover:bg-transparent hover:text-brown-normal-active hover:underline hover:shadow-none hover:translate-none",
+        cta: cn(
+            "rounded-xl border shadow-sm",
+            isActive
+                ? "border-[#BF5A3F] bg-[#BF5A3F] text-white"
+                : "border-[#E07A5F] bg-[#E07A5F] text-white hover:-translate-y-px hover:border-[#D66A4B] hover:bg-[#D66A4B] hover:shadow-md active:translate-y-0 active:bg-[#BF5A3F]"
+        ),
+        tag: "rounded-full border border-[#E8E8E8] bg-white text-text-dark hover:-translate-y-px hover:border-[#E07A5F]/40 hover:bg-[#FDF1EC] hover:shadow-sm active:scale-[0.98]",
+        secondary:
+            "border-none bg-transparent text-[#E07A5F] hover:bg-[#FDF1EC] hover:text-[#D66A4B] shadow-none active:scale-[0.98]",
     };
 
     const sizes = {
         cta: {
-            vsm: "px-2 h-8 text-sm",
-            sm: "px-3 h-10 text-sm",
-            md: "px-5 h-10 font-semibold",
-            lg: "px-6 h-12",
+            vsm: "h-8 px-3 text-xs",
+            sm: "h-10 px-4 text-sm",
+            md: "h-11 px-5 text-sm",
+            lg: "h-12 px-6 text-base",
         },
         tag: {
-            vsm: "px-2 h-6 text-sm",
-            sm: "px-3 h-6 text-sm",
-            md: "px-5 h-8",
-            lg: "px-5 h-10",
+            vsm: "h-6 px-2.5 text-xs",
+            sm: "h-7 px-3 text-xs",
+            md: "h-8 px-4 text-sm",
+            lg: "h-9 px-5 text-sm",
         },
         secondary: {
-            vsm: "p-1 h-6 text-sm",
-            sm: "p-1 h-6 text-sm",
-            md: "px-5 h-8",
-            lg: "px-6 h-10",
-        }
+            vsm: "h-6 px-1 text-xs",
+            sm: "h-7 px-2 text-sm",
+            md: "h-8 px-3 text-sm",
+            lg: "h-10 px-4 text-base",
+        },
     };
 
     const statusStyles = {
-        danger: "border-red-500 text-red-500 hover:bg-red-600 hover:text-white hover:icon-white",
-        success: "border-green-500 text-green-500 hover:bg-green-600 hover:text-white hover:icon-white",
-        warning: "border-yellow-500 text-yellow-500 hover:bg-yellow-600 hover:text-white hover:icon-white",
+        danger:
+            "border-[#FEE2E2] bg-[#FEE2E2] text-[#EF4444] hover:border-[#EF4444]/30 hover:bg-[#EF4444] hover:text-white",
+        success:
+            "border-[#DCFCE7] bg-[#DCFCE7] text-[#22C55E] hover:border-[#22C55E]/30 hover:bg-[#22C55E] hover:text-white",
+        warning:
+            "border-[#FEF3C7] bg-[#FEF3C7] text-[#F59E0B] hover:border-[#F59E0B]/30 hover:bg-[#F59E0B] hover:text-white",
     };
-
-    const baseColor = status ? "bg-transparent" : 
-    isActive
-                ? "bg-brown-normal text-white"
-                : baseStyles;
 
     return (
         <button
-            className={`
-                ${baseStyles}
-                ${variants[variant]}
-                ${sizes[variant][size]}
-                ${baseColor}
-                ${className ? className : ""}
-                ${status ? statusStyles[status] : ""}
-            `}
-            onClick={onClick}>
-
-            {iconLeft && <span className="mr-2">{iconLeft}</span>}
+            type="button"
+            className={cn(
+                baseStyles,
+                variants[variant],
+                sizes[variant][size],
+                status && statusStyles[status],
+                className
+            )}
+            onClick={onClick}
+        >
+            {iconLeft && <span className="mr-2 shrink-0">{iconLeft}</span>}
             {text}
             {iconRight && (
-                <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
+                <span className="ml-2 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5">
                     {iconRight}
                 </span>
             )}
         </button>
-
     );
 };
 
 export default Button;
-
-
-

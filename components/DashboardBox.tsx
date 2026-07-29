@@ -25,12 +25,11 @@ const DashboardBox = (
     const router = useRouter();
 
     return (
-        <div className='w-full border border-brown-normal bg-brown-light rounded-xl 
-        p-4 space-y-1 flex flex-col justify-start gap-4 shadow-md'>
-            <h2 className='font-dynapuff text-xl md:text-2xl lg:text-2xl font-semibold '>
+        <div className='surface-card w-full p-5 shadow-sm md:p-6 flex flex-col justify-start gap-4'>
+            <h2 className='text-xl font-semibold tracking-tight text-text-dark md:text-2xl'>
                 {title}
             </h2>
-            <p className='text-base md:text-md lg:text-md'>
+            <p className='max-w-2xl text-sm leading-relaxed text-text-light md:text-base'>
                 {description}
             </p>
             <div>

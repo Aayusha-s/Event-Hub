@@ -1,9 +1,95 @@
-import React from 'react'
+'use client'
+import React, { use, useState } from 'react'
+
 import { ArrowLeft, Check } from 'lucide-react';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
-const page = () => {
+const Page = () => {
+
+    const [businessType, setBusinessType] = useState('');
+    const [years, setYears] = useState('');
+    const [description, setDescription] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [website, setWebsite] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] =useState('');
+    const [state,setState] = useState('');
+
+
+    const [typeError, setTypeError] = useState('');
+    const [yearsError, setYearsError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [descriptionError, setDescriptionError] = useState('');
+    const [websiteError, setWebsiteError] = useState('');
+    const [addressError, setAddressError] = useState('');
+    const [cityError, setCityError] = useState('');
+    const [stateError, setStateError] = useState('');
+
+    const validateType = (value: string) : string => {
+        if (!value){
+            return "Please select one type!"
+        }
+        return '';
+    }
+
+    const validateYears = (value: string) : string => {
+        if(!value){
+            return "This is a required field!"
+        }
+        return '';
+    }
+
+    const validateEmail = (value: string): string => {
+        if (!value){
+            return 'Email is required!'
+        }
+        return '';
+    }
+
+    const validatePhone = (value: string): string => {
+        if (!value){
+            return 'Phone number is required!'
+        }
+        return '';
+    }
+    const validateWebsite = (value: string): string => {
+        if (!value){
+            return 'Website is required!'
+        }
+        return '';
+    }
+
+    const validateAddress = (value: string): string => {
+        if (!value){
+            return 'Business address is required!'
+        }
+        return '';
+    }
+
+    const validateCity = (value: string): string => {
+        if (!value){
+            return 'City is required!'
+        }
+        return '';
+    }
+
+    const validateState = (value: string): string => {
+        if (!value){
+            return 'State is required!'
+        }
+        return '';
+    }
+
+    const validateDescription = (value: string): string => {
+        if (!value){
+            return 'Description is required!'
+        }
+        return '';
+    }
+
     return (
 
         <section className='flex flex-col
@@ -50,7 +136,12 @@ const page = () => {
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div>
                         <h2 className="font-bold">Business Type *</h2>
-                        <select name="business_type" id="business_type" className="w-full border border-brown-normal rounded-md p-3 mt-1">
+                        <select name="business_type" id="business_type" className="w-full border border-brown-normal rounded-md p-3 mt-1"
+                        value={businessType}
+                        onChange={(e)=>{
+                        setBusinessType(e.target.value);
+                        setTypeError(validateType(e.target.value));
+                        }}>
                             <option value="">Select an option</option>
                             <option value="music_concerts">Music Concerts</option>
                             <option value="concert_parties">Concert/Parties</option>
@@ -67,7 +158,12 @@ const page = () => {
 
                     <div>
                         <h2 className="font-bold">Years in Business *</h2>
-                        <select name="years_in_business" id="years_in_business" className="w-full border border-brown-normal rounded-md p-3 mt-1">
+                        <select name="years_in_business" id="years_in_business" className="w-full border border-brown-normal rounded-md p-3 mt-1"
+                        value={years}
+                        onChange={(e)=>{
+                            setYears(e.target.value);
+                            setYearsError(validateYears(e.target.value));
+                        }}>
                             <option value="">Select experience</option>
                             <option value="less_than_1_year">Less than 1 year</option>
                             <option value="1_3_years">1-3 years</option>
@@ -84,7 +180,13 @@ const page = () => {
                     <h3 className='font-bold'>Business Description</h3>
                     <textarea
                         placeholder='Describe your business, what you offer, and what makes you unique...'
-                        className='w-full border border-brown-normal rounded-md p-2 mt-1 h-32 resize-none'>
+                        className='w-full border border-brown-normal rounded-md p-2 mt-1 h-32 resize-none'
+                        value={description}
+                        onChange={(e) => {
+                            setDescription(e.target.value)
+                            setDescriptionError(validateDescription(e.target.value));
+                        }}
+                >
                     </textarea>
                 </div>
 
@@ -97,7 +199,12 @@ const page = () => {
                         <input
                             type="email"
                             placeholder="Enter your email"
-                            className="w-full border border-brown-normal rounded-md p-2 mt-1" />
+                            className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                            value={email}
+                            onChange={(e)=>{
+                                setEmail(e.target.value)
+                                setEmailError(validateEmail(e.target.value))
+                            }}/>
                     </div>
 
                     <div>
@@ -105,7 +212,12 @@ const page = () => {
                         <input
                             type="tel"
                             placeholder="Enter your phone number"
-                            className="w-full border border-brown-normal rounded-md p-2 mt-1" />
+                            className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                            value={phone}
+                            onChange={(e)=>{
+                                setPhone(e.target.value)
+                                setPhoneError(validatePhone(e.target.value))
+                            }}/>
                     </div>
                 </div>
 
@@ -117,7 +229,12 @@ const page = () => {
                         <input
                             type="url"
                             placeholder="Enter your website"
-                            className="w-full border border-brown-normal rounded-md p-2 mt-1" />
+                            className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                            value={website}
+                            onChange={(e)=>{
+                                setWebsite(e.target.value)
+                                setWebsiteError(validateWebsite)(e.target.value)
+                            }}/>
                     </div>
 
                     <div>
@@ -125,7 +242,12 @@ const page = () => {
                         <input
                             type="text"
                             placeholder="Enter your business address"
-                            className="w-full border border-brown-normal rounded-md p-2 mt-1" />
+                            className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                            value={address}
+                            onChange={(e)=>{
+                                setAddress(e.target.value)
+                                setAddressError(validateAddress(e.target.value))
+                            }}/>
                     </div>
                 </div>
 
@@ -138,7 +260,12 @@ const page = () => {
                         <input
                             type="text"
                             placeholder="Enter your city"
-                            className="w-full border border-brown-normal rounded-md p-2 mt-1" />
+                            className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                            value={city}
+                            onChange={(e)=>{
+                                setCity(e.target.value)
+                                setCityError(validateCity(e.target.value))
+                            }}/>
                     </div>
 
                     <div>
@@ -146,7 +273,12 @@ const page = () => {
                         <input
                             type="text"
                             placeholder="Enter your state"
-                            className="w-full border border-brown-normal rounded-md p-2 mt-1" />
+                            className="w-full border border-brown-normal rounded-md p-2 mt-1"
+                            value={status}
+                            onChange={(e)=>{
+                                setState(e.target.value)
+                                setStateError(validateState(e.target.value))
+                            }}/>
                     </div>
                 </div>
 
@@ -169,4 +301,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

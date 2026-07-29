@@ -4,25 +4,55 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --color-brown-light: #FAF8F5;
-    --color-brown-light-hover: #F7F4F0;
-    --color-brown-light-active: #EFE9DF;
+    /* Brand — soft terracotta + neutral surfaces */
+    --color-background: #FAFAFA;
+    --color-surface: #FFFFFF;
+    --color-surface-hover: #F7F7F7;
+    --color-border: #E8E8E8;
+    --color-divider: #F1F1F1;
 
-    --color-brown-normal: #CBB799;
-    --color-brown-normal-hover: #B7A58A;
-    --color-brown-normal-active: #A2927A;
+    --color-primary: #E07A5F;
+    --color-primary-hover: #D66A4B;
+    --color-primary-active: #BF5A3F;
+    --color-primary-light: #FDF1EC;
 
-    --color-brown-dark: #988973;
-    --color-brown-dark-hover: #7A6E5C;
-    --color-brown-dark-active: #5B5245;
-    --color-brown-darker: #474036;
+    /* Backwards-compatible aliases used across the app */
+    --color-brown-light: #FAFAFA;
+    --color-brown-light-hover: #F7F7F7;
+    --color-brown-light-active: #FDF1EC;
 
-    --color-text-light: #988973;
-    --color-text-dark: #7A6E5C;
+    --color-brown-normal: #E07A5F;
+    --color-brown-normal-hover: #D66A4B;
+    --color-brown-normal-active: #BF5A3F;
 
-    --font-dynapuff: 'DynaPuff', cursive;
-    --font-cause: 'Cause', sans-serif;
-    --font-montserrat: 'Montserrat', sans-serif;
+    --color-brown-dark: #222222;
+    --color-brown-dark-hover: #111111;
+    --color-brown-dark-active: #0F172A;
+    --color-brown-darker: #111111;
+
+    /* Typography colors */
+    --color-text-light: #6B7280;
+    --color-text-muted: #9CA3AF;
+    --color-text-dark: #222222;
+
+    /* Semantic colors */
+    --color-success: #22C55E;
+    --color-success-light: #DCFCE7;
+    --color-warning: #F59E0B;
+    --color-warning-light: #FEF3C7;
+    --color-error: #EF4444;
+    --color-error-light: #FEE2E2;
+
+    /* Shadows */
+    --shadow-xs: 0 1px 2px 0 rgb(34 34 34 / 0.04);
+    --shadow-sm: 0 1px 3px 0 rgb(34 34 34 / 0.06), 0 1px 2px -1px rgb(34 34 34 / 0.06);
+    --shadow-md: 0 4px 10px -2px rgb(34 34 34 / 0.08), 0 2px 4px -4px rgb(34 34 34 / 0.06);
+    --shadow-lg: 0 12px 24px -8px rgb(34 34 34 / 0.1), 0 4px 8px -6px rgb(34 34 34 / 0.06);
+
+    /* Typography */
+    --font-dynapuff: var(--font-plus-jakarta-sans), sans-serif;
+    --font-cause: var(--font-plus-jakarta-sans), sans-serif;
+    --font-montserrat: var(--font-plus-jakarta-sans), sans-serif;
 }
 
 
@@ -33,8 +63,156 @@
 }
 
 body {
-
     padding-top: 80px;
+    background-color: var(--color-background);
+    color: var(--color-text-dark);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reusable layout & surface utilities */
+@layer utilities {
+    .surface-card {
+        @apply rounded-2xl border border-border bg-surface shadow-xs;
+    }
+
+    .surface-elevated {
+        @apply rounded-2xl border border-border bg-surface shadow-sm;
+    }
+
+    .interactive-card {
+        @apply transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-brown-normal hover:shadow-md;
+    }
+
+    .focus-ring {
+        @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+    }
+
+    /* Motion utilities */
+    .motion-page-enter {
+        animation: page-enter 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    }
+
+    .motion-fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+            opacity 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+            transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition-delay: var(--motion-delay, 0ms);
+    }
+
+    .motion-fade-in {
+        opacity: 0;
+        transition: opacity 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition-delay: var(--motion-delay, 0ms);
+    }
+
+    .motion-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .motion-hero-enter {
+        animation: hero-enter 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        animation-delay: var(--hero-delay, 0ms);
+    }
+
+    .motion-float {
+        animation: float 6s ease-in-out infinite;
+        animation-delay: var(--float-delay, 0ms);
+    }
+
+    .motion-float-slow {
+        animation: float 8s ease-in-out infinite;
+        animation-delay: var(--float-delay, 0ms);
+    }
+
+    .motion-tab-enter {
+        animation: tab-fade 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    }
+
+    .motion-card-lift {
+        @apply transition-all duration-300 ease-out;
+        transition-property: transform, box-shadow, border-color;
+    }
+
+    .motion-card-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+@keyframes page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes hero-enter {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes tab-fade {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .motion-page-enter,
+    .motion-hero-enter,
+    .motion-float,
+    .motion-float-slow,
+    .motion-tab-enter {
+        animation: none !important;
+    }
+
+    .motion-fade-up,
+    .motion-fade-in {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .motion-card-lift:hover {
+        transform: none !important;
+    }
+
+    .interactive-card {
+        transition: none !important;
+    }
+
+    .interactive-card:hover {
+        transform: none !important;
+    }
 }
 
 .flexs {

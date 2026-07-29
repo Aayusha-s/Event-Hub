@@ -1,16 +1,17 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const Footer = () => {
     const legalLinks = [
-        { name: 'Terms of Service', href: '/termsofservice' },
-        { name: 'Privacy Policy', href: '/privacypolicy' },
-        { name: 'Cookie Policy', href: '/cookiepolicy' },
-        { name: 'Legal Disclaimer', href: '/legaldisclaimer' }
+        { name: 'Terms of Service', href: '/terms-of-service' },
+        { name: 'Privacy Policy', href: '/privacy-policy' },
+        { name: 'Cookie Policy', href: '/cookie-policy' },
+        { name: 'Legal Disclaimer', href: '/legal-disclaimer' }
     ]
 
     const supportLinks = [
         { name: 'Help Center', href: '/helpcenter' },
-        { name: 'Contact Us', href: '/contactus' },
+        { name: 'Contact Us', href: '/contact-us' },
         { name: 'Community', href: '/community' }
     ]
 
@@ -36,19 +37,21 @@ const Footer = () => {
         { name: 'YouTube', href: 'https://youtube.com', icon: <i className="fa-brands fa-youtube"></i> }
     ]
     return (
-        <footer className='w-full bg-brown-light text-text-dark py-5 mt-10 border-t border-brown-normal'>
-            <div className='mx-5 px-4 grid lg:grid-cols-6 gap-8 '>
+        <footer className='mt-10 w-full border-t border-border bg-surface text-text-dark'>
+            <div className='mx-5 grid gap-10 px-4 py-10 lg:grid-cols-6'>
 
                 {/* Logo & Description */}
                 <div className='lg:col-span-2'>
-                    <div className='mb-4'>
-                        <img
+                    <div className='mb-5'>
+                        <Image
                             src="/images/logo.png"
                             alt="EventHub Logo"
-                            className='w-[130px] h-auto cursor-pointer'
+                            width={130}
+                            height={52}
+                            className='h-auto w-[130px] cursor-pointer'
                         />
                     </div>
-                    <p className='text-text-light max-w-[300px] mb-6'>
+                    <p className='mb-6 max-w-[320px] text-text-light'>
                         Discover, create, and manage unforgettable events.
                         Connect with your community and make memories that last.
                     </p>
@@ -71,15 +74,12 @@ const Footer = () => {
                 <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:col-span-4">
                     {/* Platform Links */}
                     <div>
-                        <h3 className="text-brown-darker font-semibold text-lg mb-4">Platform</h3>
+                        <h3 className="mb-4 text-lg font-semibold text-text-dark">Platform</h3>
                         <ul className="space-y-2">
                             {platformLinks.map((link) => (
                                 <li key={link.name}>
                                     <Link href={link.href}
-                                        className='text-text-light 
-                                    hover:text-brown-darker
-                                    transition-all duration-300 ease-in-out
-                                    hover:translate-x-2 hover:scale-105'>
+                                        className='text-text-light transition-colors duration-200 ease-in-out hover:text-primary'>
                                         {link.name}
                                     </Link>
                                 </li>
@@ -89,14 +89,12 @@ const Footer = () => {
 
                     {/* Legal Links */}
                     <div>
-                        <h3 className="text-brown-darker font-semibold text-lg mb-4">Legal</h3>
+                        <h3 className="mb-4 text-lg font-semibold text-text-dark">Legal</h3>
                         <ul className="space-y-2">
                             {legalLinks.map((link) => (
                                 <li key={link.name}>
                                     <Link href={link.href}
-                                        className='text-text-light 
-                                    hover:text-brown-darker 
-                                    transition-all duration-300 ease-in-out'>
+                                        className='text-text-light transition-colors duration-200 ease-in-out hover:text-primary'>
                                         {link.name}</Link>
                                 </li>
                             )
@@ -108,14 +106,12 @@ const Footer = () => {
 
                     {/* Company Links */}
                     <div>
-                        <h3 className="text-brown-darker font-semibold text-lg mb-4">Company</h3>
+                        <h3 className="mb-4 text-lg font-semibold text-text-dark">Company</h3>
                         <ul className="space-y-2">
                             {companyLinks.map((link) => (
                                 <li key={link.name}>
                                     <Link href={link.href}
-                                        className='text-text-light 
-                                    hover:text-brown-darker 
-                                    transition-all duration-300 ease-in-out'>
+                                        className='text-text-light transition-colors duration-200 ease-in-out hover:text-primary'>
                                         {link.name}
                                     </Link>
                                 </li>
@@ -125,14 +121,12 @@ const Footer = () => {
 
                     {/* Support Links */}
                     <div>
-                        <h3 className="text-brown-darker font-semibold text-lg mb-4">Support</h3>
+                        <h3 className="mb-4 text-lg font-semibold text-text-dark">Support</h3>
                         <ul className="space-y-2">
                             {supportLinks.map((link) => (
                                 <li key={link.name}>
                                     <Link href={link.href}
-                                        className='text-text-light 
-                                    hover:text-brown-darker 
-                                    transition-all duration-300 ease-in-out'>
+                                        className='text-text-light transition-colors duration-200 ease-in-out hover:text-primary'>
                                         {link.name}</Link>
                                 </li>
                             ))}
@@ -145,26 +139,20 @@ const Footer = () => {
             </div>
 
             {/* Bottom Section - Social & Copyright */}
-            <div className='mx-5 px-4 mt-10 pt-8 border-t border-brown-normal'>
-                <div className='flex flex-col justify-between gap-4 lg:flex-row md:flex-row '>
+            <div className='mx-5 mt-6 border-t border-divider px-4 py-6'>
+                <div className='flex flex-col justify-between gap-4 md:flex-row lg:flex-row'>
                     
                     {/* Copyright */}
-                    <div className= "flex items-center justify-center text-text-light text-sm lg:justify-start">
+                    <div className= "flex items-center justify-center text-sm text-text-light lg:justify-start">
                         <p>© 2024 EventHub. All rights reserved.</p>
                     </div>
 
                     {/* Social Links */}
-                    <div className="flex gap-4 items-center justify-center lg:justify-end md:justify-end">
+                    <div className="flex items-center justify-center gap-3 md:justify-end lg:justify-end">
                         {socialLinks.map((link) => (
                             <div key={link.name}>
                                 <Link href={link.href}
-                                    className="w-8 h-8 rounded-full 
-                                bg-brown-normal 
-                                hover:bg-brown-normal-hover 
-                                text-white 
-                                flex items-center justify-center  
-                                transition-all duration-300 ease-in-out
-                                hover:-translate-y-1 hover:shadow-lg"
+                                    className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-sm"
                                 >
                                     {link.icon}
                                 </Link>

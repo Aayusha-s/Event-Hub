@@ -1,4 +1,4 @@
-import { Calendar, Facebook, Mail, MapPin, MessageCircle, Twitter } from 'lucide-react';
+import { Facebook, Mail, MessageCircle, Twitter } from 'lucide-react';
 import React from 'react'
 import Button from './Button';
 
@@ -13,23 +13,23 @@ const SharePopup = (
     }: SharePopupProps) => {
     if (!isOpen) return null;
     return (
-        <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
-            <div className="bg-white rounded-lg p-4 m-2 w-full max-w-md">
-                <h1 className='text-xl font-bold mb-4'>Share Event</h1>
+        <div className='fixed inset-0 bg-text-dark/20 flex items-center justify-center z-50 p-4'>
+            <div className="surface-card w-full max-w-md p-6 shadow-lg">
+                <h1 className='text-2xl font-semibold tracking-tight text-text-dark mb-4'>Share Event</h1>
 
                 {/* event details */}
-                <div className="bg-gray-100 rounded-xl p-4">
-                    <p className='font-bold' >Summer Music Festival 2025</p>
-                    <p>Share this event with your friends and family</p>
+                <div className="rounded-2xl border border-border bg-surface-hover p-4">
+                    <p className='font-semibold text-text-dark' >Summer Music Festival 2025</p>
+                    <p className='text-sm text-text-light'>Share this event with your friends and family</p>
                 </div>
 
                 {/* social media buttons */}
                 <div>
-                    <p className='font-semibold mt-2'>Share via social media:</p>
+                    <p className='mt-3 font-semibold text-text-dark'>Share via social media:</p>
                     <div className="grid grid-cols-2 gap-4 mt-2">
                         <Button
                             text='Facebook'
-                            className='text-blue-700'
+                            className='bg-primary-light text-primary'
                             onClick={() => {
                                 alert('Shared on Facebook!');
                             }}
@@ -37,7 +37,7 @@ const SharePopup = (
                         />
                         <Button
                             text='Twitter'
-                            className='text-blue-400'
+                            className='bg-primary-light text-primary'
                             onClick={() => {
                                 alert('Shared on Twitter!');
                             }}
@@ -45,7 +45,7 @@ const SharePopup = (
                         />
                         <Button
                             text='Whatsapp'
-                            className='text-green-500'
+                            className='bg-primary-light text-primary'
                             onClick={() => {
                                 alert('Shared on Whatsapp!');
                             }}
@@ -53,7 +53,7 @@ const SharePopup = (
                         />
                         <Button
                             text='Email'
-                            className='text-red-500'
+                            className='bg-primary-light text-primary'
                             onClick={() => {
                                 alert('Shared on Email!');
                             }}
@@ -65,13 +65,13 @@ const SharePopup = (
 
                 {/* copy event link */}
                 <div>
-                    <p className='font-semibold mt-4'>Or copy the event link:</p>
+                    <p className='mt-4 font-semibold text-text-dark'>Or copy the event link:</p>
                     <div className="flex items-center mt-2">
                         <input
                             type="text"
                             readOnly
                             value="https://eventhub.com/events/summer-music-festival-2025"
-                            className="grow border border-gray-300 rounded-l-lg px-3 py-2"
+                            className="grow rounded-l-xl border border-border px-3 py-2 text-text-dark focus:outline-none"
                         />
                         <Button
                             text='Copy Link'
@@ -86,10 +86,11 @@ const SharePopup = (
 
 
 
-                <div className="flex justify-end mt-4 gap-2">
+                <div className="mt-6 flex justify-end gap-2">
                     <Button
                         text='Close'
                         onClick={onClose}
+                        variant='secondary'
                     />
 
                     <Button
@@ -99,7 +100,7 @@ const SharePopup = (
                             alert('Event Shared!');
                             onClose();
                         }}
-                        className="bg-brown-normal text-white"
+                        className=""
                     />
 
                 </div>

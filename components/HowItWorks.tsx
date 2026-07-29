@@ -1,7 +1,12 @@
 "use client";
+
 import React, { useState } from "react";
 import Button from "./Button";
 import HowItWorksStep from "./HowItWorksStep";
+import SectionContainer from "./SectionContainer";
+import SectionHeader from "./SectionHeader";
+import FadeInView from "./motion/FadeInView";
+import { cn } from "@/lib/utils";
 
 const HowItWorks = () => {
     const attendeeSteps = [
@@ -63,70 +68,64 @@ const HowItWorks = () => {
     const stepsMaps = {
         attendees: attendeeSteps,
         organizers: organizerSteps,
-        vendors: vendorSteps
+        vendors: vendorSteps,
     };
 
+    const tabs = [
+        { id: "attendees" as const, label: "For Attendees" },
+        { id: "organizers" as const, label: "For Organizers" },
+        { id: "vendors" as const, label: "For Vendors" },
+    ];
+
     return (
-        <section className="text-text-dark px-4 py-10">
-            {/* Title */}
-            <div className="flex justify-center mb-8">
-                <h2 className="text-2xl sm:text-3xl font-semibold font-dynapuff">
-                    How It Works
-                </h2>
-            </div>
+        <SectionContainer className="border-t border-brown-normal/30 py-10 md:py-14">
+            <FadeInView>
+                <SectionHeader
+                    title="How it works"
+                    description="Whether you're attending, organizing, or vending — Vivnt makes it simple."
+                    align="center"
+                    accent
+                />
+            </FadeInView>
 
-            {/* Tabs */}
-            <div className="flex justify-center">
-                <div className="
-                    flex flex-wrap justify-center gap-3
-                    border border-brown-normal
-                    rounded-xl p-2
-                    max-w-full sm:max-w-[700px]"
+            <FadeInView delay={100}>
+                <div className="flex justify-center">
+                <div
+                    className="inline-flex flex-wrap justify-center gap-1 rounded-xl border border-brown-normal/50 bg-brown-light p-1.5"
+                    role="tablist"
+                    aria-label="How it works audience"
                 >
-                    <Button
-                        text="For Attendees"
-                        variant="cta"
-                        size="sm"
-                        isActive={activeTab === "attendees"}
-                        onClick={() => setActiveTab("attendees")}
-                    />
-
-                    <Button
-                        text="For Organizers"
-                        variant="cta"
-                        size="sm"
-                        isActive={activeTab === "organizers"}
-                        onClick={() => setActiveTab("organizers")}
-                    />
-
-                    <Button
-                        text="For Vendors"
-                        variant="cta"
-                        size="sm"
-                        isActive={activeTab === "vendors"}
-                        onClick={() => setActiveTab("vendors")}
-                    />
+                    {tabs.map((tab) => (
+                        <Button
+                            key={tab.id}
+                            text={tab.label}
+                            variant="cta"
+                            size="sm"
+                            isActive={activeTab === tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={cn(
+                                activeTab !== tab.id &&
+                                    "!border-transparent !bg-transparent !text-text-dark !shadow-none hover:!bg-white/60"
+                            )}
+                        />
+                    ))}
                 </div>
             </div>
+            </FadeInView>
 
-            {/* Steps */}
-            <div className="relative mt-10 flex items-center justify-center">
-                
-                <div className="lg:block absolute
-                    top-12 left-1/4 right-1/4
-                    lg:top-12 lg:left-1/3 lg:right-1/3   
-                    2xl:top-12 2xl:left-1/3 2xl:right-1/3
-                    h-0.5 bg-brown-normal"
+            <div className="relative mt-10 md:mt-12">
+                <div
+                    className="absolute left-[16.67%] right-[16.67%] top-12 hidden h-px bg-brown-normal/40 md:block"
+                    aria-hidden="true"
                 />
 
-                <div className="
-                    grid grid-cols-3
-                    gap-4
-                    max-w-6xl"
+                <div
+                    key={activeTab}
+                    className="motion-tab-enter grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-6"
                 >
                     {stepsMaps[activeTab].map((step, index) => (
                         <HowItWorksStep
-                            key={index}
+                            key={step.title}
                             step={index + 1}
                             icon={step.icon}
                             title={step.title}
@@ -135,9 +134,8 @@ const HowItWorks = () => {
                     ))}
                 </div>
             </div>
-        </section>
+        </SectionContainer>
     );
-
 };
 
 export default HowItWorks;

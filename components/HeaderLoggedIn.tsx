@@ -1,12 +1,11 @@
 'use client';
-import Link from 'next/link'
-import React, { useState } from 'react'
-import Button from './Button'
-import { Bell, ChevronDown, CirclePlus, CircleUserRound, Filter, LogOut, Mic, Search, Settings, User } from 'lucide-react'
-import Image from 'next/image'
-import UserAvatar from './UserAvatar'
+import Link from 'next/link';
+import React, { useState } from 'react';
+import { Bell, ChevronDown, CirclePlus, CircleUserRound, LogOut, Settings, User } from 'lucide-react';
+import Image from 'next/image';
 import ManageRoles from './ManageRoles';
 import Logout from './Logout';
+import Searchbar from './Searchbar';
 
 const HeaderLoggedIn = () => {
     const [open, setOpen] = useState(false);
@@ -15,14 +14,11 @@ const HeaderLoggedIn = () => {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
     return (
-        <header className='fixed top-0 left-0 right-0 w-full bg-brown-light z-50 shadow-sm text-text-dark'>
-
-            <div className='mx-auto px-4 flex justify-between items-center h-[70px] max-w-7xl'>
-
-                <div className='nav-left'>
+        <header className="fixed left-0 right-0 top-0 z-50 w-full border-b border-border bg-surface/95 text-text-dark shadow-sm backdrop-blur-md">
+            <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                <div className="nav-left">
                     <Link href="/">
-                        <div className="relative w-[120px] h-[60px] cursor-pointer">
-
+                        <div className="relative h-[60px] w-[120px] cursor-pointer">
                             <Image
                                 src="/images/logo.png"
                                 alt="EventHub Logo"
@@ -34,165 +30,106 @@ const HeaderLoggedIn = () => {
                     </Link>
                 </div>
 
-                {/* Search Bar  */}
-                <div className='hidden md:flex flex-1 max-w-xl mx-6'>
-
-                    <div className='w-full h-[42px] bg-brown-light border border-brown-normal/80 rounded-lg flex items-center px-4'>
-
-                        <div className='flex items-center gap-3 flex-1'>
-
-                            <Search className="w-4 h-4 text-text-light" />
-                            <input
-                                type="text"
-                                placeholder='Search events, venues, artists...'
-                                className='w-full bg-transparent text-text-light placeholder:text-text-light/70 focus:outline-none'
-                            />
-                        </div>
-
-                        <div className='flex items-center gap-3 border-l border-brown-normal pl-3'>
-                            <button className="text-text-light hover:text-text-dark transition-colors">
-                                <Filter className="w-4 h-4" />
-                            </button>
-                            <button className="text-text-light hover:text-text-dark transition-colors">
-                                <Mic className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
+                <div className="hidden flex-1 max-w-3xl md:flex mx-6">
+                    <Searchbar />
                 </div>
 
+                <div className="nav-right flex items-center gap-2 text-text-dark cursor-pointer">
+                    <Link href="/create-event/step-1" className="rounded-full p-2 transition-colors hover:bg-surface-hover hover:text-primary">
+                        <CirclePlus size={22} />
+                    </Link>
 
-                <div className='nav-right flex items-center gap-4 text-brown-dark cursor-pointer'>
+                    <button type="button" onClick={() => setIsNotificationOpen(!isNotificationOpen)} className="rounded-full p-2 transition-colors hover:bg-surface-hover hover:text-primary" aria-label="Toggle notifications">
+                        <Bell size={22} />
+                    </button>
 
-                    {/* create event */}
-                    <Link href="/create-event/step-1"><CirclePlus /></Link>
-
-                    {/* notification */}
-                    <Bell onClick={() => setIsNotificationOpen(!isNotificationOpen)} />
-
-                    {/* user avatar and dropdown */}
-                    <div className='flex flex-row items-center gap-1' onClick={() => setOpen(!open)}>
+                    <button type="button" className="flex flex-row items-center gap-1 rounded-full p-1.5 transition-colors hover:bg-surface-hover" onClick={() => setOpen(!open)}>
                         <CircleUserRound size={32} strokeWidth={1.3} />
                         <ChevronDown size={18} />
-                    </div>
-
+                    </button>
                 </div>
 
                 {isNotificationOpen && (
-                    <>
+                    <div className="absolute right-6 top-[72px] z-50 w-80 rounded-2xl border border-border bg-surface shadow-lg md:right-20">
+                        <div className="px-4 pt-4">
+                            <p className="mb-2 text-lg font-semibold text-text-dark">Notifications</p>
+                            <div className="border-t border-divider"></div>
+                        </div>
 
-                        <div className="absolute top-15 right-6 md:right-20 bg-white border rounded-lg w-80 z-50">
-                            <div className='px-4 pt-4'>
-                                <p className="font-bold text-lg mb-2">Notifications</p>
-                                <div className="border-t border-brown-light-active"></div>
+                        <div className="max-h-70 overflow-y-auto p-4">
+                            <div className="flex cursor-pointer flex-col rounded-xl p-3 transition-colors duration-200 ease-in-out hover:bg-surface-hover">
+                                <p className="text-md text-text-dark">Your ticket for Summer Music Festival is confirmed.</p>
+                                <p className="mt-2 text-sm text-gray-500">2 hours ago</p>
                             </div>
-
-
-                            <div className='p-4  overflow-y-auto max-h-70 '>
-                                {/* notification 1 */}
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-2 rounded-lg transition duration-300 ease-in-out'>
-                                    <p className="text-md ">Your ticket for Summer Music Festival is confirmed.</p>
-                                    <p className="text-sm text-gray-500 mt-2">2 hours ago</p>
-                                </div>
-
-                                {/* divider */}
-                                <div className="border-t border-brown-light my-2"></div>
-
-                                {/* notification 2 */}
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-2 rounded-lg transition duration-300 ease-in-out'>
-                                    <p className="text-md ">New Event: Tech Summit 2025</p>
-                                    <p className="text-sm text-gray-500 mt-2">5 hours ago</p>
-                                </div>
-
-                                {/* divider */}
-                                <div className="border-t border-brown-light my-2"></div>
-
-                                {/* notification 3 */}
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-2 rounded-lg transition duration-300 ease-in-out'>
-                                    <p className="text-md ">Event Reminder: Jazz Night tomorrow at 7 PM</p>
-                                    <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                                </div>
-
-                                {/* divider */}
-                                <div className="border-t border-brown-light my-2"></div>
-
-                                {/* notification 4 */}
-                                <div className='flex flex-col cursor-pointer hover:bg-brown-light p-2 rounded-lg transition duration-300 ease-in-out'>
-                                    <p className="text-md ">Check out this new event happening near you!</p>
-                                    <p className="text-sm text-gray-500 mt-2">2 days ago</p>
-                                </div>
+                            <div className="my-2 border-t border-divider"></div>
+                            <div className="flex cursor-pointer flex-col rounded-xl p-3 transition-colors duration-200 ease-in-out hover:bg-surface-hover">
+                                <p className="text-md text-text-dark">New Event: Tech Summit 2025</p>
+                                <p className="mt-2 text-sm text-gray-500">5 hours ago</p>
                             </div>
-
-                            {/* divider */}
-                            <div className="border-t border-brown-light-active mx-4"></div>
-
-                            {/* view all notification button */}
-
-                            <div className='px-4 pt-4 flex justify-center cursor-pointer hover:underline p-2 rounded-lg transition duration-300 ease-in-out'>
-                                <p className="font-bold text-md mb-2">View All Notifications</p>
-                                <div className="border-t border-brown-light-active"></div>
+                            <div className="my-2 border-t border-divider"></div>
+                            <div className="flex cursor-pointer flex-col rounded-xl p-3 transition-colors duration-200 ease-in-out hover:bg-surface-hover">
+                                <p className="text-md text-text-dark">Event Reminder: Jazz Night tomorrow at 7 PM</p>
+                                <p className="mt-2 text-sm text-gray-500">1 day ago</p>
+                            </div>
+                            <div className="my-2 border-t border-divider"></div>
+                            <div className="flex cursor-pointer flex-col rounded-xl p-3 transition-colors duration-200 ease-in-out hover:bg-surface-hover">
+                                <p className="text-md text-text-dark">Check out this new event happening near you!</p>
+                                <p className="mt-2 text-sm text-gray-500">2 days ago</p>
                             </div>
                         </div>
 
-                    </>
+                        <div className="mx-4 border-t border-divider"></div>
+                        <div className="flex cursor-pointer justify-center rounded-b-2xl px-4 pt-4 transition-colors duration-200 ease-in-out hover:bg-surface-hover">
+                            <p className="mb-2 text-md font-semibold text-primary">View All Notifications</p>
+                        </div>
+                    </div>
                 )}
 
                 {open && (
-                    <div className="absolute top-15 right-5 bg-white border rounded-lg w-45">
+                    <div className="absolute right-5 top-[72px] w-45 rounded-2xl border border-border bg-surface shadow-lg">
+                        <p className="px-4 py-3 text-lg font-semibold text-text-dark">John Doe</p>
+                        <div className="my-0.5 border-t border-divider"></div>
 
-                        <p className="px-4 py-3 text-lg font-bold">John Doe</p>
-                        <div className="border-t border-brown-light-active my-0.5"></div>
-
-
-                        <div className='px-4 py-3 flex flex-row items-center gap-1 hover:bg-gray-100 cursor-pointer 
-                        transition 3s ease-in-out'
-                            onClick={() => {
-                                setOpen(false);
-                                setIsRolePopupOpen(true)
-                            }}>
-                            <User size={18} />
-                            <p >Manage Roles</p>
+                        <div className="cursor-pointer px-4 py-3 transition duration-200 ease-in-out hover:bg-surface-hover" onClick={() => { setOpen(false); setIsRolePopupOpen(true); }}>
+                            <div className="flex flex-row items-center gap-1">
+                                <User size={18} />
+                                <p>Manage Roles</p>
+                            </div>
                         </div>
 
-
-                        <Link href="/settings/profile" onClick={() => setOpen(false)}><div className='px-4 py-3 flex flex-row items-center gap-1 hover:bg-gray-100 cursor-pointer transition 3s ease-in-out'>
-                            <Settings size={18} />
-                            <p>Settings</p>
-                        </div>
+                        <Link href="/settings/profile" onClick={() => setOpen(false)}>
+                            <div className="flex cursor-pointer flex-row items-center gap-1 px-4 py-3 transition duration-200 ease-in-out hover:bg-surface-hover">
+                                <Settings size={18} />
+                                <p>Settings</p>
+                            </div>
                         </Link>
 
-
-                        <div className='px-4 py-3 flex flex-row items-center gap-1  text-red-500 hover:bg-gray-100 cursor-pointer transition 3s ease-in-out'
-                            onClick={() => {
-                                setOpen(false)
-                                setIsLogoutOpen(true)
-
-                            }}>
-                            <LogOut size={18} />
-                            <p>Logout</p>
+                        <div className="cursor-pointer px-4 py-3 transition duration-200 ease-in-out hover:bg-surface-hover" onClick={() => { setOpen(false); setIsLogoutOpen(true); }}>
+                            <div className="flex flex-row items-center gap-1 text-error">
+                                <LogOut size={18} />
+                                <p>Logout</p>
+                            </div>
                         </div>
-
                     </div>
-
                 )}
-
 
                 <Logout
                     isOpen={isLogoutOpen}
                     onClose={() => {
-                        setIsLogoutOpen(false)
+                        setIsLogoutOpen(false);
                         setOpen(false);
-
-                    }} />
+                    }}
+                />
                 <ManageRoles
                     isOpen={isRolePopupOpen}
                     onClose={() => {
-                        setIsRolePopupOpen(false)
+                        setIsRolePopupOpen(false);
                         setOpen(false);
-                    }} />
-
+                    }}
+                />
             </div>
         </header>
-    )
-}
+    );
+};
 
-export default HeaderLoggedIn
+export default HeaderLoggedIn;

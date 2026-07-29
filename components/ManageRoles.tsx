@@ -1,5 +1,5 @@
 // components/ManageRoles.tsx
-import { Calendar, Check, CircleCheck, CircleCheckBig, ShoppingBag, X } from "lucide-react";
+import { Calendar, Check, CircleCheckBig, ShoppingBag } from "lucide-react";
 import React from "react";
 import Button from "./Button";
 import Link from "next/link";
@@ -14,47 +14,49 @@ export default function ManageRoles({ isOpen, onClose }: ManageRolesProps) {
 
     
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-4 m-2 rounded-lg w-full max-w-3xl  max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-text-dark/20 flex items-center justify-center z-50 p-4">
+            <div className="surface-card w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 shadow-lg">
 
                 <div>
-                    <h3 className="font-bold text-md md:text-lg lg:text-xl">Manage Your Roles</h3>
-                    <div className="border-b my-2 border-brown-normal"></div>
+                    <h3 className="text-lg font-semibold text-text-dark md:text-xl">Manage Your Roles</h3>
+                    <div className="my-3 border-b border-divider"></div>
                 </div>
 
-                <div className="space-y-2 mb-4">
-                    <p className="font-medium text-md md:text-lg lg:text-xl">
+                <div className="mb-6 space-y-2">
+                    <p className="text-base font-semibold text-text-dark md:text-lg">
                         Current Roles
                     </p>
-                    <p className="text-sm md:text-md lg:text-lg ">
+                    <p className="text-sm leading-relaxed text-text-light md:text-base">
                         Manage your account roles and unlock new features on EventHub
                     </p>
                 </div>
 
                 <div className="space-y-4">
                     {/* attendee active */}
-                    <div className="flex items-center justify-between border border-green-300 bg-green-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between rounded-2xl border border-border bg-surface-hover p-4">
                         <div className="flex flex-row items-center gap-4">
-                            <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-green-100 text-green-500">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-success-light text-success">
                                 <Check />
                             </div>
-                            <div> <p className="font-medium">Attendee</p>
-                                <p className="text-sm">Browse and book event tickets</p></div>
+                            <div>
+                                <p className="font-medium text-text-dark">Attendee</p>
+                                <p className="text-sm text-text-light">Browse and book event tickets</p>
+                            </div>
                         </div>
-                        <div><button className="bg-green-600 text-white rounded-lg px-2 h-8 text-sm" disabled>Active Now</button></div>
+                        <div><button className="rounded-full bg-success px-3 h-8 text-sm text-white" disabled>Active Now</button></div>
                     </div>
 
                     {/* vendor apply now */}
-                    <div className="border border-gray-300 rounded-lg p-4">
+                    <div className="surface-card p-4">
 
                         <div className="flex items-center justify-between ">
                             <div className="flex flex-row items-center gap-4">
-                                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-purple-100 text-purple-500">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-light text-primary">
                                     <ShoppingBag />
                                 </div>
                                 <div>
-                                    <p className="font-medium">Vendor</p>
-                                    <p className="text-sm">Apply to sell at events</p>
+                                    <p className="font-medium text-text-dark">Vendor</p>
+                                    <p className="text-sm text-text-light">Apply to sell at events</p>
                                 </div>
                             </div>
 
@@ -65,26 +67,25 @@ export default function ManageRoles({ isOpen, onClose }: ManageRolesProps) {
                                     size="vsm"
                                     onClick={() => {
                                         onClose();
-                                    }}
-                                    className="border-purple-500 text-white bg-purple-600" />
+                                    }} />
                             </Link>
 
 
 
                         </div>
-                        <div className="border-b border-brown-normal my-4"></div>
+                        <div className="my-4 border-b border-divider"></div>
 
                         <ol className="list-none space-y-2">
                             <li className="flex items-center gap-2">
-                                <CircleCheckBig className="w-5 h-5 text-purple-500" />
+                                <CircleCheckBig className="w-5 h-5 text-primary" />
                                 <span>Apply for booth spaces at event</span>
                             </li>
                             <li className="flex items-center gap-2">
-                                <CircleCheckBig className="w-5 h-5 text-purple-500" />
+                                <CircleCheckBig className="w-5 h-5 text-primary" />
                                 <span>Manage inventory and sales</span>
                             </li>
                             <li className="flex items-center gap-2">
-                                <CircleCheckBig className="w-5 h-5 text-purple-500" />
+                                <CircleCheckBig className="w-5 h-5 text-primary" />
                                 <span>Track sales and analytics</span>
                             </li>
                         </ol>
@@ -92,16 +93,16 @@ export default function ManageRoles({ isOpen, onClose }: ManageRolesProps) {
 
 
                     {/* organizer apply now */}
-                    <div className="border border-gray-300 rounded-lg p-4">
+                    <div className="surface-card p-4">
 
                         <div className="flex items-center justify-between ">
                             <div className="flex flex-row items-center gap-4">
-                                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-blue-100 text-blue-500">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-light text-primary">
                                     <Calendar />
                                 </div>
                                 <div>
-                                    <p className="font-medium">Organizer</p>
-                                    <p className="text-sm">Apply to Host your own events</p>
+                                    <p className="font-medium text-text-dark">Organizer</p>
+                                    <p className="text-sm text-text-light">Apply to host your own events</p>
                                 </div>
                             </div>
 
@@ -113,26 +114,25 @@ export default function ManageRoles({ isOpen, onClose }: ManageRolesProps) {
                                     onClick={() => {
                                         onClose();
 
-                                    }}
-                                    className="border-purple-50 text-white bg-blue-600" />
+                                    }} />
                             </Link>
 
 
 
                         </div>
-                        <div className="border-b border-brown-normal my-4"></div>
+                        <div className="my-4 border-b border-divider"></div>
 
                         <ol className="list-none space-y-2">
                             <li className="flex items-center gap-2">
-                                <CircleCheckBig className="w-5 h-5 text-blue-500" />
+                                <CircleCheckBig className="w-5 h-5 text-primary" />
                                 <span>Create and publish unlimited events</span>
                             </li>
                             <li className="flex items-center gap-2">
-                                <CircleCheckBig className="w-5 h-5 text-blue-500" />
+                                <CircleCheckBig className="w-5 h-5 text-primary" />
                                 <span>Manage tickets sales and attendees</span>
                             </li>
                             <li className="flex items-center gap-2">
-                                <CircleCheckBig className="w-5 h-5 text-blue-500" />
+                                <CircleCheckBig className="w-5 h-5 text-primary" />
                                 <span>Access to vendor and sponsor management</span>
                             </li>
                         </ol>
@@ -144,10 +144,10 @@ export default function ManageRoles({ isOpen, onClose }: ManageRolesProps) {
 
 
                 </div>
-                <div className="flex justify-end mt-4">
+                <div className="mt-6 flex justify-end">
                     <Button text='Close'
                         onClick={onClose}
-                        status="danger"
+                        variant="secondary"
                         size="md" />
                 </div>
             </div>
