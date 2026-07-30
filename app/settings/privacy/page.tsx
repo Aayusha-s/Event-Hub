@@ -145,7 +145,7 @@ const Page = () => {
                         <div className='flex flex-row items-center justify-between gap-3'>
                             <div className='flex-1'>
                                 <h4 className='font-bold text-lg mb-1'>Show Attending Events</h4>
-                                <p className='text-text-dark/70 text-md md:text-base'>Let others see events you're attending</p>
+                                <p className='text-text-dark/70 text-md md:text-base'>Let others see events you&apos;re attending</p>
                             </div>
                             <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
                                 <ToggleSwitch

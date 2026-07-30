@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
-import HeaderLoggedIn from "@/components/HeaderLoggedIn";
+import Navbar from "@/components/Navbar";
+import AuthProvider from "@/components/providers/AuthProvider";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -29,10 +30,11 @@ export default function RootLayout({
         />
       </head>
       <body className={`${plusJakartaSans.variable} font-cause bg-background text-text-dark antialiased`}>
-        <HeaderLoggedIn />
-        {/* <Header/> */}
-        {children}
-        <Footer />
+        <AuthProvider>
+          <Navbar />
+          <div className="pt-[72px]">{children}</div>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

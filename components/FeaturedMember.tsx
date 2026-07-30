@@ -30,15 +30,15 @@ const FeaturedMember = ({
                     {/* <p className='text-gray-500 font-medium text-md text-center'>{role}</p> */}
 
                     <div className='flex flex-wrap gap-2 mt-2'>
-                        <Button text={tags[0]}
+                        <Button text={tags?.[0]}
                             variant='tag'
                             size='vsm'
                         ></Button>
-                        <Button text={tags[1]}
+                        <Button text={tags?.[1]}
                             variant='tag'
                             size='vsm'
                         ></Button>
-                        <Button text={tags[2]}
+                        <Button text={tags?.[2]}
                             variant='tag'
                             size='vsm'
                         ></Button>

@@ -233,7 +233,7 @@ const Page = () => {
                             value={website}
                             onChange={(e)=>{
                                 setWebsite(e.target.value)
-                                setWebsiteError(validateWebsite)(e.target.value)
+                                setWebsiteError(validateWebsite(e.target.value))
                             }}/>
                     </div>
 

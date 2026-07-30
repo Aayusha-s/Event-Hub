@@ -3,9 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { ArrowLeft, Check, CircleAlert } from 'lucide-react';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
-
-const Page = () => {
-
+const Page = () => {
     const [eventType, setEventType] = useState('');
     const [pastExperience, setPastExperience] = useState('');
 
@@ -13,14 +11,13 @@ const Page = () => {
         const savedOrganizerStep2 = localStorage.getItem('organizerStep2')
         if (savedOrganizerStep2) {
             const data = JSON.parse(savedOrganizerStep2)
-            setEventType(data.eventType ?? '')
-            setPastExperience(data.pastExperience ?? '')
+            if (data.eventType) setEventType(data.eventType)
+            if (data.pastExperience) setPastExperience(data.pastExperience)
         }
     }, [])
 
     const [eventTypeError, setEventTypeError] = useState('');
     const [pastExperienceError, setPastExperienceError] = useState('');
-
 
     const router = useRouter()
 
@@ -44,6 +41,11 @@ const Page = () => {
 
 
         const savedOrg = localStorage.getItem('organizerStep1')
+
+        if (!savedOrg) {
+            router.push('/organizer/organizerapplication-1')
+            return
+        }
 
         const choosenOrg = JSON.parse(savedOrg);
         const type = choosenOrg.orgType;

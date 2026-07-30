@@ -44,10 +44,10 @@ const ActiveChallenges = ({
 
             <div className='flex flex-row my-4'>
                 <div className='flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium'>
-                    {tags[0]}
+                    {tags?.[0]}
                 </div>
                 <div className='flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium ml-2'>
-                    { tags[1]}
+                    {tags?.[1]}
                 </div>
             </div>
 

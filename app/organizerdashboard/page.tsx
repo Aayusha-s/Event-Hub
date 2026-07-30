@@ -25,7 +25,7 @@ import { useRouter } from 'next/navigation';
 
 import VendorCards from '@/components/VendorCards';
 
-const page = () => {
+const Page = () => {
 
     const router = useRouter();
     return (
@@ -533,4 +533,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

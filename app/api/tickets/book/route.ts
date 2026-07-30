@@ -1,0 +1,31 @@
+import { NextResponse } from "next/server";
+import mongoose, { Types } from "mongoose";
+import { requireRole } from "@/middleware/auth/requireRole";
+import { bookTicket } from "@/services/tickets/ticket.service";
+import { HttpError } from "@/utils/api/httpError";
+import { validateBookTicketInput } from "@/utils/tickets/validation";
+
+const errorResponse = (error: unknown) => {
+	if (error instanceof HttpError) {
+		return NextResponse.json({ success: false, error: { message: error.message, code: error.code } }, { status: error.statusCode });
+	}
+	if (error instanceof SyntaxError || error instanceof mongoose.Error.ValidationError) {
+		return NextResponse.json({ success: false, error: { message: error.message, code: "VALIDATION_ERROR" } }, { status: 400 });
+	}
+	if (typeof error === "object" && error && "code" in error && error.code === 11000) {
+		return NextResponse.json({ success: false, error: { message: "You already have an active booking for this ticket type.", code: "DUPLICATE_BOOKING" } }, { status: 409 });
+	}
+	console.error("Ticket booking failed:", error);
+	return NextResponse.json({ success: false, error: { message: "Unable to book ticket." } }, { status: 500 });
+};
+
+export async function POST(request: Request) {
+	try {
+		const session = await requireRole(["attendee", "organizer", "vendor", "ticket_checker", "admin"]);
+		const input = validateBookTicketInput(await request.json());
+		const ticket = await bookTicket(new Types.ObjectId(session.user.id), input);
+		return NextResponse.json({ success: true, data: ticket }, { status: 201 });
+	} catch (error) {
+		return errorResponse(error);
+	}
+}

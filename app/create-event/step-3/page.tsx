@@ -6,11 +6,18 @@ import { CircleX, Plus } from 'lucide-react';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { saveDraft } from '@/lib/createEventDraft';
 
+type TicketDraft = {
+    ticketName: string;
+    quantity: string;
+    price: string;
+    description: string;
+};
+
 const Page = () => {
     const router = useRouter();
 
     // State to hold multiple tickets
-    const [tickets, setTickets] = useState(() => {
+    const [tickets, setTickets] = useState<TicketDraft[]>(() => {
         if (typeof window === 'undefined') {
             return [{ ticketName: '', quantity: '', price: '', description: '' }];
         }
@@ -18,8 +25,8 @@ const Page = () => {
         try {
             const saved = window.localStorage.getItem('EventInfo');
             const parsed = saved ? JSON.parse(saved) : null;
-            if (parsed?.tickets?.length > 0) {
-                return parsed.tickets;
+            if (Array.isArray(parsed?.tickets) && parsed.tickets.length > 0) {
+                return parsed.tickets as TicketDraft[];
             }
         } catch {
             return [{ ticketName: '', quantity: '', price: '', description: '' }];

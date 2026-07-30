@@ -54,7 +54,7 @@ const EventDetailsTitle = (
                     <div>
                         <Button
                             text="Book Now"
-                            icon={<i className="fa-solid fa-arrow-right"></i>}
+                            iconRight={<i className="fa-solid fa-arrow-right"></i>}
                             variant="cta"
                         />
                     </div>

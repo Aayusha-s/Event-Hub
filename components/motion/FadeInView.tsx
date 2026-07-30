@@ -20,14 +20,11 @@ const FadeInView = ({
     as: Tag = "div",
 }: FadeInViewProps) => {
     const ref = useRef<HTMLDivElement>(null);
-    const [isVisible, setIsVisible] = useState(false);
     const prefersReducedMotion = useReducedMotion();
+    const [isVisible, setIsVisible] = useState(() => prefersReducedMotion);
 
     useEffect(() => {
-        if (prefersReducedMotion) {
-            setIsVisible(true);
-            return;
-        }
+        if (prefersReducedMotion) return;
 
         const element = ref.current;
         if (!element) return;
@@ -55,7 +52,7 @@ const FadeInView = ({
                     : direction === "up"
                       ? "motion-fade-up"
                       : "motion-fade-in",
-                isVisible && "motion-visible",
+                (isVisible || prefersReducedMotion) && "motion-visible",
                 className
             )}
             style={

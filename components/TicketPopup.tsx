@@ -1,5 +1,5 @@
 'use client';
-import { Calendar, Cross, Download, MapPin, QrCode, Share2, X } from "lucide-react";
+import { Calendar, Download, MapPin, QrCode, Share2, X } from "lucide-react";
 import Button from "./Button";
 import { useState } from "react";
 import SharePopup from "./SharePopup";
@@ -15,8 +15,9 @@ export default function TicketPopup(
         onClose
     }: TicketPopupProps
 ) {
-    if (!isOpen) return null;
     const [sharePopupOpen, setSharePopupOpen] = useState(false);
+
+    if (!isOpen) return null;
 
     if (sharePopupOpen) {
         return (
