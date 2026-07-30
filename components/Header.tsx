@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react";
 import Button from "./Button";
 import Searchbar from "./Searchbar";
 
@@ -22,7 +23,9 @@ const Header = () => {
                 </div>
 
                 <div className="hidden flex-1 max-w-3xl md:flex mx-6">
-                    <Searchbar />
+                    <Suspense fallback={<div className="h-10 w-full rounded-full border border-border bg-surface" />}> 
+                        <Searchbar />
+                    </Suspense>
                 </div>
 
                 <div className="nav-right flex items-center gap-4">

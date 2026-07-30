@@ -1,5 +1,5 @@
 'use client'
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 
 import { ArrowLeft, Check } from 'lucide-react';
 import Button from '@/components/Button';
@@ -274,7 +274,7 @@ const Page = () => {
                             type="text"
                             placeholder="Enter your state"
                             className="w-full border border-brown-normal rounded-md p-2 mt-1"
-                            value={status}
+                            value={state}
                             onChange={(e)=>{
                                 setState(e.target.value)
                                 setStateError(validateState(e.target.value))

@@ -1,5 +1,5 @@
 'use client';
-import  { useState } from 'react'
+import { useState } from 'react'
 import { ArrowLeft, Check } from 'lucide-react';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
@@ -7,8 +7,7 @@ import { useRouter } from 'next/navigation';
 const Page = () => {
     const router = useRouter();
 
-    const [terms, setTerms] = useState<string[]>([]);
-    const [termsError, setTermsError] = useState('');
+    const [terms] = useState<string[]>([]);
 
     
     const handlePrevious = () => {

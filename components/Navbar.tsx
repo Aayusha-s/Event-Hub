@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Bell, ChevronDown, CircleUserRound, LogOut, Menu, X } from "lucide-react";
 import Button from "@/components/Button";
 import Searchbar from "@/components/Searchbar";
@@ -62,7 +62,9 @@ const Navbar = () => {
 				</div>
 
 				<div className="hidden flex-1 max-w-2xl md:flex mx-4">
-					<Searchbar />
+					<Suspense fallback={<div className="h-10 w-full rounded-full border border-border bg-surface" />}>
+						<Searchbar />
+					</Suspense>
 				</div>
 
 				<div className="flex items-center gap-2">

@@ -1,6 +1,9 @@
-// Module placeholder: booking and ticket purchase logic will be implemented later.
+import { Types } from "mongoose";
+import { bookTicket } from "@/services/tickets/ticket.service";
+import { BookTicketInput } from "@/utils/tickets/validation";
+
 export const bookingService = {
-  createBooking: async () => {
-    throw new Error("Not implemented yet");
-  },
+	createBooking: async (userId: Types.ObjectId | string, input: BookTicketInput) => {
+		return bookTicket(new Types.ObjectId(userId), input);
+	},
 };

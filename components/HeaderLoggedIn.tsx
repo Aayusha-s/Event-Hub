@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Bell, ChevronDown, CirclePlus, CircleUserRound, LogOut, Settings, User } from 'lucide-react';
 import Image from 'next/image';
 import ManageRoles from './ManageRoles';
@@ -31,7 +31,9 @@ const HeaderLoggedIn = () => {
                 </div>
 
                 <div className="hidden flex-1 max-w-3xl md:flex mx-6">
-                    <Searchbar />
+                    <Suspense fallback={<div className="h-10 w-full rounded-full border border-border bg-surface" />}>
+                        <Searchbar />
+                    </Suspense>
                 </div>
 
                 <div className="nav-right flex items-center gap-2 text-text-dark cursor-pointer">

@@ -1,36 +1,32 @@
 'use client';
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ArrowLeft, Check, CircleAlert, Globe, Mail, Phone } from 'lucide-react';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 
 const Page = () => {
 
-    const [orgType, setOrgType] = useState('');
-    const [email, setEmail] = useState('');
-    const [contactPerson, setContactPerson] = useState('');
-    const [eventType, setEventType] = useState('');
-    const [description, setDescription] = useState('');
-    const [website, setWebsite] = useState('');
-    const [address, setAddress] = useState('');
-    const [city, setCity] = useState('');
-    const [state, setState] = useState('');
-
-    useEffect(() => {
-        const savedOrganizerStep1 = localStorage.getItem('organizerStep1')
-        if (savedOrganizerStep1){
-            const data = JSON.parse(savedOrganizerStep1)
-            if (data.orgType) setOrgType(data.orgType)
-            if (data.email) setEmail(data.email)
-            if (data.contactPerson) setContactPerson(data.contactPerson)
-            if (data.eventType) setEventType(data.eventType)
-            if (data.description) setDescription(data.description)
-            if (data.website) setWebsite(data.website)
-            if (data.address) setAddress(data.address)
-            if (data.city) setCity(data.city)
-            if (data.state) setState(data.state)
+    const getStoredOrganizerStep1 = () => {
+        if (typeof window === 'undefined') return null;
+        try {
+            const savedOrganizerStep1 = window.localStorage.getItem('organizerStep1');
+            return savedOrganizerStep1 ? JSON.parse(savedOrganizerStep1) : null;
+        } catch {
+            return null;
         }
-    },[])
+    };
+
+    const storedOrganizerStep1 = getStoredOrganizerStep1();
+
+    const [orgType, setOrgType] = useState(storedOrganizerStep1?.orgType ?? '');
+    const [email, setEmail] = useState(storedOrganizerStep1?.email ?? '');
+    const [contactPerson, setContactPerson] = useState(storedOrganizerStep1?.contactPerson ?? '');
+    const [eventType, setEventType] = useState(storedOrganizerStep1?.eventType ?? '');
+    const [description, setDescription] = useState(storedOrganizerStep1?.description ?? '');
+    const [website, setWebsite] = useState(storedOrganizerStep1?.website ?? '');
+    const [address, setAddress] = useState(storedOrganizerStep1?.address ?? '');
+    const [city, setCity] = useState(storedOrganizerStep1?.city ?? '');
+    const [state, setState] = useState(storedOrganizerStep1?.state ?? '');
 
     const [orgTypeError, setOrgTypeError] = useState('');
     const [emailError, setEmailError] = useState('');

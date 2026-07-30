@@ -1,12 +1,12 @@
 "use client";
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import EventCard from '@/components/EventCard'
 import Pagination from '@/components/Pagination'
 import Button from '@/components/Button';
 import { ListFilter, MapPin, Clock, Calendar, X } from 'lucide-react'
 
-const Page = () => {
+const ExploreEventsContent = () => {
     const searchParams = useSearchParams();
     const searchQuery = searchParams.get('query')?.trim().toLowerCase() ?? '';
     const searchLocation = searchParams.get('location')?.trim().toLowerCase() ?? '';
@@ -497,5 +497,11 @@ const Page = () => {
         </section>
     )
 }
+
+const Page = () => (
+    <Suspense fallback={<div className="px-5 py-10 text-text-muted">Loading events…</div>}>
+        <ExploreEventsContent />
+    </Suspense>
+);
 
 export default Page

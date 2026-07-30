@@ -1,20 +1,24 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ArrowLeft, Check, CircleAlert } from 'lucide-react';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
-const Page = () => {
-    const [eventType, setEventType] = useState('');
-    const [pastExperience, setPastExperience] = useState('');
 
-    useEffect(() => {
-        const savedOrganizerStep2 = localStorage.getItem('organizerStep2')
-        if (savedOrganizerStep2) {
-            const data = JSON.parse(savedOrganizerStep2)
-            if (data.eventType) setEventType(data.eventType)
-            if (data.pastExperience) setPastExperience(data.pastExperience)
+const Page = () => {
+    const getStoredOrganizerStep2 = () => {
+        if (typeof window === 'undefined') return null;
+        try {
+            const savedOrganizerStep2 = window.localStorage.getItem('organizerStep2');
+            return savedOrganizerStep2 ? JSON.parse(savedOrganizerStep2) : null;
+        } catch {
+            return null;
         }
-    }, [])
+    };
+
+    const storedOrganizerStep2 = getStoredOrganizerStep2();
+
+    const [eventType, setEventType] = useState(storedOrganizerStep2?.eventType ?? '');
+    const [pastExperience, setPastExperience] = useState(storedOrganizerStep2?.pastExperience ?? '');
 
     const [eventTypeError, setEventTypeError] = useState('');
     const [pastExperienceError, setPastExperienceError] = useState('');
