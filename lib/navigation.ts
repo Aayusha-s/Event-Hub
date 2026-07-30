@@ -7,55 +7,62 @@ export type NavItem = {
 
 export const guestNav: NavItem[] = [
 	{ label: "Home", href: "/" },
-	{ label: "Events", href: "/explore-events" },
-	{ label: "Vendors", href: "/vendors" },
+	{ label: "Explore", href: "/explore-events" },
+	{ label: "Community", href: "/community" },
 	{ label: "Login", href: "/login" },
-	{ label: "Register", href: "/signup" },
+	{ label: "Sign Up", href: "/signup" },
 ];
 
 export const attendeeNav: NavItem[] = [
 	{ label: "Home", href: "/" },
-	{ label: "Events", href: "/explore-events" },
+	{ label: "Explore", href: "/explore-events" },
 	{ label: "My Tickets", href: "/userdashboard" },
+	{ label: "Saved Events", href: "/explore-events" },
+	{ label: "Community", href: "/community" },
+	{ label: "Challenges", href: "/challenges" },
+	{ label: "Messages", href: "/messages" },
+	{ label: "Notifications", href: "/notification" },
 	{ label: "Profile", href: "/userprofile" },
-	{ label: "Settings", href: "/settings/profile" },
 ];
 
 export const organizerNav: NavItem[] = [
 	{ label: "Home", href: "/" },
-	{ label: "Events", href: "/explore-events" },
+	{ label: "Explore", href: "/explore-events" },
 	{ label: "Create Event", href: "/create-event/step-1" },
 	{ label: "My Events", href: "/explore-events?organizer=me" },
 	{ label: "Organizer Dashboard", href: "/organizerdashboard" },
+	{ label: "Messages", href: "/messages" },
+	{ label: "Notifications", href: "/notification" },
 	{ label: "Profile", href: "/userprofile" },
-	{ label: "Settings", href: "/settings/profile" },
 ];
 
 export const vendorNav: NavItem[] = [
 	{ label: "Home", href: "/" },
-	{ label: "Events", href: "/explore-events" },
+	{ label: "Explore", href: "/explore-events" },
 	{ label: "Vendor Dashboard", href: "/vendordashboard" },
-	{ label: "Create Stall", href: "/vendor/vendorapplication-1" },
-	{ label: "My Stalls", href: "/vendordashboard#stalls" },
-	{ label: "Bookings", href: "/vendordashboard#bookings" },
+	{ label: "My Stalls", href: "/vendordashboard" },
+	{ label: "Messages", href: "/messages" },
+	{ label: "Notifications", href: "/notification" },
 	{ label: "Profile", href: "/userprofile" },
 ];
 
 export const ticketCheckerNav: NavItem[] = [
 	{ label: "Home", href: "/" },
-	{ label: "Scan QR", href: "/ticket-checker" },
 	{ label: "Check In", href: "/ticket-checker" },
+	{ label: "Scan QR", href: "/ticket-checker" },
+	{ label: "Messages", href: "/messages" },
+	{ label: "Notifications", href: "/notification" },
 	{ label: "Profile", href: "/userprofile" },
 ];
 
 export const adminNav: NavItem[] = [
-	{ label: "Dashboard", href: "/admin" },
+	{ label: "Home", href: "/" },
+	{ label: "Admin Dashboard", href: "/admin" },
 	{ label: "Manage Users", href: "/admin/users" },
 	{ label: "Manage Events", href: "/admin/events" },
-	{ label: "Manage Vendors", href: "/admin/vendors" },
-	{ label: "Analytics", href: "/analytics" },
-	{ label: "Reports", href: "/admin/reports" },
-	{ label: "Settings", href: "/settings/profile" },
+	{ label: "Reports", href: "/analytics" },
+	{ label: "Notifications", href: "/notification" },
+	{ label: "Profile", href: "/userprofile" },
 ];
 
 export const getNavItemsForRole = (role?: UserRole | null): NavItem[] => {

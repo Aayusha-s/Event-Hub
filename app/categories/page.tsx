@@ -95,16 +95,7 @@ const page = () => {
                 </p>
             </div>
 
-            {/* view style */}
-            <div className='flex justify-end gap-4 mb-6 mt-1 cursor-pointer'>
-                <i className="fa-solid fa-table-cells text-2xl"></i>
-                <i className="fa-solid fa-list text-2xl"></i>
-            </div>
-
             
-
-            
-
             {/* contents */}
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
                 {events.map((event, index) => (

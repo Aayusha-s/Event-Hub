@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Bell, ChevronDown, CircleUserRound, LogOut, Menu, X } from "lucide-react";
 import Button from "@/components/Button";
 import Searchbar from "@/components/Searchbar";
@@ -19,11 +19,44 @@ const Navbar = () => {
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const [isRolePopupOpen, setIsRolePopupOpen] = useState(false);
 	const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+	const avatarButtonRef = useRef<HTMLButtonElement>(null);
+	const userMenuRef = useRef<HTMLDivElement>(null);
 
 	const isAuthenticated = status === "authenticated" && Boolean(session?.user);
 	const role = session?.user?.role as UserRole | undefined;
 	const navItems = getNavItemsForRole(isAuthenticated ? role : null);
 	const displayName = session?.user?.name ?? "Guest";
+	const profileImage = (session?.user?.image as string | undefined) ?? undefined;
+
+	useEffect(() => {
+		const handlePointerDown = (event: MouseEvent) => {
+			const target = event.target as Node;
+			if (userMenuOpen && userMenuRef.current && !userMenuRef.current.contains(target) && !avatarButtonRef.current?.contains(target)) {
+				setUserMenuOpen(false);
+			}
+			if (menuOpen && !(event.target instanceof Node)) {
+				return;
+			}
+			if (menuOpen && !(event.target as HTMLElement).closest("header")) {
+				setMenuOpen(false);
+			}
+		};
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				setUserMenuOpen(false);
+				setMenuOpen(false);
+				setIsNotificationOpen(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handlePointerDown);
+		document.addEventListener("keydown", handleKeyDown);
+		return () => {
+			document.removeEventListener("mousedown", handlePointerDown);
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [menuOpen, userMenuOpen]);
 
 	const handleLogout = async () => {
 		await fetch("/api/auth/logout", { method: "POST" });
@@ -46,7 +79,7 @@ const Navbar = () => {
 
 					<nav className="hidden items-center gap-1 lg:flex">
 						{navItems
-							.filter((item) => !["Login", "Register", "Logout"].includes(item.label))
+							.filter((item) => !["Login", "Sign Up", "Register", "Logout"].includes(item.label))
 							.map((item) => (
 								<Link
 									key={item.href + item.label}
@@ -85,10 +118,15 @@ const Navbar = () => {
 
 							<button
 								type="button"
+								ref={avatarButtonRef}
 								className="flex items-center gap-1 rounded-full p-1.5 transition-colors hover:bg-surface-hover"
 								onClick={() => setUserMenuOpen(!userMenuOpen)}
 							>
-								<CircleUserRound size={32} strokeWidth={1.3} />
+								{profileImage ? (
+									<img src={profileImage} alt={displayName} className="h-8 w-8 rounded-full object-cover" />
+								) : (
+									<CircleUserRound size={32} strokeWidth={1.3} />
+								)}
 								<span className="hidden max-w-[120px] truncate text-sm font-medium md:inline">{displayName}</span>
 								<ChevronDown size={18} />
 							</button>
@@ -110,7 +148,7 @@ const Navbar = () => {
 				<div className="border-t border-border bg-surface px-4 py-4 lg:hidden">
 					<nav className="flex flex-col gap-1">
 						{navItems
-							.filter((item) => !["Login", "Register", "Logout"].includes(item.label))
+							.filter((item) => !["Login", "Sign Up", "Register", "Logout"].includes(item.label))
 							.map((item) => (
 								<Link
 									key={item.href + item.label}
@@ -140,10 +178,20 @@ const Navbar = () => {
 			)}
 
 			{userMenuOpen && isAuthenticated && (
-				<div className="absolute right-5 top-[72px] w-52 rounded-2xl border border-border bg-surface shadow-lg">
-					<p className="px-4 py-3 text-lg font-semibold text-text-dark">{displayName}</p>
-					<p className="px-4 pb-2 text-xs capitalize text-text-light">{role?.replace("_", " ")}</p>
-					<div className="my-0.5 border-t border-divider" />
+				<div ref={userMenuRef} className="absolute right-4 top-[72px] z-[60] w-64 overflow-hidden rounded-2xl border border-border bg-surface shadow-xl transition-all duration-200">
+					<div className="flex items-center gap-3 border-b border-divider px-4 py-4">
+						{profileImage ? (
+							<img src={profileImage} alt={displayName} className="h-12 w-12 rounded-full object-cover" />
+						) : (
+							<div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-hover text-text-dark">
+								<CircleUserRound size={24} />
+							</div>
+						)}
+						<div className="min-w-0">
+							<p className="truncate text-base font-semibold text-text-dark">{displayName}</p>
+							<p className="truncate text-sm capitalize text-text-light">{role?.replace("_", " ")}</p>
+						</div>
+					</div>
 
 					{role === "attendee" && (
 						<button

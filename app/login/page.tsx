@@ -2,17 +2,20 @@
 import Link from "next/link";
 import Button from "@/components/Button";
 import Image from "next/image";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { CircleAlert, Lock, Mail } from "lucide-react";
 
-const Page = () => {
+const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [authError, setAuthError] = useState("");
 
 
     // email validation
@@ -35,35 +38,40 @@ const Page = () => {
             return "Password is required!";
         }
 
-        if (value.length < 6) {
-            return "Password must be at least 6 characters long!";
+        if (value.length < 8) {
+            return "Password must be at least 8 characters long!";
         }
         return "";
     }
 
 
     // handle login
-    const handleLogin = () => {
+    const handleLogin = async () => {
         const emailValidation = validateEmail(email);
         const passwordValidation = validatePassword(password);
 
         setEmailError(emailValidation);
         setPasswordError(passwordValidation);
+        setAuthError("");
 
         if (emailValidation || passwordValidation) {
             return;
         }
 
-        const LoginDetail = {
+        const result = await signIn("credentials", {
             email,
-            password
+            password,
+            redirect: false,
+        });
+
+        if (result?.error) {
+            setAuthError("Invalid email or password.");
+            return;
         }
 
-        localStorage.setItem(
-            'loginDetail',
-            JSON.stringify(LoginDetail)
-        )
-        router.push('/');
+        const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+        router.replace(callbackUrl);
+        router.refresh();
     }
 
     {/* handle register button */ }
@@ -198,6 +206,11 @@ const Page = () => {
                             </div>
                         </div>
 
+                        {authError && (
+                            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                                {authError}
+                            </div>
+                        )}
 
                         <Button text="Login" variant="cta" size="md" onClick={handleLogin} />
                     </div>
@@ -245,5 +258,19 @@ const Page = () => {
         </section>
     );
 };
+
+const Page = () => (
+    <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center">Loading...</div>}>
+        <LoginForm />
+    </Suspense>
+);
+
+export default Page;
+
+const Page = () => (
+    <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center">Loading...</div>}>
+        <LoginForm />
+    </Suspense>
+);
 
 export default Page;

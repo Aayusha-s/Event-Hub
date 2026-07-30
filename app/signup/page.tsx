@@ -1,9 +1,10 @@
 'use client';
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link';
 import Button from '@/components/Button';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { CircleAlert } from 'lucide-react';
 
 const Page = () => {
@@ -18,22 +19,11 @@ const Page = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [termsError, setTermsError] = useState('');
+    const [authError, setAuthError] = useState('');
 
     const router = useRouter();
 
-    const handleSignup = () => {
-        const signupDetail = {
-            fullName,
-            email,
-            password
-
-        }
-
-        localStorage.setItem(
-            'signupDetails',
-            JSON.stringify(signupDetail)
-        )
-
+    const handleSignup = async () => {
         const fullNameValidation = validateFullName(fullName);
         const emailValidation = validateEmail(email);
         const passwordValidation = validatePassword(password);
@@ -44,12 +34,35 @@ const Page = () => {
         setEmailError(emailValidation)
         setPasswordError(passwordValidation)
         setTermsError(termsValidation)
+        setAuthError('');
 
         if (fullNameValidation || emailValidation || passwordValidation || termsValidation) return;
 
-        router.push('/login')
+        const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: fullName, email, password }),
+        });
 
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            setAuthError(data.error?.message ?? 'Unable to create account.');
+            return;
+        }
 
+        const result = await signIn('credentials', {
+            email,
+            password,
+            redirect: false,
+        });
+
+        if (result?.error) {
+            setAuthError('Account created but sign in failed.');
+            return;
+        }
+
+        router.replace('/');
+        router.refresh();
     }
 
     // handle full name
@@ -94,7 +107,7 @@ const Page = () => {
 
         if (!value) return "Password is required!";
 
-        if (value.length < 6) return "Password must be atleast 6 characters long!";
+        if (value.length < 8) return "Password must be at least 8 characters long!";
 
         return "";
 
@@ -319,6 +332,12 @@ const Page = () => {
                                 </div>
                             )}
                         </div>
+
+                        {authError && (
+                            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                                {authError}
+                            </div>
+                        )}
 
                         <Button text="Register" variant="cta" onClick={handleSignup} />
                     </div>

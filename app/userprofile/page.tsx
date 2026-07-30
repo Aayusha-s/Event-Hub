@@ -1,6 +1,7 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import { 
     Calendar, MapPin, Share2, Link2, Mail, Sparkles, Star, Utensils, 
     Music, Laptop, Crown, MessageCircle, Heart, Camera, Users, 
@@ -11,7 +12,9 @@ import Button from '@/components/Button'
 import EventCard from '@/components/EventCard'
 
 const Page = () => {
+    const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState('events')
+    const [profile, setProfile] = useState<{ name?: string; email?: string; phone?: string; role?: string; profileImage?: string } | null>(null)
 
     const events = [
         {
@@ -104,6 +107,24 @@ const Page = () => {
         { id: 9, src: "/images/party.png", alt: "Night Festival", likes: 58, comments: 11, category: "Music" },
     ]
 
+    useEffect(() => {
+        const loadProfile = async () => {
+            if (!session?.user?.id) return;
+            try {
+                const response = await fetch('/api/users/me');
+                if (!response.ok) return;
+                const result = await response.json();
+                if (result?.success) {
+                    setProfile(result.data);
+                }
+            } catch (error) {
+                console.error('Failed to load profile', error);
+            }
+        };
+
+        loadProfile();
+    }, [session?.user?.id]);
+
     const activities = [
         {
             id: 1,
@@ -175,16 +196,20 @@ const Page = () => {
             2xl:my-8 2xl:mx-8 2xl:px-8'>
             {/* Profile Header */}
             <div className='flex flex-col sm:flex-row items-start sm:items-center gap-6'>
-                <Link href="/user/jane-doe" className='shrink-0'>
-                    <div className='w-24 h-24 md:w-28 md:h-28 rounded-full bg-linear-to-br from-blue-100 to-purple-100 flex items-center justify-center border-4 border-white shadow-lg'>
-                        <span className='text-2xl md:text-3xl font-bold '>JD</span>
+                <Link href="/userprofile" className='shrink-0'>
+                    <div className='w-24 h-24 md:w-28 md:h-28 rounded-full bg-linear-to-br from-blue-100 to-purple-100 flex items-center justify-center border-4 border-white shadow-lg overflow-hidden'>
+                        {profile?.profileImage ? (
+                            <img src={profile.profileImage} alt={profile.name ?? 'Profile'} className='h-full w-full object-cover' />
+                        ) : (
+                            <span className='text-2xl md:text-3xl font-bold '>{(profile?.name ?? session?.user?.name ?? 'U').charAt(0).toUpperCase()}</span>
+                        )}
                     </div>
                 </Link>
 
                 <div className='flex-1 space-y-3'>
                     <div>
-                        <h1 className='text-2xl md:text-3xl font-bold'>Jane Doe</h1>
-                        <p className='text-gray-500 text-lg'>@jane_doe</p>
+                        <h1 className='text-2xl md:text-3xl font-bold'>{profile?.name ?? session?.user?.name ?? 'User'}</h1>
+                        <p className='text-gray-500 text-lg capitalize'>{profile?.role ?? session?.user?.role ?? 'attendee'}</p>
                     </div>
                     
                     <div className='flex flex-wrap items-center gap-4 text-base md:text-lg'>
@@ -209,8 +234,7 @@ const Page = () => {
             {/* Bio & Links */}
             <div className='mt-6 space-y-4'>
                 <p className='text-gray-700'>
-                    Passionate about music festivals, tech conferences, and food events.
-                    Always looking for the next great experience! 🎵🍕💡
+                    {profile?.phone ? `Phone: ${profile.phone}` : 'Add your contact details and profile image to personalize your account.'}
                 </p>
 
                 <div className='flex flex-wrap gap-4'>
@@ -218,9 +242,9 @@ const Page = () => {
                         <Link2 size={18} />
                         <span>johndoe.com</span>
                     </a>
-                    <a href="mailto:johndoe@gmail.com" className='flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline'>
+                    <a href={`mailto:${profile?.email ?? session?.user?.email ?? ''}`} className='flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline'>
                         <Mail size={18} />
-                        <span>johndoe@gmail.com</span>
+                        <span>{profile?.email ?? session?.user?.email ?? 'Email not available'}</span>
                     </a>
                 </div>
 
