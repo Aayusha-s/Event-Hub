@@ -6,6 +6,7 @@ type PastEventsCardProps = {
     location:string;
     rating:number;
     onOpen?: () => void;    
+    onClick?: () => void;
 }
 const PastEventsCard = (
     {
@@ -13,12 +14,12 @@ const PastEventsCard = (
         date,
         location,
         rating,
-        onOpen
+        onOpen, onClick
     }: PastEventsCardProps
 ) => {
     return (
         <div className="border border-brown-normal bg-brown-light rounded-xl p-4 w-full md:max-w-[535px]
-        cursor-pointer transform transition-all duration-300 ease-in-out hover:shadow-lg">
+        cursor-pointer transform transition-all duration-300 ease-in-out hover:shadow-lg" onClick={onClick}>
 
             <div className='flex flex-col gap-6'>
                 <div className='space-y-2'>

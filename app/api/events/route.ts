@@ -55,7 +55,12 @@ export async function GET(request: Request) {
 		const search = searchParams.get("search")?.trim();
 		if (search && search.length > 100) throw new HttpError(400, "search must not exceed 100 characters.", "VALIDATION_ERROR");
 		const category = searchParams.get("category")?.trim();
+		const tags = searchParams.get("tags")?.split(",").map((tag) => tag.trim()).filter(Boolean);
+		const location = searchParams.get("location")?.trim() || searchParams.get("filterLocation")?.trim();
+		const parsePrice = (value: string | null, field: string) => { if (!value) return undefined; const parsed = Number(value); if (!Number.isFinite(parsed) || parsed < 0) throw new HttpError(400, `${field} must be a non-negative number.`, "VALIDATION_ERROR"); return parsed; };
+		const priceMin = parsePrice(searchParams.get("priceMin"), "priceMin"); const priceMax = parsePrice(searchParams.get("priceMax"), "priceMax");
 		if (category && category.length > 100) throw new HttpError(400, "category must not exceed 100 characters.", "VALIDATION_ERROR");
+		if (priceMin !== undefined && priceMax !== undefined && priceMax < priceMin) throw new HttpError(400, "priceMax must be greater than priceMin.", "VALIDATION_ERROR");
 
 		const result = await listEvents({
 			page,
@@ -67,6 +72,10 @@ export async function GET(request: Request) {
 			status: status as EventStatus | undefined,
 			dateFrom,
 			dateTo,
+			tags,
+			location: location || undefined,
+			priceMin,
+			priceMax,
 		});
 
 		return NextResponse.json({ success: true, data: { items: result.items, pagination: { page, pageSize, total: result.total, totalPages: Math.ceil(result.total / pageSize) } } });

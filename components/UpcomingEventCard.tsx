@@ -9,6 +9,7 @@ type UpcomingEventCardProps = {
     time: string;
     tickets: string;
     onOpen: () => void;
+    onClick?: () => void;
 }
 const UpcomingEventCard = (
     {
@@ -19,7 +20,7 @@ const UpcomingEventCard = (
         location,
         time,
         tickets,
-        onOpen
+        onOpen, onClick
     }: UpcomingEventCardProps
     
 ) => {
@@ -27,7 +28,7 @@ const UpcomingEventCard = (
 
     return (
         <div  className="border border-brown-normal bg-brown-light rounded-xl p-4 w-full md:max-w-[535px] cursor-pointer
-        transform transition-all duration-300 ease-in-out  hover:scale-103 hover:shadow-lg">
+        transform transition-all duration-300 ease-in-out  hover:scale-103 hover:shadow-lg" onClick={onClick}>
             <div className='flex flex-col gap-6'>
                 <div>
                     <img src={img} alt={imgAlt} className='w-full h-auto rounded-xl ' />

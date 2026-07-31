@@ -12,6 +12,10 @@ export type EventListFilters = {
 	status?: EventStatus;
 	dateFrom?: Date;
 	dateTo?: Date;
+	tags?: string[];
+	location?: string;
+	priceMin?: number;
+	priceMax?: number;
 };
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -87,6 +91,8 @@ const organizerLookup: PipelineStage[] = [
 export const listEvents = async (filters: EventListFilters) => {
 	const match: Record<string, unknown> = {};
 	if (filters.category) match.category = filters.category;
+	if (filters.tags?.length) match.tags = { $in: filters.tags };
+	if (filters.location) match.venue = new RegExp(escapeRegex(filters.location), "i");
 	if (filters.organizer) match.organizer = filters.organizer;
 	if (filters.featured !== undefined) match.featured = filters.featured;
 	if (filters.status) match.status = filters.status;
@@ -99,6 +105,9 @@ export const listEvents = async (filters: EventListFilters) => {
 		if (filters.dateFrom) startDate.$gte = filters.dateFrom;
 		if (filters.dateTo) startDate.$lte = filters.dateTo;
 		match.startDate = startDate;
+	}
+	if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
+		match.ticketTypes = { $elemMatch: { ...(filters.priceMin !== undefined ? { price: { $gte: filters.priceMin } } : {}), ...(filters.priceMax !== undefined ? { price: { $lte: filters.priceMax } } : {}) } };
 	}
 
 	const skip = (filters.page - 1) * filters.pageSize;

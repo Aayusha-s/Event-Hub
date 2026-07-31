@@ -8,3 +8,4 @@ export * from "./dashboard/dashboard.service";
 export * from "./vendors/vendor.service";
 export * from "./notifications/notification.service";
 export * from "./email/email.service";
+export * from "./attendee/attendee.service";

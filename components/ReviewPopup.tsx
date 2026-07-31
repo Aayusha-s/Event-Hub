@@ -4,13 +4,15 @@ import Button from './Button';
 type ReviewPopupProps = {
     isOpen: boolean;
     onclose: () => void;
+    onSubmit?: (rating: number, text: string) => Promise<void> | void;
 }
 
 const ReviewPopup = ({
     isOpen,
-    onclose
+    onclose, onSubmit
 }: ReviewPopupProps) => {
 
+    const [rating, setRating] = React.useState(5); const [text, setText] = React.useState(''); const [error, setError] = React.useState('');
     if (!isOpen) return null;
 
     return (
@@ -20,7 +22,7 @@ const ReviewPopup = ({
                 
                 <div>
                     <label className='block mb-2 text-sm font-medium text-text-dark'>Rating:</label>
-                    <select className='w-full rounded-xl border border-border bg-surface px-3 py-2 mb-4 text-text-dark focus-ring'>
+                    <select value={rating} onChange={event=>setRating(Number(event.target.value))} className='w-full rounded-xl border border-border bg-surface px-3 py-2 mb-4 text-text-dark focus-ring'>
                         <option value='5'>5 - Excellent</option>
                         <option value='4'>4 - Very Good</option>
                         <option value='3'>3 - Good</option>
@@ -32,7 +34,7 @@ const ReviewPopup = ({
                 <textarea
                     className='w-full rounded-xl border border-border bg-surface px-3 py-3 mb-4 text-text-dark focus-ring'
                     rows={5}
-                    placeholder='Share your experience...'
+                    placeholder='Share your experience...' value={text} onChange={event=>setText(event.target.value)}
                 ></textarea>
 
                 <div className='flex justify-end gap-2'>
@@ -40,13 +42,13 @@ const ReviewPopup = ({
                     text='Cancel'
                     variant='secondary'
                     size='md'
-                    onClick={onclose}/>
+                    onClick={onclose}/>{error&&<p className='text-red-600'>{error}</p>}
                     
                     <Button
                     text='Submit'
                     variant='cta'
                     size='md'
-                    onClick={onclose}/>
+                    onClick={async()=>{try{await onSubmit?.(rating,text);setText('')}catch(e){setError(e instanceof Error?e.message:'Unable to submit review.')}}}/>
                 </div>
 
             </div>

@@ -7,12 +7,13 @@ import SharePopup from "./SharePopup";
 type TicketPopupProps = {
     isOpen: boolean;
     onClose: () => void;
+    ticket?: { ticketNumber: string; ticketType: string; qrCode: string; paymentStatus: string; ticketStatus: string; event?: { title?: string; venue?: string; startDate?: string; endDate?: string } };
 }
 
 export default function TicketPopup(
     {
         isOpen,
-        onClose
+        onClose, ticket
     }: TicketPopupProps
 ) {
     const [sharePopupOpen, setSharePopupOpen] = useState(false);
@@ -34,21 +35,21 @@ export default function TicketPopup(
                 <div >
                     <div className="grid grid-cols-[3fr_1fr] gap-2">
                         <div className="space-y-3">
-                            <h3 className="font-bold">Summer Music Festival 2025</h3>
+                            <h3 className="font-bold">{ticket?.event?.title ?? 'Ticket'}</h3>
 
                             <div className="flex items-center gap-2">
                                 <Calendar size={18} />
-                                <p className="text-sm">July 24, 2024 6:00 PM - 11:00 PM</p>
+                                <p className="text-sm">{ticket?.event?.startDate ? new Date(ticket.event.startDate).toLocaleString() : ''}</p>
                             </div>
 
                             <div className="flex items-center gap-2">
                                 <MapPin size={18} />
-                                <p className="text-sm">Central Park Amphitheater, New York, NY</p>
+                                <p className="text-sm">{ticket?.event?.venue ?? ''}</p>
                             </div>
                         </div>
 
                         <div className="border bg-gray-50 rounded-xl p-2 h-[120px] flex justify-center items-center">
-                            <QrCode size={100} className="text-gray-500" />
+                            {ticket?.qrCode ? <img src={ticket.qrCode} alt="Ticket QR code" className="h-[100px] w-[100px]" /> : <QrCode size={100} className="text-gray-500" />}
                         </div>
                     </div>
 
@@ -56,11 +57,11 @@ export default function TicketPopup(
                     <div className="flex flex-row gap-4 mt-2">
                         <div>
                             <p className="text-sm text-gray-400">Ticket Type</p>
-                            <button className="mt-1 bg-brown-light-active rounded-lg px-3 py-1 text-xs">VIP Pass - $150.00</button>
+                            <button className="mt-1 bg-brown-light-active rounded-lg px-3 py-1 text-xs">{ticket?.ticketType ?? ''} · {ticket?.paymentStatus ?? ''}</button>
                         </div>
                         <div>
                             <p className="text-sm text-gray-400">Ticket Number</p>
-                            <p className="text-xs font-bold mt-1">SMF-2025-VIP-001234</p>
+                            <p className="text-xs font-bold mt-1">{ticket?.ticketNumber ?? ''}</p>
                         </div>
                     </div>
 
@@ -71,7 +72,7 @@ export default function TicketPopup(
                         <div className="flex gap-2">
                             <Button text='Download'
                                 iconLeft={<Download size={18} />}
-                                size="vsm" />
+                                size="vsm" onClick={() => { if (ticket?.qrCode) { const link = document.createElement('a'); link.href = ticket.qrCode; link.download = `${ticket.ticketNumber}.png`; link.click(); } }} />
 
                             <Button text='Share'
                                 onClick={() => setSharePopupOpen(true)}

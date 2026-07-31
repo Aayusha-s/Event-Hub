@@ -8,13 +8,15 @@ type SavedEventsCardProps = {
     date: string;
     location: string;
     price?: number;
+    eventId?: string;
+    onRemove?: () => void;
 }
 const SavedEventsCard = (
     {
         title,
         date,
         location,
-        price
+        price, eventId, onRemove
     }: SavedEventsCardProps
 ) => {
     return (
@@ -25,7 +27,7 @@ const SavedEventsCard = (
                 <div className='space-y-2 grow'>
                     <div className='flex justify-between items-center gap-4'>
                         <h3 className='font-dynapuff text-xl'>{title}</h3>
-                        <Heart className="text-red-500 fill-red-500 
+                        <Heart onClick={onRemove} className="text-red-500 fill-red-500 
                         transform transition-all duration-300 ease-in-out hover:scale-120" />
                     </div>
                     <p><i className="fa-solid fa-calendar mr-2"></i>{date}</p>
@@ -35,7 +37,7 @@ const SavedEventsCard = (
 
             <div className="flex justify-between items-center mt-4">
                 <p>From Rs. {price}</p>
-                <Link href='/booknow'>
+                <Link href={`/booknow${eventId ? `?eventId=${eventId}` : ''}`}>
                     <Button
                         text="Book Now"
                         variant="cta"
