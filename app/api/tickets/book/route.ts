@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import mongoose, { Types } from "mongoose";
 import { requireRole } from "@/middleware/auth/requireRole";
-import { bookTicket } from "@/services/tickets/ticket.service";
+import { bookingService } from "@/services/bookings/booking.service";
 import { HttpError } from "@/utils/api/httpError";
 import { validateBookTicketInput } from "@/utils/tickets/validation";
 
@@ -23,8 +23,8 @@ export async function POST(request: Request) {
 	try {
 		const session = await requireRole(["attendee", "organizer", "vendor", "ticket_checker", "admin"]);
 		const input = validateBookTicketInput(await request.json());
-		const ticket = await bookTicket(new Types.ObjectId(session.user.id), input);
-		return NextResponse.json({ success: true, data: ticket }, { status: 201 });
+		const booking = await bookingService.createBooking(new Types.ObjectId(session.user.id), input);
+		return NextResponse.json({ success: true, data: booking }, { status: 201 });
 	} catch (error) {
 		return errorResponse(error);
 	}

@@ -5,7 +5,7 @@ import dbConnect from "@/lib/mongodb";
 import Event from "@/models/Event";
 import Ticket, { TicketDocument } from "@/models/Ticket";
 import { HttpError } from "@/utils/api/httpError";
-import { BookTicketInput } from "@/utils/tickets/validation";
+type LegacyBookTicketInput = { eventId: Types.ObjectId; ticketType: string; quantity: number };
 
 const createTicketNumber = () => `VIVNT-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${randomUUID().replace(/-/g, "").slice(0, 10).toUpperCase()}`;
 
@@ -16,49 +16,36 @@ const createQrCode = (ticketNumber: string) =>
 		width: 300,
 	});
 
-export const bookTicket = async (userId: Types.ObjectId, input: BookTicketInput) => {
+export const bookTicket = async (userId: Types.ObjectId, input: LegacyBookTicketInput) => {
 	await dbConnect();
 	const session = await mongoose.startSession();
 	try {
-		let ticket: TicketDocument | undefined;
+		let tickets: TicketDocument[] = [];
 		await session.withTransaction(async () => {
 			const event = await Event.findById(input.eventId).session(session).exec();
 			if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
-			if (event.status !== "published" || event.startDate <= new Date()) {
-				throw new HttpError(409, "Tickets are not available for this event.", "BOOKING_UNAVAILABLE");
-			}
+			if (event.status !== "published") throw new HttpError(409, "This event is not published.", "EVENT_NOT_PUBLISHED");
+			if (event.startDate <= new Date()) throw new HttpError(409, "This event has already started.", "EVENT_STARTED");
 
 			const selectedType = event.ticketTypes.find((type) => type.name === input.ticketType);
 			if (!selectedType) throw new HttpError(400, "Ticket type is not available for this event.", "INVALID_TICKET_TYPE");
 
-			const [duplicateTicket, ticketTypeCount, eventTicketCount] = await Promise.all([
-				Ticket.exists({ user: userId, event: event._id, ticketType: input.ticketType, ticketStatus: "active" }).session(session),
+			const [ticketTypeCount, eventTicketCount] = await Promise.all([
 				Ticket.countDocuments({ event: event._id, ticketType: input.ticketType, ticketStatus: "active" }).session(session),
 				Ticket.countDocuments({ event: event._id, ticketStatus: "active" }).session(session),
 			]);
 
-			if (duplicateTicket) throw new HttpError(409, "You already have an active booking for this ticket type.", "DUPLICATE_BOOKING");
-			if (ticketTypeCount >= selectedType.quantity || eventTicketCount >= event.capacity) {
+			if (ticketTypeCount + input.quantity > selectedType.quantity || eventTicketCount + input.quantity > event.capacity) {
 				throw new HttpError(409, "This ticket type is sold out.", "SOLD_OUT");
 			}
 
-			const ticketNumber = createTicketNumber();
-			const qrCode = await createQrCode(ticketNumber);
-			const [createdTicket] = await Ticket.create(
-				[
-					{
-						user: userId,
-						event: event._id,
-						ticketType: input.ticketType,
-						ticketNumber,
-						qrCode,
-					},
-				],
-				{ session }
-			);
-			ticket = createdTicket;
+			const ticketPayloads = await Promise.all(Array.from({ length: input.quantity }, async () => {
+				const ticketNumber = createTicketNumber();
+				return { user: userId, event: event._id, ticketType: input.ticketType, ticketNumber, qrCode: await createQrCode(ticketNumber) };
+			}));
+			tickets = await Ticket.create(ticketPayloads, { session });
 		});
-		return ticket!;
+		return tickets;
 	} finally {
 		await session.endSession();
 	}

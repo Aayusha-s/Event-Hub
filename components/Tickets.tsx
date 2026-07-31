@@ -10,6 +10,9 @@ type TicketsProps = {
     price?: number
     remainingTickets?: number
     features?: string[]
+    quantity?: number
+    onQuantityChange?: (quantity: number) => void
+    disabled?: boolean
 
 
 }
@@ -18,17 +21,27 @@ const Tickets = ({
     subtitle,
     price,
     remainingTickets,
-    features
+    features,
+    quantity: controlledQuantity,
+    onQuantityChange,
+    disabled = false
 }: TicketsProps) => {
     const [quantity, setQuantity] = useState(0);
+    const selectedQuantity = controlledQuantity ?? quantity;
+    const setSelectedQuantity = (nextQuantity: number) => {
+        const maximum = disabled ? 0 : Math.max(0, remainingTickets ?? 0);
+        const safeQuantity = Math.max(0, Math.min(maximum, Number.isFinite(nextQuantity) ? Math.floor(nextQuantity) : 0));
+        if (controlledQuantity === undefined) setQuantity(safeQuantity);
+        onQuantityChange?.(safeQuantity);
+    };
 
     const increaseQuantity = () => {
-        setQuantity(quantity + 1);
+        setSelectedQuantity(selectedQuantity + 1);
     }
 
     const decreaseQuantity = () => {
-        if (quantity > 0) {
-            setQuantity(quantity - 1);
+        if (selectedQuantity > 0) {
+            setSelectedQuantity(selectedQuantity - 1);
         }
     }
 
@@ -69,14 +82,15 @@ const Tickets = ({
                 <h3 className='font-bold'>Quantity</h3>
 
                 <div className='flex flex-row items-center'>
-                    <div className='w-8 h-8 flex items-center bg-gray-100 hover:bg-gray-300 transition ease-in-out rounded-[50px] justify-center cursor-pointer'>
+                    <button type='button' disabled={disabled || selectedQuantity <= 0} className='w-8 h-8 flex items-center bg-gray-100 hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 transition ease-in-out rounded-[50px] justify-center cursor-pointer'>
                         <Minus size={18} onClick={decreaseQuantity} />
-                    </div>
-                    <input type="number" min={1} name="no-of-tickets" id="no-of-tickets"
+                    </button>
+                    <input type="number" min={0} max={remainingTickets ?? 0} name={`no-of-tickets-${title ?? 'ticket'}`} id={`no-of-tickets-${title ?? 'ticket'}`} value={selectedQuantity} disabled={disabled}
+                        onChange={(event) => setSelectedQuantity(Number(event.target.value))}
                         className='p-2 focus:outline-none focus:ring-1 focus:ring-brown-light w-10' />
-                    <div className='w-8 h-8 flex items-center bg-gray-100 hover:bg-gray-300 transition ease-in-out rounded-[50px] justify-center cursor-pointer'>
+                    <button type='button' disabled={disabled || selectedQuantity >= (remainingTickets ?? 0)} className='w-8 h-8 flex items-center bg-gray-100 hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 transition ease-in-out rounded-[50px] justify-center cursor-pointer'>
                         <Plus size={18} onClick={increaseQuantity} />
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>

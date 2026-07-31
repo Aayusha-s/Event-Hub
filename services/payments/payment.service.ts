@@ -1,107 +1,21 @@
+import { createHmac, randomUUID } from "crypto";
 import { Types } from "mongoose";
 import dbConnect from "@/lib/mongodb";
+import Booking from "@/models/Booking";
 import Payment, { IPayment } from "@/models/Payment";
-import Ticket from "@/models/Ticket";
-import Event from "@/models/Event";
-import User from "@/models/User";
+import { bookingService } from "@/services/bookings/booking.service";
 import { HttpError } from "@/utils/api/httpError";
-import { createNotification } from "@/services/notifications/notification.service";
-import { sendPaymentConfirmationEmail } from "@/services/email/email.service";
 
-export interface InitiatePaymentInput {
-	ticketId: string;
-	paymentMethod: IPayment["paymentMethod"];
-	amount: number;
-}
-
+export interface InitiatePaymentInput { bookingId: string; paymentMethod: IPayment["paymentMethod"]; }
 export const initiatePayment = async (userId: Types.ObjectId | string, input: InitiatePaymentInput) => {
-	await dbConnect();
-	const userObjId = new Types.ObjectId(userId);
-	const ticketObjId = new Types.ObjectId(input.ticketId);
-
-	const ticket = await Ticket.findById(ticketObjId).exec();
-	if (!ticket) throw new HttpError(404, "Ticket not found.", "NOT_FOUND");
-	if (ticket.user.toString() !== userObjId.toString()) throw new HttpError(403, "Forbidden.", "FORBIDDEN");
-	if (ticket.paymentStatus === "paid") throw new HttpError(409, "Ticket has already been paid for.", "ALREADY_PAID");
-
-	const existingPayment = await Payment.findOne({ ticket: ticketObjId, paymentStatus: "paid" });
-	if (existingPayment) throw new HttpError(409, "A completed payment already exists for this ticket.", "DUPLICATE_PAYMENT");
-
-	const payment = await Payment.create({
-		user: userObjId,
-		event: ticket.event,
-		ticket: ticketObjId,
-		amount: input.amount,
-		paymentMethod: input.paymentMethod,
-		paymentStatus: "pending",
-	});
-
-	// Handle method-specific mock/payload initialization
-	if (input.paymentMethod === "khalti") {
-		payment.pidx = `khalti_pidx_${payment._id.toString()}`;
-		await payment.save();
-		return {
-			paymentId: payment._id.toString(),
-			paymentMethod: "khalti",
-			pidx: payment.pidx,
-			paymentUrl: `https://test-pay.khalti.com/?pidx=${payment.pidx}`,
-		};
-	} else if (input.paymentMethod === "stripe") {
-		payment.stripePaymentIntentId = `pi_${payment._id.toString()}`;
-		await payment.save();
-		return {
-			paymentId: payment._id.toString(),
-			paymentMethod: "stripe",
-			clientSecret: `${payment.stripePaymentIntentId}_secret_test`,
-		};
-	}
-
-	return {
-		paymentId: payment._id.toString(),
-		paymentMethod: input.paymentMethod,
-		status: "pending",
-	};
+	await dbConnect(); const user = new Types.ObjectId(userId);
+	if (!Types.ObjectId.isValid(input.bookingId)) throw new HttpError(400, "bookingId is invalid.", "VALIDATION_ERROR");
+	const booking = await Booking.findById(input.bookingId).exec(); if (!booking) throw new HttpError(404, "Booking not found.", "NOT_FOUND");
+	if (booking.user.toString() !== user.toString()) throw new HttpError(403, "Forbidden.", "FORBIDDEN"); if (booking.status !== "pending") throw new HttpError(409, "This booking cannot be paid.", "BOOKING_NOT_PENDING");
+	const existing = await Payment.findOne({ booking: booking._id, paymentStatus: "pending" }).exec(); if (existing) await existing.deleteOne();
+	const payment = await Payment.create({ user, event: booking.event, booking: booking._id, amount: booking.totalAmount, paymentMethod: input.paymentMethod, paymentStatus: "pending" });
+	const returnUrl = `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/booknow?eventId=${booking.event}&paymentId=${payment._id}`;
+	if (input.paymentMethod === "khalti") { const key = process.env.KHALTI_SECRET_KEY; if (!key) throw new HttpError(503, "Khalti sandbox is not configured. Set KHALTI_SECRET_KEY.", "PAYMENT_NOT_CONFIGURED"); const response = await fetch("https://a.khalti.com/api/v2/epayment/initiate/", { method: "POST", headers: { Authorization: `Key ${key}`, "Content-Type": "application/json" }, body: JSON.stringify({ return_url: returnUrl, website_url: process.env.NEXTAUTH_URL ?? "http://localhost:3000", amount: Math.round(booking.totalAmount * 100), purchase_order_id: payment._id.toString(), purchase_order_name: "Event booking" }) }); const data = await response.json() as { pidx?: string; payment_url?: string; detail?: string }; if (!response.ok || !data.pidx || !data.payment_url) throw new HttpError(502, data.detail ?? "Khalti could not initialize payment.", "PAYMENT_PROVIDER_ERROR"); payment.pidx = data.pidx; await payment.save(); return { paymentId: payment._id.toString(), paymentUrl: data.payment_url, paymentMethod: "khalti" as const }; }
+	const code = process.env.ESEWA_PRODUCT_CODE, key = process.env.ESEWA_SECRET_KEY; if (!code || !key) throw new HttpError(503, "eSewa UAT sandbox is not configured. Set ESEWA_PRODUCT_CODE and ESEWA_SECRET_KEY.", "PAYMENT_NOT_CONFIGURED"); const transactionUuid = randomUUID(), total = booking.totalAmount.toFixed(2), signature = createHmac("sha256", key).update(`total_amount=${total},transaction_uuid=${transactionUuid},product_code=${code}`).digest("base64"); payment.transactionId = transactionUuid; payment.metadata = { productCode: code }; await payment.save(); return { paymentId: payment._id.toString(), paymentMethod: "esewa" as const, paymentUrl: process.env.ESEWA_PAYMENT_URL ?? "https://rc-epay.esewa.com.np/api/epay/main/v2/form", formData: { amount: total, tax_amount: "0", total_amount: total, transaction_uuid: transactionUuid, product_code: code, product_service_charge: "0", product_delivery_charge: "0", success_url: returnUrl, failure_url: returnUrl, signed_field_names: "total_amount,transaction_uuid,product_code", signature } };
 };
-
-export const verifyPayment = async (
-	paymentId: string,
-	transactionId?: string,
-	pidx?: string,
-	paymentIntentId?: string
-) => {
-	await dbConnect();
-	const payment = await Payment.findById(paymentId).exec();
-	if (!payment) throw new HttpError(404, "Payment record not found.", "NOT_FOUND");
-	if (payment.paymentStatus === "paid") return payment;
-
-	payment.paymentStatus = "paid";
-	payment.transactionId = transactionId || pidx || paymentIntentId || `TXN-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-	await payment.save();
-
-	// Update Ticket status
-	if (payment.ticket) {
-		const ticket = await Ticket.findById(payment.ticket).exec();
-		if (ticket) {
-			ticket.paymentStatus = "paid";
-			await ticket.save();
-
-			const [user, event] = await Promise.all([
-				User.findById(ticket.user).exec(),
-				Event.findById(ticket.event).exec(),
-			]);
-
-			if (user && event) {
-				createNotification(
-					user._id,
-					"payment_success",
-					"Payment Successful",
-					`Your payment for ${event.title} ticket was verified.`
-				).catch(console.error);
-
-				sendPaymentConfirmationEmail(user.email, user.name, payment.amount, payment.transactionId).catch(console.error);
-			}
-		}
-	}
-
-	return payment;
-};
+export const verifyPayment = async (paymentId: string, transactionId?: string, pidx?: string) => { await dbConnect(); const payment = await Payment.findById(paymentId).exec(); if (!payment) throw new HttpError(404, "Payment record not found.", "NOT_FOUND"); if (payment.paymentStatus === "paid") return payment; if (payment.paymentMethod === "khalti") { const key = process.env.KHALTI_SECRET_KEY; if (!key) throw new HttpError(503, "Khalti sandbox is not configured.", "PAYMENT_NOT_CONFIGURED"); const response = await fetch("https://a.khalti.com/api/v2/epayment/lookup/", { method: "POST", headers: { Authorization: `Key ${key}`, "Content-Type": "application/json" }, body: JSON.stringify({ pidx: pidx ?? payment.pidx }) }); const data = await response.json() as { status?: string; transaction_id?: string }; if (!response.ok || data.status !== "Completed") throw new HttpError(409, "Khalti payment is not complete.", "PAYMENT_PENDING"); payment.transactionId = data.transaction_id ?? pidx ?? payment.pidx; } else if (!transactionId) throw new HttpError(400, "eSewa transaction id is required.", "VALIDATION_ERROR"); else payment.transactionId = transactionId; if (!payment.booking) throw new HttpError(409, "Payment has no booking.", "INVALID_PAYMENT"); await bookingService.completeBooking(payment.booking, payment._id); return Payment.findById(payment._id).exec(); };

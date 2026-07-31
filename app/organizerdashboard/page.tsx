@@ -22,12 +22,22 @@ import {
     CircleCheckBig
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import VendorCards from '@/components/VendorCards';
 
 const Page = () => {
 
     const router = useRouter();
+    const [dashboard, setDashboard] = useState<{ summary: { totalEvents: number; totalTicketsSold: number; totalRevenue: number }; events: Array<{ _id: string; title: string; venue: string; startDate: string; capacity: number; ticketsSold: number; status: string; images: string[] }> } | null>(null);
+
+    useEffect(() => {
+        fetch('/api/organizer/dashboard').then((response) => response.json()).then((result) => {
+            if (result.success) setDashboard(result.data);
+        }).catch(() => undefined);
+    }, []);
+
+    const events = dashboard?.events ?? [];
     return (
         <section className='flex flex-col
         my-4 mx-2 px-4 font-cause text-text-dark 
@@ -39,10 +49,10 @@ const Page = () => {
 
             <DashboardBox
                 title="Organizer Dashboard"
-                description="Managing 3 upcoming events with 1,170 tickets sold"
+                description={`Managing ${dashboard?.summary.totalEvents ?? 0} events with ${dashboard?.summary.totalTicketsSold ?? 0} tickets sold`}
                 buttonText="Create New Events"
                 buttonIcon={<Plus />}
-                buttonLink="/createnewevent"
+                buttonLink="/create-event/step-1"
 
             >
             </DashboardBox>
@@ -73,7 +83,7 @@ const Page = () => {
                 {/* organizer cards */}
                 <VendorCards
                     icon1={<DollarSign className='text-3xl text-green-500' />}
-                    count={"$137500"}
+                    count={`$${dashboard?.summary.totalRevenue ?? 0}`}
                     label="Total Revenue"
                     icon2={<TrendingUp className='inline mr-2 text-green-500' />}
                     subLabel="+24% from last month"
@@ -82,7 +92,7 @@ const Page = () => {
 
                 <VendorCards
                     icon1={<Ticket className='text-3xl text-blue-500' />}
-                    count={1620}
+                    count={dashboard?.summary.totalTicketsSold ?? 0}
                     label="Tickets Sold"
                     subLabel="Across all events"
                 >
@@ -130,28 +140,28 @@ const Page = () => {
                         {/* card 1 */}
                         <div className='p-4 w-full border border-brown-normal rounded-xl space-y-1'>
                             <div className='flex flex-col md:flex-row gap-4 w-full'>
-                                <img src="/images/party.png" className='rounded-2xl w-[200px] h-auto object-cover ' />
+                                <img src={events[0]?.images?.[0] ?? "/images/party.png"} alt={events[0]?.title ?? 'Event'} className='rounded-2xl w-[200px] h-auto object-cover ' />
 
                                 <div className='flex-1'>
                                     <div className='flex flex-col gap-4'>
                                         <div className='flex flex-row gap-4'>
-                                            <h3 className='font-bold text-lg'>Summer Music Festival</h3>
+                                            <h3 className='font-bold text-lg'>{events[0]?.title ?? 'No events yet'}</h3>
                                             
                                             <div className={`flex items-center gap-1 bg-green-100 px-2 py-1 rounded-full text-xs font-medium`}>
                                                 <CircleCheckBig size={14} className='text-green-700' /> 
-                                                <p className='text-green-700'>Active</p>
+                                                <p className='text-green-700'>{events[0]?.status ?? 'Draft'}</p>
                                             </div>
                                         </div>
 
                                         <div className='flex flex-col md:flex-row gap-4'>
-                                            <p className='text-sm'><Calendar className='inline mr-1' size={18} /> March 15-17, 2024 at 6:00 PM</p>
-                                            <p className='text-sm'><MapPin className='inline mr-1' size={18} /> San Francisco, CA</p>
+                                            <p className='text-sm'><Calendar className='inline mr-1' size={18} /> {events[0]?.startDate ? new Date(events[0].startDate).toLocaleString() : 'No date set'}</p>
+                                            <p className='text-sm'><MapPin className='inline mr-1' size={18} /> {events[0]?.venue ?? 'No venue set'}</p>
                                         </div>
                                     </div>
 
                                     <div className='flex flex-row justify-between mt-4'>
-                                        <p className='text-sm'> 850/1000 tickets sold</p>
-                                        <p className='text-sm'>85%</p>
+                                        <p className='text-sm'>{events[0]?.ticketsSold ?? 0}/{events[0]?.capacity ?? 0} tickets sold</p>
+                                        <p className='text-sm'>{events[0]?.capacity ? Math.round((events[0].ticketsSold / events[0].capacity) * 100) : 0}%</p>
                                     </div>
 
                                     <div className='h-2 bg-gray-300 w-full rounded-full mt-1'>
@@ -164,7 +174,7 @@ const Page = () => {
                                         <div className='flex flex-row gap-2 justify-between items-center '>
                                             <Button text='Analytics' variant='cta' size='sm' iconLeft={<TrendingUp size={18} />} onClick={() => router.push('/analytics')}></Button>
                                             {/* <Button text='Promote' variant='cta' size='sm' iconLeft={<Megaphone size={18} />} onClick={() => router.push('')}></Button> */}
-                                            <Button text='Edit' variant='cta' size='sm' iconLeft={<SquarePen size={18} />} onClick={() => router.push('')}></Button>
+                                            <Button text='Edit' variant='cta' size='sm' iconLeft={<SquarePen size={18} />} onClick={() => events[0] && router.push(`/event-details/${events[0]._id}`)}></Button>
                                         </div>
                                     </div>
                                 </div>

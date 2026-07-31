@@ -4,12 +4,12 @@ export interface IPayment {
 	user: Types.ObjectId;
 	event: Types.ObjectId;
 	ticket?: Types.ObjectId;
+	booking?: Types.ObjectId;
 	amount: number;
-	paymentMethod: "esewa" | "khalti" | "stripe" | "cash" | "bank_transfer";
+	paymentMethod: "esewa" | "khalti";
 	paymentStatus: "pending" | "paid" | "failed" | "refunded";
 	transactionId?: string;
 	pidx?: string;
-	stripePaymentIntentId?: string;
 	metadata?: Record<string, unknown>;
 }
 
@@ -20,12 +20,12 @@ const paymentSchema = new Schema<IPayment>(
 		user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 		event: { type: Schema.Types.ObjectId, ref: "Event", required: true },
 		ticket: { type: Schema.Types.ObjectId, ref: "Ticket" },
+		booking: { type: Schema.Types.ObjectId, ref: "Booking", index: true },
 		amount: { type: Number, required: true, min: 0 },
-		paymentMethod: { type: String, enum: ["esewa", "khalti", "stripe", "cash", "bank_transfer"], required: true },
+		paymentMethod: { type: String, enum: ["esewa", "khalti"], required: true },
 		paymentStatus: { type: String, enum: ["pending", "paid", "failed", "refunded"], default: "pending", required: true },
 		transactionId: { type: String, trim: true, unique: true, sparse: true, maxlength: 255 },
 		pidx: { type: String, trim: true, sparse: true, maxlength: 255 },
-		stripePaymentIntentId: { type: String, trim: true, sparse: true, maxlength: 255 },
 		metadata: { type: Schema.Types.Mixed },
 	},
 	{ timestamps: true, versionKey: false }

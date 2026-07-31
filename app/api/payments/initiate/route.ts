@@ -7,13 +7,13 @@ export async function POST(request: Request) {
 	try {
 		const session = await requireRole(["attendee", "organizer", "vendor", "ticket_checker", "admin"]);
 		const body = await request.json();
-		const { ticketId, paymentMethod, amount } = body;
+		const { bookingId, paymentMethod } = body;
 
-		if (!ticketId || !paymentMethod || amount === undefined || amount < 0) {
-			throw new HttpError(400, "ticketId, paymentMethod, and a valid amount are required.", "VALIDATION_ERROR");
+		if (!bookingId || !["khalti", "esewa"].includes(paymentMethod)) {
+			throw new HttpError(400, "bookingId and paymentMethod are required.", "VALIDATION_ERROR");
 		}
 
-		const result = await initiatePayment(session.user.id, { ticketId, paymentMethod, amount });
+		const result = await initiatePayment(session.user.id, { bookingId, paymentMethod });
 		return NextResponse.json({ success: true, data: result }, { status: 201 });
 	} catch (error) {
 		if (error instanceof HttpError) {

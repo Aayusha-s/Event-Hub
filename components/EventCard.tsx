@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useTilt } from "@/hooks/use-tilt";
 
 type EventCardProps = {
-    eventId: number;
+    eventId: string | number;
     tags: string[];
     imageUrl: string;
     imageAlt: string;

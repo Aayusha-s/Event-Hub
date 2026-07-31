@@ -16,6 +16,36 @@ export type EventListFilters = {
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+const ticketAvailabilityLookup: PipelineStage[] = [
+	{
+		$lookup: {
+			from: "tickets",
+			let: { eventId: "$_id" },
+			pipeline: [
+				{ $match: { $expr: { $and: [{ $eq: ["$event", "$$eventId"] }, { $eq: ["$ticketStatus", "active"] }] } } },
+				{ $group: { _id: "$ticketType", sold: { $sum: 1 } } },
+			],
+			as: "ticketSales",
+		},
+	},
+	{ $addFields: { ticketsSold: { $sum: "$ticketSales.sold" } } },
+	{
+		$addFields: {
+			ticketTypes: {
+				$map: {
+					input: "$ticketTypes", as: "type",
+					in: {
+						$let: {
+							vars: { sales: { $filter: { input: "$ticketSales", as: "sale", cond: { $eq: ["$$sale._id", "$$type.name"] } } } },
+							in: { $mergeObjects: ["$$type", { sold: { $ifNull: [{ $arrayElemAt: ["$$sales.sold", 0] }, 0] }, remaining: { $max: [0, { $subtract: ["$$type.quantity", { $ifNull: [{ $arrayElemAt: ["$$sales.sold", 0] }, 0] }] }] } }] },
+						},
+					},
+				},
+			},
+		},
+	},
+];
+
 const organizerLookup: PipelineStage[] = [
 	{
 		$lookup: {
@@ -28,6 +58,7 @@ const organizerLookup: PipelineStage[] = [
 	{ $unwind: { path: "$organizerDetails", preserveNullAndEmptyArrays: true } },
 	{
 		$project: {
+			ticketsSold: 1,
 			title: 1,
 			description: 1,
 			venue: 1,
@@ -74,6 +105,7 @@ export const listEvents = async (filters: EventListFilters) => {
 	const [result] = await Event.aggregate([
 		{ $match: match },
 		...organizerLookup,
+		...ticketAvailabilityLookup,
 		{
 			$facet: {
 				items: [{ $sort: { featured: -1, startDate: 1, _id: 1 } }, { $skip: skip }, { $limit: filters.pageSize }],
@@ -89,7 +121,11 @@ export const listEvents = async (filters: EventListFilters) => {
 };
 
 export const getEventById = async (id: Types.ObjectId) => {
-	const [event] = await Event.aggregate([{ $match: { _id: id } }, ...organizerLookup]).exec();
+	const [event] = await Event.aggregate([
+		{ $match: { _id: id } },
+		...ticketAvailabilityLookup,
+		...organizerLookup,
+	]).exec();
 	return event ?? null;
 };
 

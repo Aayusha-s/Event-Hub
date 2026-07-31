@@ -15,7 +15,7 @@ export const getOrganizerDashboard = async (organizerId: Types.ObjectId | string
 	const eventIds = events.map((e) => e._id);
 
 	// Aggregate ticket stats for these events
-	const [ticketStats, checkedInCount, recentBookings, payments] = await Promise.all([
+	const [ticketStats, checkedInCount, recentBookings, payments, ticketCounts] = await Promise.all([
 		Ticket.countDocuments({ event: { $in: eventIds }, ticketStatus: "active" }),
 		Ticket.countDocuments({ event: { $in: eventIds }, checkedIn: true }),
 		Ticket.find({ event: { $in: eventIds } })
@@ -28,6 +28,10 @@ export const getOrganizerDashboard = async (organizerId: Types.ObjectId | string
 			{ $match: { event: { $in: eventIds }, paymentStatus: "paid" } },
 			{ $group: { _id: null, totalRevenue: { $sum: "$amount" } } },
 		]),
+		Ticket.aggregate([
+			{ $match: { event: { $in: eventIds }, ticketStatus: "active" } },
+			{ $group: { _id: "$event", ticketsSold: { $sum: 1 } } },
+		]),
 	]);
 
 	const totalRevenue = payments[0]?.totalRevenue ?? 0;
@@ -39,7 +43,10 @@ export const getOrganizerDashboard = async (organizerId: Types.ObjectId | string
 			totalCheckedIn: checkedInCount,
 			totalRevenue,
 		},
-		events,
+			events: events.map((event) => ({
+				...event.toObject(),
+				ticketsSold: ticketCounts.find((count) => count._id.toString() === event._id.toString())?.ticketsSold ?? 0,
+			})),
 		recentBookings,
 	};
 };

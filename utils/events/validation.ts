@@ -65,8 +65,9 @@ const isImageUrl = (value: string) => {
 };
 
 const imageUrls = (value: unknown) => {
-	if (!Array.isArray(value) || value.length === 0 || value.length > 10 || value.some((url) => typeof url !== "string" || url.length > 500 || !isImageUrl(url))) {
-		throw new HttpError(400, "images must contain between 1 and 10 valid HTTP(S) image URLs.", "VALIDATION_ERROR");
+	if (value === undefined) return [];
+	if (!Array.isArray(value) || value.length > 10 || value.some((url) => typeof url !== "string" || url.length > 500 || !isImageUrl(url))) {
+		throw new HttpError(400, "images must contain up to 10 valid HTTP(S) image URLs.", "VALIDATION_ERROR");
 	}
 	return value.map((url) => url.trim());
 };
@@ -115,6 +116,12 @@ export const validateEventCreateInput = (value: unknown): EventInput => {
 		throw new HttpError(400, "featured must be a boolean.", "VALIDATION_ERROR");
 	}
 
+	const parsedTicketTypes = ticketTypes(payload.ticketTypes);
+	const capacity = numberValue(payload.capacity, "capacity", 1, Number.MAX_SAFE_INTEGER, true);
+	if (parsedTicketTypes.reduce((total, ticket) => total + ticket.quantity, 0) > capacity) {
+		throw new HttpError(400, "The total ticket quantity cannot exceed event capacity.", "VALIDATION_ERROR");
+	}
+
 	return {
 		title: requiredString(payload, "title", 3, 200),
 		description: requiredString(payload, "description", 10, 5000),
@@ -125,8 +132,8 @@ export const validateEventCreateInput = (value: unknown): EventInput => {
 		images: imageUrls(payload.images),
 		startDate,
 		endDate,
-		ticketTypes: ticketTypes(payload.ticketTypes),
-		capacity: numberValue(payload.capacity, "capacity", 1, Number.MAX_SAFE_INTEGER, true),
+		ticketTypes: parsedTicketTypes,
+		capacity,
 		status: payload.status as EventStatus | undefined,
 		featured: payload.featured as boolean | undefined,
 		tags: payload.tags === undefined ? [] : tags(payload.tags),
