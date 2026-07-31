@@ -214,7 +214,7 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
         >
             <div
                 className={cn(
-                    "flex overflow-hidden rounded-full border border-border bg-surface shadow-sm transition-shadow duration-200 focus-within:shadow-md",
+                    "flex overflow-visible rounded-full border border-border bg-surface shadow-sm transition-shadow duration-200 focus-within:shadow-md",
                     compact ? "h-11 flex-row items-center" : "flex-col lg:flex-row"
                 )}
             >
@@ -274,7 +274,7 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
                         </button>
 
                         {isFilterOpen && (
-                            <div className="absolute right-0 top-full z-50 mt-2 w-[92vw] max-w-sm rounded-2xl border border-border bg-surface p-4 shadow-xl duration-150 animate-in fade-in slide-in-from-top-2">
+                            <div className="absolute right-0 top-full z-60 mt-2 w-[92vw] max-w-sm rounded-2xl border border-border bg-surface p-4 shadow-xl duration-150 animate-in fade-in slide-in-from-top-2">
                                 <div className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto pr-1">
                                     {/* Date & Time Range */}
                                     <div className="flex flex-col gap-1.5">

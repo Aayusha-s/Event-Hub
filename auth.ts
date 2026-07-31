@@ -42,13 +42,23 @@ export const authOptions: NextAuthOptions = {
 		}),
 	],
 	callbacks: {
-		async jwt({ token, user }) {
+		async jwt({ token, user, trigger }) {
 			if (user) {
 				token.id = user.id;
 				token.role = (user.role as UserRole) ?? "attendee";
 				token.name = user.name;
 				token.email = user.email;
 				token.picture = (user as { image?: string | null }).image ?? null;
+			}
+			if (trigger === "update" && token.id) {
+				await dbConnect();
+				const currentUser = await User.findById(token.id).select("name email role profileImage").lean().exec();
+				if (currentUser) {
+					token.role = currentUser.role as UserRole;
+					token.name = currentUser.name;
+					token.email = currentUser.email;
+					token.picture = currentUser.profileImage ?? null;
+				}
 			}
 			return token;
 		},

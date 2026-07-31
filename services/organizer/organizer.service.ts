@@ -6,7 +6,7 @@ import { HttpError } from "@/utils/api/httpError";
 import { createNotification } from "@/services/notifications/notification.service";
 
 export interface RegisterOrganizerInput {
-	orgType: "individual" | "business" | "nonprofit" | "agency";
+	orgType: "individual" | "community" | "business" | "nonprofit" | "agency";
 	organizationName: string;
 	description?: string;
 	website?: string;

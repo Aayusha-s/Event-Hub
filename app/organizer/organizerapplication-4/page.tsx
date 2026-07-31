@@ -87,13 +87,16 @@ const Page = () => {
                 }),
             });
 
-            const result = await response.json();
+			const contentType = response.headers.get('content-type') ?? '';
+			const result: { success?: boolean; error?: { message?: string } } = contentType.includes('application/json')
+				? await response.json()
+				: {};
 
-            if (!response.ok || !result.success) {
-                throw new Error(result?.error?.message || 'Failed to submit application.');
-            }
+			if (!response.ok || !result.success) {
+				throw new Error(result.error?.message || 'Failed to submit application. Please try again.');
+			}
 
-            await updateSession();
+			await updateSession({});
 
             localStorage.removeItem('organizerStep1');
             localStorage.removeItem('organizerStep2');

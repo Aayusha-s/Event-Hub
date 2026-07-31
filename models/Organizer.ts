@@ -2,7 +2,7 @@ import mongoose, { HydratedDocument, Model, Schema, Types } from "mongoose";
 
 export interface IOrganizer {
 	owner: Types.ObjectId;
-	orgType: "individual" | "business" | "nonprofit" | "agency";
+	orgType: "individual" | "community" | "business" | "nonprofit" | "agency";
 	organizationName: string;
 	description?: string;
 	website?: string;
@@ -15,7 +15,7 @@ export type OrganizerDocument = HydratedDocument<IOrganizer>;
 const organizerSchema = new Schema<IOrganizer>(
 	{
 		owner: { type: Schema.Types.ObjectId, ref: "User", required: true, unique: true },
-		orgType: { type: String, enum: ["individual", "business", "nonprofit", "agency"], required: true },
+		orgType: { type: String, enum: ["individual", "community", "business", "nonprofit", "agency"], required: true },
 		organizationName: { type: String, required: true, trim: true, minlength: 2, maxlength: 200 },
 		description: { type: String, trim: true, maxlength: 2000 },
 		website: { type: String, trim: true, maxlength: 500 },
