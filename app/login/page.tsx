@@ -266,11 +266,3 @@ const Page = () => (
 );
 
 export default Page;
-
-const Page = () => (
-    <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center">Loading...</div>}>
-        <LoginForm />
-    </Suspense>
-);
-
-export default Page;

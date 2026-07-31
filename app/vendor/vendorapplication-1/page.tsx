@@ -1,12 +1,27 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { ArrowLeft, Check } from 'lucide-react';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
-const Page = () => {
+type VendorStep1 = {
+    businessType: string; years: string; description: string; email: string;
+    phone: string; website: string; address: string; city: string; state: string;
+};
 
+const loadVendorStep1 = (): Partial<VendorStep1> => {
+    if (typeof window === 'undefined') return {};
+
+    try {
+        const saved = window.localStorage.getItem('vendorStep1');
+        return saved ? JSON.parse(saved) : {};
+    } catch {
+        return {};
+    }
+};
+
+const Page = () => {
     const [businessType, setBusinessType] = useState('');
     const [years, setYears] = useState('');
     const [description, setDescription] = useState('');
@@ -17,16 +32,48 @@ const Page = () => {
     const [city, setCity] =useState('');
     const [state,setState] = useState('');
 
+    useEffect(() => {
+        const initialValues = loadVendorStep1();
+        const restoreSavedValues = window.setTimeout(() => {
+            setBusinessType(initialValues.businessType ?? '');
+            setYears(initialValues.years ?? '');
+            setDescription(initialValues.description ?? '');
+            setEmail(initialValues.email ?? '');
+            setPhone(initialValues.phone ?? '');
+            setWebsite(initialValues.website ?? '');
+            setAddress(initialValues.address ?? '');
+            setCity(initialValues.city ?? '');
+            setState(initialValues.state ?? '');
+        }, 0);
 
-    const [typeError, setTypeError] = useState('');
-    const [yearsError, setYearsError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [phoneError, setPhoneError] = useState('');
-    const [descriptionError, setDescriptionError] = useState('');
-    const [websiteError, setWebsiteError] = useState('');
-    const [addressError, setAddressError] = useState('');
-    const [cityError, setCityError] = useState('');
-    const [stateError, setStateError] = useState('');
+        return () => window.clearTimeout(restoreSavedValues);
+    }, []);
+
+    const persist = (next: Partial<{
+        businessType: string; years: string; description: string; email: string;
+        phone: string; website: string; address: string; city: string; state: string;
+    }>) => {
+        try {
+            const current = {
+                businessType, years, description, email, phone, website, address, city, state,
+                ...next,
+            };
+            window.localStorage.setItem('vendorStep1', JSON.stringify(current));
+        } catch {
+            // ignore storage errors
+        }
+    };
+
+
+    const [, setTypeError] = useState('');
+    const [, setYearsError] = useState('');
+    const [, setEmailError] = useState('');
+    const [, setPhoneError] = useState('');
+    const [, setDescriptionError] = useState('');
+    const [, setWebsiteError] = useState('');
+    const [, setAddressError] = useState('');
+    const [, setCityError] = useState('');
+    const [, setStateError] = useState('');
 
     const validateType = (value: string) : string => {
         if (!value){
@@ -141,6 +188,7 @@ const Page = () => {
                         onChange={(e)=>{
                         setBusinessType(e.target.value);
                         setTypeError(validateType(e.target.value));
+                        persist({ businessType: e.target.value });
                         }}>
                             <option value="">Select an option</option>
                             <option value="music_concerts">Music Concerts</option>
@@ -163,6 +211,7 @@ const Page = () => {
                         onChange={(e)=>{
                             setYears(e.target.value);
                             setYearsError(validateYears(e.target.value));
+                            persist({ years: e.target.value });
                         }}>
                             <option value="">Select experience</option>
                             <option value="less_than_1_year">Less than 1 year</option>
@@ -185,6 +234,7 @@ const Page = () => {
                         onChange={(e) => {
                             setDescription(e.target.value)
                             setDescriptionError(validateDescription(e.target.value));
+                            persist({ description: e.target.value });
                         }}
                 >
                     </textarea>
@@ -204,6 +254,7 @@ const Page = () => {
                             onChange={(e)=>{
                                 setEmail(e.target.value)
                                 setEmailError(validateEmail(e.target.value))
+                                persist({ email: e.target.value });
                             }}/>
                     </div>
 
@@ -217,6 +268,7 @@ const Page = () => {
                             onChange={(e)=>{
                                 setPhone(e.target.value)
                                 setPhoneError(validatePhone(e.target.value))
+                                persist({ phone: e.target.value });
                             }}/>
                     </div>
                 </div>
@@ -234,6 +286,7 @@ const Page = () => {
                             onChange={(e)=>{
                                 setWebsite(e.target.value)
                                 setWebsiteError(validateWebsite(e.target.value))
+                                persist({ website: e.target.value });
                             }}/>
                     </div>
 
@@ -247,6 +300,7 @@ const Page = () => {
                             onChange={(e)=>{
                                 setAddress(e.target.value)
                                 setAddressError(validateAddress(e.target.value))
+                                persist({ address: e.target.value });
                             }}/>
                     </div>
                 </div>
@@ -265,6 +319,7 @@ const Page = () => {
                             onChange={(e)=>{
                                 setCity(e.target.value)
                                 setCityError(validateCity(e.target.value))
+                                persist({ city: e.target.value });
                             }}/>
                     </div>
 
@@ -278,6 +333,7 @@ const Page = () => {
                             onChange={(e)=>{
                                 setState(e.target.value)
                                 setStateError(validateState(e.target.value))
+                                persist({ state: e.target.value });
                             }}/>
                     </div>
                 </div>

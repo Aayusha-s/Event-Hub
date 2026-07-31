@@ -10,6 +10,7 @@ type ButtonProps = {
     isActive?: boolean;
     className?: string;
     status?: "danger" | "success" | "warning";
+    disabled?: boolean;
 };
 
 const Button = ({
@@ -22,6 +23,7 @@ const Button = ({
     isActive,
     status,
     className,
+    disabled,
 }: ButtonProps) => {
     const baseStyles =
         "group inline-flex items-center justify-center font-medium transition-all duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50";
@@ -71,6 +73,7 @@ const Button = ({
     return (
         <button
             type="button"
+            disabled={disabled}
             className={cn(
                 baseStyles,
                 variants[variant],

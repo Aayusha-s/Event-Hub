@@ -1,9 +1,97 @@
-import React from 'react'
-import { ArrowLeft, Check, Upload } from 'lucide-react';
+'use client'
+import { useState } from 'react'
+import { ArrowLeft, Check, Upload, Loader2 } from 'lucide-react';
 import Button from '@/components/Button';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
-const page = () => {
+const BUSINESS_TYPE_LABELS: Record<string, string> = {
+    music_concerts: 'Music Concerts',
+    concert_parties: 'Concert/Parties',
+    business_events: 'Business Events',
+    workshops_seminars: 'Workshops/Seminars',
+    sports_events: 'Sports Events',
+    community_events: 'Community Events',
+    festivals_fairs: 'Festivals/Fairs',
+    charity_nonprofit_events: 'Charity/Non-Profit Events',
+    other: 'Other',
+};
+
+const Page = () => {
+    const router = useRouter();
+    const { update: updateSession } = useSession();
+
+    const [agreedTerms, setAgreedTerms] = useState<Record<string, boolean>>({
+        term2: false,
+        term3: false,
+        term4: false,
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
+    const [submitSuccess, setSubmitSuccess] = useState(false);
+
+    const toggleTerm = (key: string) => {
+        setAgreedTerms((prev) => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const allTermsAccepted = Object.values(agreedTerms).every(Boolean);
+
+    const handleSubmit = async () => {
+        setSubmitError('');
+
+        if (!allTermsAccepted) {
+            setSubmitError('Please accept all the required terms before submitting.');
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const savedStep1 = localStorage.getItem('vendorStep1');
+            const step1 = savedStep1 ? JSON.parse(savedStep1) : {};
+
+            const category = BUSINESS_TYPE_LABELS[step1?.businessType as string] || 'Other';
+            const businessName =
+                step1?.city && step1?.state
+                    ? `${step1.city} Vendor (${step1.state})`
+                    : step1?.email
+                    ? `${step1.email.split('@')[0]}'s Business`
+                    : 'My Vendor Business';
+            const description = step1?.description || 'Vendor application submitted via EventHub.';
+
+            const response = await fetch('/api/vendors', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    businessName,
+                    description,
+                    category,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result?.error?.message || 'Failed to submit application.');
+            }
+
+            await updateSession();
+
+            localStorage.removeItem('vendorStep1');
+
+            setSubmitSuccess(true);
+
+            setTimeout(() => {
+                router.push('/vendordashboard');
+            }, 1500);
+        } catch (error) {
+            setSubmitError(error instanceof Error ? error.message : 'Something went wrong. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div>
             <section className='flex flex-col
@@ -187,19 +275,31 @@ const page = () => {
 
 
                         <div className=" flex items-center gap-2 w-full p-3  cursor-pointer">
-                            <input type="checkbox" id="term2" value="term2" />
+                            <input type="checkbox" id="term2" checked={agreedTerms.term2} onChange={() => toggleTerm('term2')} />
                             <label htmlFor="term2" className='cursor-pointer'>I confirm that all information provided is accurate and complete *</label>
                         </div>
 
                         <div className=" flex items-center gap-2 w-full p-3  cursor-pointer">
-                            <input type="checkbox" id="term3" value="term3" />
+                            <input type="checkbox" id="term3" checked={agreedTerms.term3} onChange={() => toggleTerm('term3')} />
                             <label htmlFor="term3" className='cursor-pointer'>I agree to EventHub &apos;s Vendor Terms & Conditions *</label>
                         </div>
                         <div className=" flex items-center gap-2 w-full p-3  cursor-pointer">
-                            <input type="checkbox" id="term4" value="term4" />
+                            <input type="checkbox" id="term4" checked={agreedTerms.term4} onChange={() => toggleTerm('term4')} />
                             <label htmlFor="term4" className='cursor-pointer'>I understand that my application will be reviewed within 2-3 business days *</label>
                         </div>
                     </div>
+
+                    {submitError && (
+                        <div className='rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700'>
+                            {submitError}
+                        </div>
+                    )}
+
+                    {submitSuccess && (
+                        <div className='rounded-md border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-700'>
+                            Application submitted successfully! Redirecting to your dashboard...
+                        </div>
+                    )}
 
 
                     {/* divider and steps */}
@@ -211,11 +311,16 @@ const page = () => {
                     {/* next button */}
                     <div className='flex justify-between'>
                         <Link href='/vendor/vendorapplication-2' >
-                            <Button text="Previous Step" variant='cta' size='sm'></Button>
+                            <Button text="Previous Step" variant='cta' size='sm' disabled={isSubmitting}></Button>
                         </Link>
-                        <Link href=''>
-                            <Button text="Submit Application" variant='cta' size='sm'></Button>
-                        </Link>
+                        <Button
+                            text={isSubmitting ? 'Submitting...' : 'Submit Application'}
+                            variant='cta'
+                            size='sm'
+                            onClick={handleSubmit}
+                            disabled={isSubmitting || submitSuccess}
+                            iconLeft={isSubmitting ? <Loader2 className='animate-spin' /> : undefined}
+                        ></Button>
                     </div>
                 </div>
             </section>
@@ -223,4 +328,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

@@ -61,7 +61,18 @@ const Page = () => {
             return;
         }
 
-        router.replace('/');
+        // Public registration always creates an Attendee account.
+        // Organizer/Vendor privileges are granted only after the applicant
+        // completes the dedicated application flow and is approved, so we
+        // route the user into the correct wizard based on their selection
+        // instead of pretending the tab choice already assigned a role.
+        if (activeTab === 'host') {
+            router.replace('/organizer/organizerapplication-1');
+        } else if (activeTab === 'vendor') {
+            router.replace('/vendor/vendorapplication-1');
+        } else {
+            router.replace('/');
+        }
         router.refresh();
     }
 
@@ -209,6 +220,14 @@ const Page = () => {
                                 isActive={activeTab === 'vendor'}
                             />
                         </div>
+
+                        {activeTab !== 'attend' && (
+                            <p className="text-sm text-text-light mb-2">
+                                {activeTab === 'host'
+                                    ? "You'll be registered as an Attendee first, then we'll take you straight to the Organizer application. Your account is upgraded once it's approved."
+                                    : "You'll be registered as an Attendee first, then we'll take you straight to the Vendor application. Your account is upgraded once it's approved."}
+                            </p>
+                        )}
 
                     </div>
 
