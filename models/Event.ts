@@ -23,6 +23,7 @@ export interface IEvent {
 	status: "draft" | "published" | "cancelled" | "completed";
 	featured: boolean;
 	tags: string[];
+	isOnline?: boolean;
 }
 
 export type EventDocument = HydratedDocument<IEvent>;
@@ -54,6 +55,7 @@ const eventSchema = new Schema<IEvent>(
 		status: { type: String, enum: ["draft", "published", "cancelled", "completed"], default: "draft", required: true },
 		featured: { type: Boolean, default: false, required: true },
 		tags: [{ type: String, trim: true, maxlength: 50 }],
+		isOnline: { type: Boolean, default: false },
 	},
 	{ timestamps: true, versionKey: false }
 );

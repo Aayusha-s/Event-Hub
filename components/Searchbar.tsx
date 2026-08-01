@@ -11,6 +11,7 @@ type SearchbarProps = {
     /** Compact, single-row pill used inside the navbar (fixed height, no vertical stacking). */
     compact?: boolean;
 };
+type Suggestions = { events: { _id: string; title: string }[]; organizers: { _id: string; name: string }[]; venues: string[]; categories: string[]; tags: string[]; recent: string[]; popular: string[] };
 
 type FilterState = {
     dateFrom: string;
@@ -69,6 +70,8 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
     const [location, setLocation] = useState(() => searchParams.get("location") ?? "");
     const [isListening, setIsListening] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
+    const [showSuggestions, setShowSuggestions] = useState(false);
     const [filters, setFilters] = useState<FilterState>(() => ({
         dateFrom: searchParams.get("dateFrom") ?? "",
         dateTo: searchParams.get("dateTo") ?? "",
@@ -102,7 +105,11 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
         };
     }, [isFilterOpen]);
 
+    useEffect(() => { const timer = window.setTimeout(() => fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`).then(response => response.json()).then(result => { if (result.success) setSuggestions(result.data); }).catch(() => undefined), 180); return () => window.clearTimeout(timer); }, [query]);
+
     const submitSearch = (nextQuery = query, nextLocation = location) => {
+        if (nextQuery.trim()) fetch("/api/search/suggestions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: nextQuery.trim() }) }).catch(() => undefined);
+        setShowSuggestions(false);
         const params = new URLSearchParams();
 
         if (nextQuery.trim()) {
@@ -156,14 +163,16 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
         if (filters.distanceValue) {
             params.set("distance", filters.distanceValue);
             params.set("distanceUnit", filters.distanceUnit);
+            const distance = Number(filters.distanceValue);
+            if (Number.isFinite(distance)) params.set("distanceKm", String(filters.distanceUnit === "miles" ? distance * 1.609344 : distance));
         }
         if (filters.categories.length) params.set("categories", filters.categories.join(","));
         if (filters.priceMin) params.set("priceMin", filters.priceMin);
         if (filters.priceMax) params.set("priceMax", filters.priceMax);
         if (filters.popularity) params.set("popularity", filters.popularity);
 
-        setIsFilterOpen(false);
-        router.push(`/explore-events${params.toString() ? `?${params.toString()}` : ""}`);
+        const navigate = () => { setIsFilterOpen(false); router.push(`/explore-events${params.toString() ? `?${params.toString()}` : ""}`); };
+        if (filters.distanceValue && navigator.geolocation) navigator.geolocation.getCurrentPosition((position) => { params.set("lat", String(position.coords.latitude)); params.set("lng", String(position.coords.longitude)); navigate(); }, navigate, { enableHighAccuracy: false, timeout: 5000 }); else navigate();
     };
 
     const startVoiceSearch = () => {
@@ -218,14 +227,15 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
                     compact ? "h-11 flex-row items-center" : "flex-col lg:flex-row"
                 )}
             >
-                <label className={cn("flex min-w-0 flex-1 items-center gap-2.5", compact ? "h-full px-4" : "px-4 py-3")}>
+                <label className={cn("relative flex min-w-0 flex-1 items-center gap-2.5", compact ? "h-full px-4" : "px-4 py-3")}>
                     <Search className="h-4 w-4 shrink-0 text-primary" />
                     <input
                         value={query}
-                        onChange={(event) => setQuery(event.target.value)}
+                        onChange={(event) => setQuery(event.target.value)} onFocus={() => setShowSuggestions(true)}
                         placeholder={compact ? "Search events..." : "Search events, artists, venues"}
                         className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none"
                     />
+                    {showSuggestions && suggestions && <div className="absolute left-0 top-full z-60 mt-2 w-full min-w-[260px] rounded-xl border border-border bg-surface p-3 shadow-xl"><div className="max-h-72 overflow-y-auto text-sm">{[...suggestions.recent, ...suggestions.popular].slice(0, 5).map(value => <button type="button" key={`q-${value}`} onClick={() => { setQuery(value); submitSearch(value); }} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.events.map(item => <button type="button" key={item._id} onClick={() => router.push(`/event-details/${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.title}</button>)}{suggestions.organizers.map(item => <button type="button" key={item._id} onClick={() => router.push(`/userprofile?userId=${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.name}</button>)}{suggestions.venues.map(value => <button type="button" key={`v-${value}`} onClick={() => submitSearch(value, value)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.categories.concat(suggestions.tags).map(value => <button type="button" key={`f-${value}`} onClick={() => router.push(`/explore-events?tags=${encodeURIComponent(value)}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}</div></div>}
                 </label>
 
                 {showLocation && (

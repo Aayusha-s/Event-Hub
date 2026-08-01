@@ -2,9 +2,10 @@
 
 import Button from "./Button";
 import { useRouter } from "next/navigation";
-import { Calendar, ChevronRight, MapPin } from "lucide-react";
+import { Calendar, ChevronRight, Heart, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTilt } from "@/hooks/use-tilt";
+import { useEffect, useState } from "react";
 
 type EventCardProps = {
     eventId: string | number;
@@ -31,6 +32,9 @@ const EventCard = ({
 }: EventCardProps) => {
     const router = useRouter();
     const { cardRef, tilt, prefersReducedMotion } = useTilt(3);
+    const [saved, setSaved] = useState(false);
+    useEffect(() => { fetch('/api/saved-events').then(response => response.json()).then(result => { if (result.success) setSaved(result.data.items.some((item: { event: { _id: string } }) => item.event._id === String(eventId))); }).catch(() => undefined); }, [eventId]);
+    const toggleSaved = async (event: React.MouseEvent) => { event.stopPropagation(); const response = await fetch('/api/saved-events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eventId: String(eventId) }) }); const result = await response.json(); if (result.success) setSaved(result.data.saved); };
 
     const handleCardClick = () => {
         router.push(`/event-details/${eventId}`);
@@ -84,6 +88,7 @@ const EventCard = ({
                         </div>
                     ))}
                 </div>
+                <button type="button" onClick={toggleSaved} className="absolute right-3 top-3" aria-label={saved ? 'Remove saved event' : 'Save event'}><Heart className={saved ? 'fill-red-500 text-red-500' : 'text-white'} /></button>
             </div>
 
             <div className="flex flex-1 flex-col p-4 md:p-5">

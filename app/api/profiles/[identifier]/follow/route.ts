@@ -1,0 +1,9 @@
+import { NextResponse } from "next/server";
+import { Types } from "mongoose";
+import { requireRole } from "@/middleware/auth/requireRole";
+import { follow, getProfileByIdentifier, removeFollower, unfollow } from "@/services/profiles/profile.service";
+import { HttpError } from "@/utils/api/httpError";
+const roles = ["attendee", "organizer", "vendor", "ticket_checker", "admin"] as const;
+const target = async (identifier: string) => { const profile = await getProfileByIdentifier(identifier); return new Types.ObjectId(profile.user._id); };
+export async function POST(_: Request, context: { params: Promise<{ identifier: string }> }) { try { const session = await requireRole([...roles]); const { identifier } = await context.params; return NextResponse.json({ success: true, data: await follow(new Types.ObjectId(session.user.id), await target(identifier)) }); } catch (error) { return NextResponse.json({ success: false, error: { message: error instanceof HttpError ? error.message : "Unable to follow profile." } }, { status: error instanceof HttpError ? error.statusCode : 500 }); } }
+export async function DELETE(request: Request, context: { params: Promise<{ identifier: string }> }) { try { const session = await requireRole([...roles]); const { identifier } = await context.params, user = new Types.ObjectId(session.user.id), targetId = await target(identifier); const action = new URL(request.url).searchParams.get("action"); return NextResponse.json({ success: true, data: action === "remove" ? await removeFollower(user, targetId) : await unfollow(user, targetId) }); } catch (error) { return NextResponse.json({ success: false, error: { message: error instanceof HttpError ? error.message : "Unable to update follow status." } }, { status: error instanceof HttpError ? error.statusCode : 500 }); } }

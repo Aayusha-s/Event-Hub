@@ -81,7 +81,7 @@ const DROPDOWN_LINKS: Record<UserRole, DropdownLink[]> = {
 	attendee: [
 		{ label: "My Profile", href: "/userprofile", icon: <CircleUserRound size={iconSize} /> },
 		{ label: "My Tickets", href: "/userdashboard", icon: <Ticket size={iconSize} /> },
-		{ label: "Saved Events", href: "/explore-events?saved=true", icon: <Trophy size={iconSize} /> },
+		{ label: "Saved Events", href: "/saved-events", icon: <Trophy size={iconSize} /> },
 		{ label: "Community", href: "/community", icon: <Users size={iconSize} /> },
 		{ label: "Challenges", href: "/challenges", icon: <Trophy size={iconSize} /> },
 		{ label: "Settings", href: "/settings/profile", icon: <Settings size={iconSize} /> },

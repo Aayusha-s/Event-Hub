@@ -7,13 +7,14 @@ import SharePopup from "./SharePopup";
 type TicketPopupProps = {
     isOpen: boolean;
     onClose: () => void;
-    ticket?: { ticketNumber: string; ticketType: string; qrCode: string; paymentStatus: string; ticketStatus: string; event?: { title?: string; venue?: string; startDate?: string; endDate?: string } };
+    ticket?: { _id?: string; ticketNumber: string; ticketType: string; qrCode: string; paymentStatus: string; ticketStatus: string; checkedIn?: boolean; purchaseDate?: string; event?: { title?: string; venue?: string; startDate?: string; endDate?: string; images?: string[]; organizer?: { name?: string } } };
+    onCancelled?: () => void;
 }
 
 export default function TicketPopup(
     {
         isOpen,
-        onClose, ticket
+        onClose, ticket, onCancelled
     }: TicketPopupProps
 ) {
     const [sharePopupOpen, setSharePopupOpen] = useState(false);
@@ -75,7 +76,7 @@ export default function TicketPopup(
                                 size="vsm" onClick={() => { if (ticket?.qrCode) { const link = document.createElement('a'); link.href = ticket.qrCode; link.download = `${ticket.ticketNumber}.png`; link.click(); } }} />
 
                             <Button text='Share'
-                                onClick={() => setSharePopupOpen(true)}
+                                onClick={() => { const url = window.location.href; if (navigator.share) navigator.share({ title: ticket?.event?.title ?? 'Ticket', url }).catch(() => undefined); else navigator.clipboard.writeText(url); }}
                                 iconLeft={<Share2 size={18} />}
                                 size="vsm" />
                             
@@ -85,6 +86,8 @@ export default function TicketPopup(
                             iconLeft={<QrCode size={18} />}
                             size="vsm" />
                     </div>
+
+                    {ticket?._id && ticket.ticketStatus === 'active' && !ticket.checkedIn && <div className="mt-3 flex justify-center"><Button text='Cancel Ticket' status='danger' size='vsm' onClick={async () => { const response = await fetch(`/api/tickets/${ticket._id}`, { method: 'DELETE' }); if (response.ok) { onCancelled?.(); onClose(); } }} /></div>}
 
                     <div className="border-t border-gray-300 my-4"></div>
                     <div className="mt-2 flex justify-center">

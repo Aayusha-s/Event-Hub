@@ -7,6 +7,7 @@ import Event from "@/models/Event";
 import Payment from "@/models/Payment";
 import Ticket from "@/models/Ticket";
 import { HttpError } from "@/utils/api/httpError";
+import { recordActivity } from "@/services/profiles/profile.service";
 import { BookTicketInput } from "@/utils/tickets/validation";
 
 const ticketNumber = () => `VIVNT-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${randomUUID().replace(/-/g, "").slice(0, 10).toUpperCase()}`;
@@ -31,7 +32,9 @@ export const bookingService = {
 		for (const item of items) if ((sold.get(item.ticketType) ?? 0) + item.quantity > types.get(item.ticketType)!.quantity) throw new HttpError(409, `${item.ticketType} is sold out.`, "TICKET_TYPE_SOLD_OUT");
 		const eventSold = [...sold.values()].reduce((sum, count) => sum + count, 0);
 		if (eventSold + total > event.capacity) throw new HttpError(409, "This event is sold out.", "EVENT_SOLD_OUT");
-		return Booking.create({ user, event: event._id, items, totalAmount: items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0) });
+		const booking = await Booking.create({ user, event: event._id, items, totalAmount: items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0) });
+		await recordActivity(user, "booking", "Booked an event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` });
+		return booking;
 	},
 	completeBooking: async (bookingId: Types.ObjectId, paymentId: Types.ObjectId) => {
 		await dbConnect(); const session = await mongoose.startSession();

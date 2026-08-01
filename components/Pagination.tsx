@@ -1,36 +1,4 @@
-import React from 'react'
-import Button from './Button'
-import { ArrowRight, ChevronRight } from 'lucide-react'
-
-const Pagination = () => {
-    return (
-        <div className='flex flex-row items-center justify-center gap-3 font-bold'>
-
-            <Button 
-            text="1"
-            variant='cta'
-            size='sm'
-            />
-
-            <Button 
-            text="2"
-            variant='cta'
-            size='sm'
-            />
-
-            <Button 
-            text="3"
-            variant='cta'
-            size='sm'
-            />
-
-            <Button 
-            iconRight={<ChevronRight />}
-            variant='cta'
-            size='sm'
-            />
-        </div>
-    )
-}
-
-export default Pagination
+'use client';
+import Button from './Button'; import { ChevronLeft, ChevronRight } from 'lucide-react';
+type Props={page?:number;totalPages?:number;onPageChange?: (page:number)=>void};
+export default function Pagination({page=1,totalPages=1,onPageChange}:Props){if(totalPages<=1)return null;const pages=Array.from({length:Math.min(totalPages,5)},(_,i)=>Math.max(1,Math.min(totalPages,page-2+i)));return <div className='flex flex-row items-center justify-center gap-3 font-bold'><Button iconLeft={<ChevronLeft/>} variant='cta' size='sm' disabled={page<=1} onClick={()=>onPageChange?.(page-1)}/>{pages.map(value=><Button key={value} text={String(value)} variant='cta' size='sm' disabled={value===page} onClick={()=>onPageChange?.(value)}/>)}<Button iconRight={<ChevronRight/>} variant='cta' size='sm' disabled={page>=totalPages} onClick={()=>onPageChange?.(page+1)}/></div>}

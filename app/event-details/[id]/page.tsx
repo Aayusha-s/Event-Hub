@@ -6,6 +6,7 @@ import Map from '@/components/Map';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import EventSocial from '@/components/EventSocial';
 
 type TicketType = { name: string; price: number; quantity: number; description?: string };
 type EventData = {
@@ -26,6 +27,7 @@ const Page = () => {
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
     const [showAllPhotos, setShowAllPhotos] = useState(false);
+    const [saved, setSaved] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -58,6 +60,8 @@ const Page = () => {
         loadEvent();
         return () => { active = false; };
     }, [id]);
+    useEffect(() => { if (!id) return; fetch('/api/saved-events').then(response => response.json()).then(result => { if (result.success) setSaved(result.data.items.some((item: { event: { _id: string } }) => item.event._id === id)); }).catch(() => undefined); }, [id]);
+    const toggleSaved = async () => { if (!event) return; const response = await fetch('/api/saved-events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eventId: event._id }) }); const result = await response.json(); if (result.success) setSaved(result.data.saved); };
 
     const details = useMemo(() => {
         if (!event) return [];
@@ -99,7 +103,7 @@ const Page = () => {
                         <p className='ml-2 text-base md:text-lg'>Hosted by <Link href={organizerHref}><span className='font-semibold font-dynapuff hover:text-brown-dark'>{organizerName}</span></Link></p>
                     </div>
                     <p className='text-sm capitalize text-text-dark/80'>Category: {event.category.replaceAll('_', ' ')} • Event type: {event.status}</p>
-                    <div className='mt-4'><Link href={`/booknow?eventId=${event._id}`}><Button text="Book Now" iconRight={<i className="fa-solid fa-arrow-right"></i>} variant="cta" size="lg" /></Link></div>
+                    <div className='mt-4 flex gap-3'><Link href={`/booknow?eventId=${event._id}`}><Button text="Book Now" iconRight={<i className="fa-solid fa-arrow-right"></i>} variant="cta" size="lg" /></Link><Button text={saved ? 'Saved' : 'Save Event'} variant='secondary' size='lg' onClick={toggleSaved}/></div>
                 </div>
             </div>
             <div className='flex flex-col gap-8 mt-8 lg:flex-row lg:gap-12'>
@@ -112,6 +116,7 @@ const Page = () => {
             </div>
             <div className='mt-8 md:mt-12'><div className='flex flex-row sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6'><h2 className='font-dynapuff font-bold text-xl md:text-xl lg:text-xl mb-3 sm:mb-0'>Photos</h2><Button text={showAllPhotos ? 'Show Less' : 'View All'} variant='cta' size='sm' iconRight={<i className="fa-solid fa-arrow-right"></i>} onClick={() => setShowAllPhotos((visible) => !visible)} /></div><div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>{galleryImages.slice(0, showAllPhotos ? galleryImages.length : 5).map((image, index) => <div key={`${image}-${index}`} className='relative w-full h-48 md:h-56 lg:h-48 xl:h-56 transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg cursor-pointer'><div className={`absolute inset-0 rotate-3 rounded-xl ${index % 5 === 0 ? 'bg-red-200' : index % 5 === 1 ? 'bg-green-200' : index % 5 === 2 ? 'bg-blue-200' : index % 5 === 3 ? 'bg-yellow-200' : 'bg-purple-200'}`} /><img src={image} alt={`${event.title} ${index + 1}`} className='absolute inset-0 w-full h-full object-cover rounded-xl' /></div>)}</div></div>
             <div className='mt-10 md:mt-16'><div className='flex flex-row sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6'><h2 className='font-dynapuff font-bold text-xl md:text-xl lg:text-xl mb-3 sm:mb-0'>Similar Events</h2><Link href={`/explore-events?category=${encodeURIComponent(event.category)}`}><Button text='View More' variant='cta' size='sm' iconRight={<i className="fa-solid fa-arrow-right"></i>} /></Link></div><div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6'>{similarEvents.map((similar) => <EventCard key={similar._id} eventId={similar._id} tags={similar.tags} imageUrl={similar.images[0] ?? fallbackImage} imageAlt={similar.title} title={similar.title} organizer={`By ${similar.organizer?.name ?? 'Event organizer'}`} descriptions={[similar.description]} location={similar.venue} price={similar.ticketTypes.some((ticket) => ticket.price === 0) ? 'Free' : `From Rs.${Math.min(...similar.ticketTypes.map((ticket) => ticket.price))}`} />)}</div></div>
+            <EventSocial eventId={event._id} />
         </section>
     );
 };

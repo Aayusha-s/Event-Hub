@@ -1,6 +1,7 @@
 import { PipelineStage, Types } from "mongoose";
 import Event, { EventDocument } from "@/models/Event";
 import { EventInput, EventStatus } from "@/utils/events/validation";
+import { recordActivity } from "@/services/profiles/profile.service";
 
 export type EventListFilters = {
 	page: number;
@@ -16,6 +17,16 @@ export type EventListFilters = {
 	location?: string;
 	priceMin?: number;
 	priceMax?: number;
+	sort?: "newest" | "oldest" | "trending" | "popular" | "rating" | "priceAsc" | "priceDesc";
+	rating?: number;
+	availability?: "available" | "soldOut";
+	free?: boolean;
+	online?: boolean;
+	latitude?: number;
+	longitude?: number;
+	distanceKm?: number;
+	timeFrom?: string;
+	timeTo?: string;
 };
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -109,15 +120,30 @@ export const listEvents = async (filters: EventListFilters) => {
 	if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
 		match.ticketTypes = { $elemMatch: { ...(filters.priceMin !== undefined ? { price: { $gte: filters.priceMin } } : {}), ...(filters.priceMax !== undefined ? { price: { $lte: filters.priceMax } } : {}) } };
 	}
+	if (filters.free !== undefined) match.ticketTypes = { $elemMatch: { price: filters.free ? 0 : { $gt: 0 } } };
+	if (filters.online !== undefined) match.isOnline = filters.online;
+	const timeFilter: Record<string, unknown> = {};
+	if (filters.timeFrom) timeFilter.$gte = filters.timeFrom;
+	if (filters.timeTo) timeFilter.$lte = filters.timeTo;
 
 	const skip = (filters.page - 1) * filters.pageSize;
+	const sort: Record<string, 1 | -1> = filters.sort === "newest" ? { createdAt: -1, _id: -1 } : filters.sort === "oldest" ? { createdAt: 1, _id: 1 } : filters.sort === "priceAsc" ? { minPrice: 1, _id: 1 } : filters.sort === "priceDesc" ? { minPrice: -1, _id: 1 } : filters.sort === "rating" ? { averageRating: -1, reviewCount: -1 } : filters.sort === "popular" || filters.sort === "trending" ? { ticketsSold: -1, createdAt: -1 } : { featured: -1, startDate: 1, _id: 1 };
+	const distanceStages: PipelineStage[] = filters.latitude !== undefined && filters.longitude !== undefined ? [{ $addFields: { distanceKm: { $sqrt: { $add: [{ $pow: [{ $subtract: ["$latitude", filters.latitude] }, 2] }, { $pow: [{ $subtract: ["$longitude", filters.longitude] }, 2] }] } } } }] : [];
+	const timeStages: PipelineStage[] = Object.keys(timeFilter).length ? [{ $match: { $expr: { $let: { vars: { eventTime: { $dateToString: { format: "%H:%M", date: "$startDate", timezone: "UTC" } } }, in: { $and: [filters.timeFrom ? { $gte: ["$$eventTime", filters.timeFrom] } : true, filters.timeTo ? { $lte: ["$$eventTime", filters.timeTo] } : true] } } } } }] : [];
 	const [result] = await Event.aggregate([
 		{ $match: match },
-		...organizerLookup,
 		...ticketAvailabilityLookup,
+		{ $lookup: { from: "reviews", localField: "_id", foreignField: "event", as: "reviews" } },
+		{ $addFields: { averageRating: { $ifNull: [{ $avg: "$reviews.rating" }, 0] }, reviewCount: { $size: "$reviews" }, minPrice: { $min: "$ticketTypes.price" } } },
+		...distanceStages,
+		...(filters.distanceKm !== undefined && filters.latitude !== undefined && filters.longitude !== undefined ? [{ $match: { distanceKm: { $lte: filters.distanceKm } } }] : []),
+		...timeStages,
+		...(filters.rating !== undefined ? [{ $match: { averageRating: { $gte: filters.rating } } }] : []),
+		...(filters.availability === "available" ? [{ $match: { $expr: { $lt: ["$ticketsSold", "$capacity"] } } }] : filters.availability === "soldOut" ? [{ $match: { $expr: { $gte: ["$ticketsSold", "$capacity"] } } }] : []),
+		...organizerLookup,
 		{
 			$facet: {
-				items: [{ $sort: { featured: -1, startDate: 1, _id: 1 } }, { $skip: skip }, { $limit: filters.pageSize }],
+				items: [{ $sort: sort }, { $skip: skip }, { $limit: filters.pageSize }],
 				metadata: [{ $count: "total" }],
 			},
 		},
@@ -138,7 +164,7 @@ export const getEventById = async (id: Types.ObjectId) => {
 	return event ?? null;
 };
 
-export const createEvent = (input: EventInput, organizer: Types.ObjectId) => Event.create({ ...input, organizer });
+export const createEvent = async (input: EventInput, organizer: Types.ObjectId) => { const event = await Event.create({ ...input, organizer }); await recordActivity(organizer, "created_event", "Created an event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` }); return event; };
 
 export const findEventForManagement = (id: Types.ObjectId): Promise<EventDocument | null> => Event.findById(id).exec();
 

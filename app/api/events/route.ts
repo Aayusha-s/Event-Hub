@@ -59,8 +59,19 @@ export async function GET(request: Request) {
 		const location = searchParams.get("location")?.trim() || searchParams.get("filterLocation")?.trim();
 		const parsePrice = (value: string | null, field: string) => { if (!value) return undefined; const parsed = Number(value); if (!Number.isFinite(parsed) || parsed < 0) throw new HttpError(400, `${field} must be a non-negative number.`, "VALIDATION_ERROR"); return parsed; };
 		const priceMin = parsePrice(searchParams.get("priceMin"), "priceMin"); const priceMax = parsePrice(searchParams.get("priceMax"), "priceMax");
+		const sort = searchParams.get("sort") as "newest" | "oldest" | "trending" | "popular" | "rating" | "priceAsc" | "priceDesc" | null;
+		const rating = parsePrice(searchParams.get("rating"), "rating"); const availability = searchParams.get("availability") as "available" | "soldOut" | null;
+		const booleanParam = (name: string) => { const value = searchParams.get(name); if (value === null) return undefined; if (value !== "true" && value !== "false") throw new HttpError(400, `${name} must be true or false.`, "VALIDATION_ERROR"); return value === "true"; };
+		const free = booleanParam("free"); const online = booleanParam("online");
+		const parseCoordinate = (name: "lat" | "lng") => { const value = searchParams.get(name); if (!value) return undefined; const number = Number(value); if (!Number.isFinite(number)) throw new HttpError(400, `${name} must be numeric.`, "VALIDATION_ERROR"); return number; };
+		const latitude = parseCoordinate("lat"), longitude = parseCoordinate("lng"), distanceKm = parsePrice(searchParams.get("distanceKm"), "distanceKm");
+		const timeFrom = searchParams.get("timeFrom") ?? undefined, timeTo = searchParams.get("timeTo") ?? undefined;
 		if (category && category.length > 100) throw new HttpError(400, "category must not exceed 100 characters.", "VALIDATION_ERROR");
 		if (priceMin !== undefined && priceMax !== undefined && priceMax < priceMin) throw new HttpError(400, "priceMax must be greater than priceMin.", "VALIDATION_ERROR");
+		if (sort && !["newest","oldest","trending","popular","rating","priceAsc","priceDesc"].includes(sort)) throw new HttpError(400, "sort is invalid.", "VALIDATION_ERROR");
+		if (availability && availability !== "available" && availability !== "soldOut") throw new HttpError(400, "availability is invalid.", "VALIDATION_ERROR");
+		if ((latitude === undefined) !== (longitude === undefined)) throw new HttpError(400, "lat and lng must be supplied together.", "VALIDATION_ERROR");
+		if ((timeFrom && !/^\d{2}:\d{2}$/.test(timeFrom)) || (timeTo && !/^\d{2}:\d{2}$/.test(timeTo))) throw new HttpError(400, "time filters must use HH:MM.", "VALIDATION_ERROR");
 
 		const result = await listEvents({
 			page,
@@ -76,6 +87,16 @@ export async function GET(request: Request) {
 			location: location || undefined,
 			priceMin,
 			priceMax,
+			sort: sort ?? undefined,
+			rating,
+			availability: availability ?? undefined,
+			free,
+			online,
+			latitude,
+			longitude,
+			distanceKm,
+			timeFrom,
+			timeTo,
 		});
 
 		return NextResponse.json({ success: true, data: { items: result.items, pagination: { page, pageSize, total: result.total, totalPages: Math.ceil(result.total / pageSize) } } });

@@ -8,6 +8,13 @@ export interface IUser {
 	phone?: string;
 	role: UserRole;
 	profileImage?: string;
+	coverImage?: string;
+	username?: string;
+	bio?: string;
+	location?: string;
+	website?: string;
+	interests: string[];
+	privacy: "public" | "followers" | "private";
 }
 
 export type UserDocument = HydratedDocument<IUser>;
@@ -28,12 +35,20 @@ const userSchema = new Schema<IUser>(
 		phone: { type: String, trim: true, maxlength: 20 },
 		role: { type: String, enum: USER_ROLES, default: "attendee", required: true },
 		profileImage: { type: String, trim: true, maxlength: 500 },
+		coverImage: { type: String, trim: true, maxlength: 500 },
+		username: { type: String, trim: true, lowercase: true, minlength: 3, maxlength: 30, match: /^[a-z0-9_]+$/ },
+		bio: { type: String, trim: true, maxlength: 500 },
+		location: { type: String, trim: true, maxlength: 120 },
+		website: { type: String, trim: true, maxlength: 500 },
+		interests: { type: [String], default: [], validate: { validator: (items: string[]) => items.length <= 20, message: "A profile can have at most 20 interests." } },
+		privacy: { type: String, enum: ["public", "followers", "private"], default: "public", required: true },
 	},
 	{ timestamps: true, versionKey: false }
 );
 
 userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ role: 1 });
+userSchema.index({ username: 1 }, { unique: true, sparse: true });
 
 export const User: Model<IUser> =
 	(mongoose.models.User as Model<IUser> | undefined) ?? mongoose.model<IUser>("User", userSchema);
