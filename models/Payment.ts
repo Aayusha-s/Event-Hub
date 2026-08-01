@@ -6,10 +6,9 @@ export interface IPayment {
 	ticket?: Types.ObjectId;
 	booking?: Types.ObjectId;
 	amount: number;
-	paymentMethod: "esewa" | "khalti";
+	paymentMethod: "esewa";
 	paymentStatus: "pending" | "paid" | "failed" | "refunded";
 	transactionId?: string;
-	pidx?: string;
 	metadata?: Record<string, unknown>;
 }
 
@@ -22,10 +21,9 @@ const paymentSchema = new Schema<IPayment>(
 		ticket: { type: Schema.Types.ObjectId, ref: "Ticket" },
 		booking: { type: Schema.Types.ObjectId, ref: "Booking", index: true },
 		amount: { type: Number, required: true, min: 0 },
-		paymentMethod: { type: String, enum: ["esewa", "khalti"], required: true },
+		paymentMethod: { type: String, enum: ["esewa"], required: true },
 		paymentStatus: { type: String, enum: ["pending", "paid", "failed", "refunded"], default: "pending", required: true },
 		transactionId: { type: String, trim: true, unique: true, sparse: true, maxlength: 255 },
-		pidx: { type: String, trim: true, sparse: true, maxlength: 255 },
 		metadata: { type: Schema.Types.Mixed },
 	},
 	{ timestamps: true, versionKey: false }

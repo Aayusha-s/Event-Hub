@@ -3,7 +3,7 @@ import { withAuth } from "next-auth/middleware";
 import { UserRole } from "@/types";
 
 const roleProtectedRoutes: Array<{ prefix: string; roles: UserRole[] }> = [
-	{ prefix: "/analytics", roles: ["admin"] },
+	{ prefix: "/analytics", roles: ["admin", "organizer"] },
 	{ prefix: "/admin", roles: ["admin"] },
 	{ prefix: "/organizerdashboard", roles: ["admin", "organizer"] },
 	{ prefix: "/vendordashboard", roles: ["admin", "vendor"] },
@@ -21,6 +21,7 @@ const authRequiredPrefixes = [
 	"/booknow",
 	"/premium",
 	"/ticket-checker",
+	"/api/payments/esewa/callback",
 	"/analytics",
 	"/admin",
 	"/organizerdashboard",

@@ -9,8 +9,8 @@ export async function POST(request: Request) {
 		const body = await request.json();
 		const { bookingId, paymentMethod } = body;
 
-		if (!bookingId || !["khalti", "esewa"].includes(paymentMethod)) {
-			throw new HttpError(400, "bookingId and paymentMethod are required.", "VALIDATION_ERROR");
+		if (!bookingId || paymentMethod !== "esewa") {
+			throw new HttpError(400, "bookingId and eSewa paymentMethod are required.", "VALIDATION_ERROR");
 		}
 
 		const result = await initiatePayment(session.user.id, { bookingId, paymentMethod });

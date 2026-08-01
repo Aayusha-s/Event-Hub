@@ -7,13 +7,13 @@ export async function POST(request: Request) {
 	try {
 		await requireRole(["attendee", "organizer", "vendor", "ticket_checker", "admin"]);
 		const body = await request.json();
-		const { paymentId, transactionId, pidx } = body;
+		const { paymentId, data } = body;
 
 		if (!paymentId) {
 			throw new HttpError(400, "paymentId is required.", "VALIDATION_ERROR");
 		}
 
-		const result = await verifyPayment(paymentId, transactionId, pidx);
+		const result = await verifyPayment(paymentId, data);
 		return NextResponse.json({ success: true, data: result });
 	} catch (error) {
 		if (error instanceof HttpError) {

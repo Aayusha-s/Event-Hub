@@ -11,11 +11,13 @@ import { recordActivity } from "@/services/profiles/profile.service";
 import { BookTicketInput } from "@/utils/tickets/validation";
 
 const ticketNumber = () => `VIVNT-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${randomUUID().replace(/-/g, "").slice(0, 10).toUpperCase()}`;
+const logBooking = (stage: string, fields: Record<string, unknown>) => { if (process.env.NODE_ENV !== "production") console.info(`[Booking] ${stage}`, fields); };
 
 export const bookingService = {
 	createBooking: async (userId: Types.ObjectId | string, input: BookTicketInput) => {
 		await dbConnect();
 		const user = new Types.ObjectId(userId);
+		logBooking("create requested", { userId: user.toString(), eventId: input.eventId.toString(), itemCount: input.items.length });
 		const event = await Event.findById(input.eventId).exec();
 		if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
 		if (event.status !== "published") throw new HttpError(409, "This event is not published.", "EVENT_NOT_PUBLISHED");
@@ -34,10 +36,12 @@ export const bookingService = {
 		if (eventSold + total > event.capacity) throw new HttpError(409, "This event is sold out.", "EVENT_SOLD_OUT");
 		const booking = await Booking.create({ user, event: event._id, items, totalAmount: items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0) });
 		await recordActivity(user, "booking", "Booked an event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` });
+		logBooking("create completed", { bookingId: booking._id.toString(), eventId: event._id.toString(), totalAmount: booking.totalAmount, itemCount: booking.items.length });
 		return booking;
 	},
 	completeBooking: async (bookingId: Types.ObjectId, paymentId: Types.ObjectId) => {
 		await dbConnect(); const session = await mongoose.startSession();
+		logBooking("complete requested", { bookingId: bookingId.toString(), paymentId: paymentId.toString() });
 		try { let tickets: Awaited<ReturnType<typeof Ticket.create>> = [] as never;
 			await session.withTransaction(async () => {
 				const booking = await Booking.findById(bookingId).session(session).exec(); const payment = await Payment.findById(paymentId).session(session).exec();
@@ -49,6 +53,7 @@ export const bookingService = {
 				for (const item of booking.items) { const type = event.ticketTypes.find((candidate) => candidate.name === item.ticketType); if (!type || (sold.get(item.ticketType) ?? 0) + item.quantity > type.quantity) throw new HttpError(409, `${item.ticketType} is sold out.`, "TICKET_TYPE_SOLD_OUT"); }
 				const rows = await Promise.all(booking.items.flatMap((item) => Array.from({ length: item.quantity }, async () => { const number = ticketNumber(); return { user: booking.user, event: booking.event, booking: booking._id, payment: payment._id, ticketType: item.ticketType, ticketNumber: number, qrCode: await QRCode.toDataURL(`vivnt-ticket:${number}`, { width: 300, margin: 1 }), paymentStatus: "paid" as const }; })));
 				tickets = await Ticket.create(rows, { session }); booking.status = "paid"; booking.payment = payment._id; payment.paymentStatus = "paid"; await Promise.all([booking.save({ session }), payment.save({ session })]);
+				logBooking("complete transaction", { bookingId: booking._id.toString(), paymentId: payment._id.toString(), ticketCount: tickets.length, status: booking.status });
 			}); return tickets;
 		} finally { await session.endSession(); }
 	},
