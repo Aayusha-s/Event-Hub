@@ -1,7 +1,7 @@
 'use client';
 import Button from '@/components/Button';
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { clearEventDraft, loadDraft } from '@/lib/createEventDraft';
 
@@ -40,7 +40,7 @@ const Page = () => {
     const [eventDetails] = useState<EventDetailsDraft | null>(() => loadDraft<EventDetailsDraft>("eventDetails"));
     const [eventInfo] = useState<EventInfoDraft | null>(() => loadDraft<EventInfoDraft>("eventInfo"));
     const router = useRouter();
-	const searchParams = useSearchParams();
+	const eventIdFromUrl = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
     const [isPublishing, setIsPublishing] = useState(false);
     const [publishError, setPublishError] = useState('');
 
@@ -62,7 +62,7 @@ const Page = () => {
                 throw new Error('Your date, time, or capacity is invalid. Please review Step 2.');
             }
 
-			const eventId = searchParams.get('eventId') || (basicInformation as BasicInformationDraft & { eventId?: string }).eventId;
+			const eventId = eventIdFromUrl() || (basicInformation as BasicInformationDraft & { eventId?: string }).eventId;
 			const response = await fetch(eventId ? `/api/events/${eventId}` : '/api/events', {
 				method: eventId ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -112,7 +112,7 @@ const Page = () => {
             description="Check your event details before publishing. You can still go back and make changes if needed."
             footer={(
                 <div className='flex items-center justify-between gap-3'>
-                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push(`/create-event/step-3${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`)} disabled={isPublishing} />
+                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push(`/create-event/step-3${eventIdFromUrl() ? `?eventId=${eventIdFromUrl()}` : ''}`)} disabled={isPublishing} />
                     <Button text={isPublishing ? "Publishing..." : "Publish Event"} variant='cta' size='sm' onClick={handlePublish} disabled={isPublishing} />
                 </div>
             )}

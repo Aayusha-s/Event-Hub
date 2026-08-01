@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/middleware/auth/requireRole";
-import { getUserNotifications, markAllNotificationsAsRead } from "@/services/notifications/notification.service";
+import { deleteAllNotifications, getUserNotifications, markAllNotificationsAsRead } from "@/services/notifications/notification.service";
 import { HttpError } from "@/utils/api/httpError";
 
 const errorResponse = (error: unknown) => {
@@ -18,12 +18,14 @@ export async function GET(request: Request) {
 		const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
 		const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") ?? "20", 10)));
 
-		const result = await getUserNotifications(session.user.id, page, pageSize);
+		const result = await getUserNotifications(session.user.id, page, pageSize, searchParams.get("q")?.trim() || undefined, searchParams.get("type")?.trim() || undefined);
 		return NextResponse.json({ success: true, data: result });
 	} catch (error) {
 		return errorResponse(error);
 	}
 }
+
+export async function DELETE() { try { const session = await requireRole(["attendee", "organizer", "vendor", "ticket_checker", "admin"]); return NextResponse.json({ success: true, data: await deleteAllNotifications(session.user.id) }); } catch (error) { return errorResponse(error); } }
 
 export async function PATCH() {
 	try {

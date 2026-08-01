@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Button from '@/components/Button';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { CircleX, Plus } from 'lucide-react';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { saveDraft } from '@/lib/createEventDraft';
@@ -15,7 +15,7 @@ type TicketDraft = {
 
 const Page = () => {
     const router = useRouter();
-	const searchParams = useSearchParams();
+	const eventId = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
 
     // State to hold multiple tickets
     const [tickets, setTickets] = useState<TicketDraft[]>(() => {
@@ -69,11 +69,11 @@ const Page = () => {
         }
 
         saveDraft("eventInfo", { tickets });
-        router.push(`/create-event/step-4${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`);
+        router.push(`/create-event/step-4${eventId() ? `?eventId=${eventId()}` : ''}`);
     };
 
     const handlePrevious = () => {
-        router.push(`/create-event/step-2${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`);
+        router.push(`/create-event/step-2${eventId() ? `?eventId=${eventId()}` : ''}`);
     };
 
     return (

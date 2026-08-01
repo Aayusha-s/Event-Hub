@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Button from '@/components/Button';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { saveDraft } from '@/lib/createEventDraft';
 
@@ -44,7 +44,7 @@ const Page = () => {
         try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.eventCapacity ?? ''; } catch { return ''; }
     });
     const router = useRouter();
-	const searchParams = useSearchParams();
+	const eventId = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
 
     const handleNext = () => {
         if (!startDate || !endDate || !startTime || !endTime || !venueName || !streetAddress || !city || !state || !eventCapacity) {
@@ -65,7 +65,7 @@ const Page = () => {
 
         saveDraft("eventDetails", EventDetails);
 
-		router.push(`/create-event/step-3${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`);
+		router.push(`/create-event/step-3${eventId() ? `?eventId=${eventId()}` : ''}`);
 
     }
 
@@ -77,7 +77,7 @@ const Page = () => {
             description="Add the timing, venue, and capacity so guests know exactly where and when to join."
             footer={(
                 <div className='flex items-center justify-between gap-3'>
-                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push(`/create-event/step-1${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`)} />
+                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push(`/create-event/step-1${eventId() ? `?eventId=${eventId()}` : ''}`)} />
                     <Button text="Next Step" variant='cta' size='sm' onClick={handleNext} />
                 </div>
             )}
@@ -107,8 +107,8 @@ const Page = () => {
                     <input type="text" placeholder="e.g., Central Park" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={venueName} onChange={(e) => setVenueName(e.target.value)} />
                 </div>
                 <div>
-                    <h2 className="mb-2 text-sm font-medium text-text-dark">Street Address *</h2>
-                    <input type="text" placeholder="e.g., 123 Main Street" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} />
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">Street Address </h2>
+                    <input type="text" placeholder="e.g., 123 Main Street" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring"  value={streetAddress} onChange={(e) => setStreetAddress(e.target.value)} />
                 </div>
             </div>
 
@@ -118,8 +118,8 @@ const Page = () => {
                     <input type="text" placeholder="e.g., New York" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={city} onChange={(e) => setCity(e.target.value)} />
                 </div>
                 <div>
-                    <h2 className="mb-2 text-sm font-medium text-text-dark">State *</h2>
-                    <input type="text" placeholder="e.g., NY" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={state} onChange={(e) => setState(e.target.value)} />
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">State </h2>
+                    <input type="text" placeholder="e.g., NY" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" value={state} onChange={(e) => setState(e.target.value)} />
                 </div>
                 <div>
                     <h2 className="mb-2 text-sm font-medium text-text-dark">Event Capacity *</h2>

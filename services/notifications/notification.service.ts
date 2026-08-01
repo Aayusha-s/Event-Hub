@@ -19,13 +19,16 @@ export const createNotification = async (
 	});
 };
 
-export const getUserNotifications = async (userId: Types.ObjectId | string, page = 1, pageSize = 20) => {
+export const getUserNotifications = async (userId: Types.ObjectId | string, page = 1, pageSize = 20, query?: string, type?: string) => {
 	await dbConnect();
 	const userObjId = new Types.ObjectId(userId);
 	const skip = (page - 1) * pageSize;
+	const filter: Record<string, unknown> = { user: userObjId };
+	if (type) filter.type = type;
+	if (query) { const pattern = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"); filter.$or = [{ title: pattern }, { message: pattern }]; }
 
 	const [notifications, unreadCount, total] = await Promise.all([
-		Notification.find({ user: userObjId }).sort({ createdAt: -1 }).skip(skip).limit(pageSize).exec(),
+		Notification.find(filter).sort({ createdAt: -1 }).skip(skip).limit(pageSize).lean().exec(),
 		Notification.countDocuments({ user: userObjId, read: false }),
 		Notification.countDocuments({ user: userObjId }),
 	]);
@@ -39,6 +42,9 @@ export const getUserNotifications = async (userId: Types.ObjectId | string, page
 		totalPages: Math.ceil(total / pageSize),
 	};
 };
+
+export const deleteNotification = async (notificationId: Types.ObjectId | string, userId: Types.ObjectId | string) => { await dbConnect(); return Notification.deleteOne({ _id: notificationId, user: userId }).exec(); };
+export const deleteAllNotifications = async (userId: Types.ObjectId | string) => { await dbConnect(); return Notification.deleteMany({ user: userId }).exec(); };
 
 export const markNotificationAsRead = async (notificationId: Types.ObjectId | string, userId: Types.ObjectId | string) => {
 	await dbConnect();

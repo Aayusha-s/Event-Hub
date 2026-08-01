@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
@@ -57,7 +57,7 @@ type ProfileResponse = {
 
 const fallbackImage = '/images/party.png';
 
-const Page = () => {
+const ProfilePage = () => {
     const { data: session } = useSession();
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -373,4 +373,4 @@ const Page = () => {
     )
 }
 
-export default Page
+export default function Page() { return <Suspense fallback={<section className='px-4 py-8 text-text-dark'>Loading profile…</section>}><ProfilePage /></Suspense>; }
