@@ -53,8 +53,8 @@ export const validateRegisterInput = (value: unknown) => {
 		throw new HttpError(400, "Profile image URL is invalid.", "VALIDATION_ERROR");
 	}
 
-	if (role !== undefined && role !== "attendee") {
-		throw new HttpError(403, "Public registration can only create attendee accounts.", "ROLE_NOT_ALLOWED");
+	if (role !== undefined && !["attendee", "organizer", "vendor"].includes(String(role))) {
+		throw new HttpError(403, "Public registration cannot create privileged accounts.", "ROLE_NOT_ALLOWED");
 	}
 
 	return {
@@ -63,6 +63,6 @@ export const validateRegisterInput = (value: unknown) => {
 		password,
 		phone: typeof phone === "string" ? phone.trim() : undefined,
 		profileImage: typeof profileImage === "string" ? profileImage.trim() : undefined,
-		role: "attendee" as UserRole,
+		role: (role ?? "attendee") as "attendee" | "organizer" | "vendor",
 	};
 };

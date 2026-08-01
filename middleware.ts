@@ -5,10 +5,10 @@ import { UserRole } from "@/types";
 const roleProtectedRoutes: Array<{ prefix: string; roles: UserRole[] }> = [
 	{ prefix: "/analytics", roles: ["admin", "organizer"] },
 	{ prefix: "/admin", roles: ["admin"] },
-	{ prefix: "/organizerdashboard", roles: ["admin", "organizer"] },
-	{ prefix: "/vendordashboard", roles: ["admin", "vendor"] },
-	{ prefix: "/create-event", roles: ["admin", "organizer"] },
-	{ prefix: "/ticket-checker", roles: ["admin", "ticket_checker"] },
+	{ prefix: "/organizerdashboard", roles: ["organizer"] },
+	{ prefix: "/vendordashboard", roles: ["vendor"] },
+	{ prefix: "/create-event", roles: ["organizer"] },
+	{ prefix: "/ticket-checker", roles: ["ticket_checker"] },
 ];
 
 const authRequiredPrefixes = [

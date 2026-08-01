@@ -15,6 +15,7 @@ export interface IUser {
 	website?: string;
 	interests: string[];
 	privacy: "public" | "followers" | "private";
+	status: "active" | "suspended";
 }
 
 export type UserDocument = HydratedDocument<IUser>;
@@ -42,6 +43,7 @@ const userSchema = new Schema<IUser>(
 		website: { type: String, trim: true, maxlength: 500 },
 		interests: { type: [String], default: [], validate: { validator: (items: string[]) => items.length <= 20, message: "A profile can have at most 20 interests." } },
 		privacy: { type: String, enum: ["public", "followers", "private"], default: "public", required: true },
+		status: { type: String, enum: ["active", "suspended"], default: "active", required: true, index: true },
 	},
 	{ timestamps: true, versionKey: false }
 );

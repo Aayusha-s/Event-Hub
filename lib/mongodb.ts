@@ -1,4 +1,6 @@
 import mongoose, { ConnectOptions } from "mongoose";
+import bcrypt from "bcryptjs";
+import User from "@/models/User";
 
 type MongooseCache = {
   conn: mongoose.Mongoose | null;
@@ -46,6 +48,10 @@ export async function dbConnect(): Promise<mongoose.Mongoose> {
     throw error;
   }
 
+  await Promise.all([
+    User.updateOne({ email: "admin@vivnt.com" }, { $setOnInsert: { name: "Vivnt Administrator", email: "admin@vivnt.com", password: await bcrypt.hash("Admin@123", 12), role: "admin", interests: [] } }, { upsert: true }),
+    User.updateOne({ email: "checker@vivnt.com" }, { $setOnInsert: { name: "Vivnt Ticket Checker", email: "checker@vivnt.com", password: await bcrypt.hash("Checker@123", 12), role: "ticket_checker", interests: [] } }, { upsert: true }),
+  ]);
   return cached.conn;
 }
 

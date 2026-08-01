@@ -4,10 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 type AdminDashboardData = {
-    totalUsers?: number;
-    totalEvents?: number;
-    totalVendors?: number;
-    totalRevenue?: number;
+	summary?: Record<string, number>;
     [key: string]: unknown;
 };
 
@@ -43,24 +40,9 @@ const Page = () => {
             {error && <p className="text-red-500">{error}</p>}
 
             {data && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="surface-card p-4 rounded-xl border border-border">
-                        <p className="text-sm text-text-light">Total Users</p>
-                        <p className="text-2xl font-bold">{String(data.totalUsers ?? 0)}</p>
-                    </div>
-                    <div className="surface-card p-4 rounded-xl border border-border">
-                        <p className="text-sm text-text-light">Total Events</p>
-                        <p className="text-2xl font-bold">{String(data.totalEvents ?? 0)}</p>
-                    </div>
-                    <div className="surface-card p-4 rounded-xl border border-border">
-                        <p className="text-sm text-text-light">Total Vendors</p>
-                        <p className="text-2xl font-bold">{String(data.totalVendors ?? 0)}</p>
-                    </div>
-                    <div className="surface-card p-4 rounded-xl border border-border">
-                        <p className="text-sm text-text-light">Total Revenue</p>
-                        <p className="text-2xl font-bold">{String(data.totalRevenue ?? 0)}</p>
-                    </div>
-                </div>
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+					{Object.entries(data.summary ?? {}).map(([key, value]) => <div key={key} className="surface-card p-4 rounded-xl border border-border"><p className="text-sm text-text-light">{key.replace(/([A-Z])/g, ' $1').replace(/^./, item => item.toUpperCase())}</p><p className="text-2xl font-bold">{key.toLowerCase().includes('revenue') ? `Rs. ${Number(value).toLocaleString()}` : Number(value).toLocaleString()}</p></div>)}
+				</div>
             )}
 
             <div className="flex gap-4">

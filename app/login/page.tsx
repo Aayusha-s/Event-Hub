@@ -69,7 +69,9 @@ const LoginForm = () => {
             return;
         }
 
-        const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+        const role = (await fetch('/api/users/me').then(response => response.ok ? response.json() : null))?.data?.role;
+        const destinations: Record<string, string> = { admin: '/admin/dashboard', ticket_checker: '/ticket-checker', organizer: '/organizerdashboard', attendee: '/userdashboard', vendor: '/vendordashboard' };
+        const callbackUrl = searchParams.get("callbackUrl") ?? destinations[role] ?? "/";
         router.replace(callbackUrl);
         router.refresh();
     }

@@ -27,6 +27,7 @@ export const authOptions: NextAuthOptions = {
 				await dbConnect();
 
 				const user = await User.findOne({ email }).select("+password").exec();
+				if (user?.status === "suspended") return null;
 				if (!user || !(await bcrypt.compare(password, user.password))) {
 					return null;
 				}

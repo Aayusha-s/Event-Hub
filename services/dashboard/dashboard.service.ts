@@ -199,6 +199,7 @@ export const getOrganizerDashboard = async (organizerId: Types.ObjectId | string
 
 export const getAdminDashboard = async () => {
 	await dbConnect();
+	const now = new Date(); const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()); const startWeek = new Date(startToday); startWeek.setDate(startToday.getDate() - startToday.getDay()); const startMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
 	const [
 		totalUsers,
@@ -224,6 +225,12 @@ export const getAdminDashboard = async () => {
 		Vendor.aggregate([{ $group: { _id: "$approvalStatus", count: { $sum: 1 } } }]),
 		User.find().select("-password").sort({ createdAt: -1 }).limit(5).exec(),
 	]);
+	const [todayTickets, paymentsByStatus, revenueWindows, newUsersThisWeek, newEventsThisWeek, ongoingEvents] = await Promise.all([
+		Ticket.countDocuments({ ticketStatus: "active", purchaseDate: { $gte: startToday } }),
+		Payment.aggregate([{ $group: { _id: "$paymentStatus", count: { $sum: 1 } } }]),
+		Payment.aggregate([{ $match: { paymentStatus: "paid" } }, { $group: { _id: null, today: { $sum: { $cond: [{ $gte: ["$createdAt", startToday] }, "$amount", 0] } }, week: { $sum: { $cond: [{ $gte: ["$createdAt", startWeek] }, "$amount", 0] } }, month: { $sum: { $cond: [{ $gte: ["$createdAt", startMonth] }, "$amount", 0] } } } }]),
+		User.countDocuments({ createdAt: { $gte: startWeek } }), Event.countDocuments({ createdAt: { $gte: startWeek } }), Event.countDocuments({ status: "published", startDate: { $lte: now }, endDate: { $gte: now } }),
+	]);
 
 	const roleCounts = usersByRole.reduce((acc, curr) => {
 		acc[curr._id] = curr.count;
@@ -239,14 +246,16 @@ export const getAdminDashboard = async () => {
 		acc[curr._id] = curr.count;
 		return acc;
 	}, {} as Record<string, number>);
+	const paymentCounts = paymentsByStatus.reduce((acc, curr) => { acc[curr._id] = curr.count; return acc; }, {} as Record<string, number>);
 
 	return {
-		summary: {
+			summary: {
 			totalUsers,
 			totalEvents,
 			totalTickets,
 			totalRevenue: paymentsAggregate[0]?.totalRevenue ?? 0,
 			totalVendors,
+			activeEvents: statusCounts.published ?? 0, draftEvents: statusCounts.draft ?? 0, completedEvents: statusCounts.completed ?? 0, cancelledEvents: statusCounts.cancelled ?? 0, upcomingEvents: await Event.countDocuments({ status: "published", startDate: { $gt: now } }), ongoingEvents, ticketsSoldToday: todayTickets, revenueToday: revenueWindows[0]?.today ?? 0, revenueThisWeek: revenueWindows[0]?.week ?? 0, revenueThisMonth: revenueWindows[0]?.month ?? 0, pendingPayments: paymentCounts.pending ?? 0, successfulPayments: paymentCounts.paid ?? 0, failedPayments: paymentCounts.failed ?? 0, refundedPayments: paymentCounts.refunded ?? 0, totalOrganizers: roleCounts.organizer ?? 0, totalAttendees: roleCounts.attendee ?? 0, totalTicketCheckers: roleCounts.ticket_checker ?? 0, newUsersThisWeek, newEventsThisWeek,
 		},
 		roles: roleCounts,
 		eventStatuses: statusCounts,

@@ -41,7 +41,7 @@ const Page = () => {
         const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: fullName, email, password }),
+            body: JSON.stringify({ name: fullName, email, password, role: activeTab === 'host' ? 'organizer' : activeTab === 'vendor' ? 'vendor' : 'attendee' }),
         });
 
         const data = await response.json();
@@ -61,18 +61,7 @@ const Page = () => {
             return;
         }
 
-        // Public registration always creates an Attendee account.
-        // Organizer/Vendor privileges are granted only after the applicant
-        // completes the dedicated application flow and is approved, so we
-        // route the user into the correct wizard based on their selection
-        // instead of pretending the tab choice already assigned a role.
-        if (activeTab === 'host') {
-            router.replace('/organizer/organizerapplication-1');
-        } else if (activeTab === 'vendor') {
-            router.replace('/vendor/vendorapplication-1');
-        } else {
-            router.replace('/');
-        }
+        router.replace(activeTab === 'host' ? '/organizerdashboard' : activeTab === 'vendor' ? '/vendordashboard' : '/userdashboard');
         router.refresh();
     }
 
