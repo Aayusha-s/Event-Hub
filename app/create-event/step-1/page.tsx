@@ -1,8 +1,8 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Upload } from 'lucide-react';
 import Button from '@/components/Button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { saveDraft } from '@/lib/createEventDraft';
 
@@ -33,6 +33,8 @@ const Page = () => {
         }
     });
     const router = useRouter();
+	const searchParams = useSearchParams();
+	useEffect(() => { const eventId = searchParams.get('eventId'); if (!eventId) return; fetch(`/api/events/${eventId}`).then(r => r.json()).then(r => { if (!r.success) return; const event = r.data; const start = new Date(event.startDate), end = new Date(event.endDate); saveDraft('basicInformation', { title: event.title, category: event.category, description: event.description, images: event.images ?? [], eventId }); saveDraft('eventDetails', { startDate: start.toISOString().slice(0, 10), endDate: end.toISOString().slice(0, 10), startTime: start.toISOString().slice(11, 16), endTime: end.toISOString().slice(11, 16), venueName: event.venue, streetAddress: '', city: '', state: '', eventCapacity: String(event.capacity) }); saveDraft('eventInfo', { tickets: event.ticketTypes.map((ticket: { name: string; quantity: number; price: number; description?: string }) => ({ ticketName: ticket.name, quantity: String(ticket.quantity), price: String(ticket.price), description: ticket.description ?? '' })) }); setTitle(event.title); setCategory(event.category); setDescription(event.description); }); }, [searchParams]);
 
     const handleNext = () => {
         if (!title || !category || !description) {
@@ -48,7 +50,7 @@ const Page = () => {
 
         saveDraft("basicInformation", BasicInformation);
 
-        router.push('/create-event/step-2');
+		router.push(`/create-event/step-2${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`);
 
     }
     return (

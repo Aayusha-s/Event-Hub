@@ -6,16 +6,20 @@ type UserAvatarProps = {
     name?: string;
     width?: number;
     height?: number;
+    href?: string;
 }
 
-const UserAvatar = ({ nameAbv, name, width, height}: UserAvatarProps) => {
+const UserAvatar = ({ nameAbv, name, width = 16, height = 16, href }: UserAvatarProps) => {
+    const initials = nameAbv ?? name?.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+    const profileHref = href ?? `/userprofile?username=${encodeURIComponent((name ?? '').toLowerCase().trim().replace(/\s+/g, '-'))}`;
+
     return (
-        <Link href={`/user/${name?.toLowerCase().replace(/\s+/g, '-')}`}>
-            <div className='shrink-0'>
-                <div className={`w-${width} h-${height} rounded-full bg-linear-to-br from-blue-100 to-purple-100 
-                                flex items-center justify-center border-2 border-white shadow`}>
-                    <span className='text-xl font-semibold '>{nameAbv}</span>
-                </div>
+        <Link href={profileHref} className='shrink-0'>
+            <div
+                className='flex items-center justify-center rounded-full bg-linear-to-br from-blue-100 to-purple-100 border-2 border-white shadow'
+                style={{ width: `${width * 0.25}rem`, height: `${height * 0.25}rem` }}
+            >
+                <span className='text-xl font-semibold'>{initials}</span>
             </div>
         </Link>
     )

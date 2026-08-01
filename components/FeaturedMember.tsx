@@ -9,6 +9,7 @@ type FeaturedMemberProps = {
     tags?: string[];
     followersCount?: number;
     followingCount?: number;
+    profileUrl?: string;
 }
 
 const FeaturedMember = ({
@@ -16,13 +17,13 @@ const FeaturedMember = ({
     role,
     tags,
     followersCount,
-    followingCount
+    followingCount,
+    profileUrl,
 }: FeaturedMemberProps) => {
     return (
         <div className='border border-brown-normal rounded-xl p-4 flex flex-col gap-4 hover:shadow-lg'>
             <div className='flex flex-col gap-4 items-center'>
-                <UserAvatar nameAbv={name?.split(' ').map(n => n[0]).join('')} name={name}
-                    width={20} height={20}/>
+                <UserAvatar nameAbv={name?.split(' ').map(n => n[0]).join('')} name={name} width={20} height={20} href={profileUrl}/>
 
                 <div className='flex flex-col gap-1'>
                     <h3 className='text-text-dark mt-2 font-bold text-2xl text-center'>{name}</h3>
@@ -62,7 +63,7 @@ const FeaturedMember = ({
                 </div>
             </div>
             <div className='flex flex-row items-center gap-4'>
-                    <Button text='Follow' className='w-full block'></Button>
+                    <Button text='Follow' className='w-full block' />
                     <MessageCircle className='cursor-pointer' />
             </div>
         </div>

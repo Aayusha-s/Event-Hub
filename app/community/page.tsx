@@ -1,318 +1,234 @@
 'use client'
-import { Camera, Check, Plus, Users, Calendar, TrendingUp, Star, PaintBucket, Palette, Utensils, Briefcase, Music } from 'lucide-react'
+
+import { useEffect, useState } from 'react'
+import { Camera, Plus, Users, Calendar, TrendingUp, Star, PaintBucket, Palette, Utensils, Briefcase, Music, Heart } from 'lucide-react'
 import Button from '@/components/Button'
-import Link from 'next/link'
 import FeedPost from '@/components/FeedPost'
-import { useState } from 'react'
 import TrendingTopics from '@/components/TrendingTopics'
 import MeetUp from '@/components/MeetUp'
-import UserAvatar from '@/components/UserAvatar'
 import FeaturedMember from '@/components/FeaturedMember'
+import EventCard from '@/components/EventCard'
+
+type CommunityData = {
+    feed: Array<{ id: string; nameAbv?: string; name?: string; userType?: string; timeAgo?: string; postContent?: string; imgUrl?: string; profileUrl?: string; likes?: number; comments?: number; shares?: number }>;
+    photos: Array<{ id: string; src: string; alt: string; likes: number; comments: number; category: string }>;
+    events: Array<{ _id: string; title: string; description: string; venue: string; tags: string[]; images: string[]; ticketTypes: { price: number }[]; organizer?: { name?: string } }>;
+    trendingTopics: Array<{ title: string; postCount: number }>;
+    meetups: Array<{ title: string; relatedEvent: string; date: string; time: string; location: string; attendeesCount: string; totalSpots: string }>;
+    members: Array<{ name: string; role?: string; tags?: string[]; followersCount?: number; followingCount?: number; profileUrl?: string }>;
+}
+
+const categoryPalette = [
+    { hoverColor: 'hover:border-purple-500', iconBoxColor: 'bg-purple-100', icon: <Music className='text-purple-500' /> },
+    { hoverColor: 'hover:border-blue-500', iconBoxColor: 'bg-blue-100', icon: <Briefcase className='text-blue-500' /> },
+    { hoverColor: 'hover:border-green-500', iconBoxColor: 'bg-green-100', icon: <Camera className='text-green-500' /> },
+    { hoverColor: 'hover:border-yellow-500', iconBoxColor: 'bg-yellow-100', icon: <PaintBucket className='text-yellow-500' /> },
+    { hoverColor: 'hover:border-orange-500', iconBoxColor: 'bg-orange-100', icon: <Utensils className='text-orange-500' /> },
+    { hoverColor: 'hover:border-red-500', iconBoxColor: 'bg-red-100', icon: <Palette className='text-red-500' /> },
+]
 
 const Page = () => {
+    const [activeTab, setActiveTab] = useState<'feed' | 'photos' | 'events' | 'trending' | 'meetups' | 'members'>('feed')
+    const [data, setData] = useState<CommunityData | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
 
-    const [activeTab, setActiveTab] = useState('feed');
+    useEffect(() => {
+        let active = true
+        fetch('/api/community', { cache: 'no-store' })
+            .then(async (response) => {
+                const result = await response.json()
+                if (!response.ok || !result.success) throw new Error(result.error?.message || 'Unable to load community.')
+                if (active) setData(result.data as CommunityData)
+            })
+            .catch((loadError) => { if (active) setError(loadError instanceof Error ? loadError.message : 'Unable to load community.') })
+            .finally(() => { if (active) setLoading(false) })
+
+        return () => { active = false }
+    }, [])
+
+    if (loading) {
+        return <section className='flex flex-col my-4 mx-2 px-4 font-cause text-text-dark md:my-3 md:mx-3 md:px-3 lg:my-4 lg:mx-4 lg:px-4 xl:my-6 xl:mx-6 xl:px-6 2xl:my-8 2xl:mx-8 2xl:px-8'>Loading community…</section>
+    }
+
+    if (error || !data) {
+        return <section className='flex flex-col my-4 mx-2 px-4 font-cause text-text-dark md:my-3 md:mx-3 md:px-3 lg:my-4 lg:mx-4 lg:px-4 xl:my-6 xl:mx-6 xl:px-6 2xl:my-8 2xl:mx-8 2xl:px-8'><h1 className='font-dynapuff text-2xl font-bold'>Community</h1><p className='mt-2 text-red-600'>{error || 'Unable to load community.'}</p></section>
+    }
 
     return (
-        <section className='flex flex-col
-            my-4 mx-2 px-4 font-cause text-text-dark 
+        <section className='flex flex-col my-4 mx-2 px-4 font-cause text-text-dark 
             md:my-3 md:mx-3 md:px-3
             lg:my-4 lg:mx-4 lg:px-4
             xl:my-6 xl:mx-6 xl:px-6
             2xl:my-8 2xl:mx-8 2xl:px-8'>
-
-            {/* Header */}
             <div className='flex flex-col gap-6 md:flex-row md:items-center md:justify-between'>
                 <div className='space-y-2'>
-                    <h1 className='font-dynapuff text-2xl md:text-3xl font-bold'>
-                        Community
-                    </h1>
-                    <p className='text-base md:text-lg max-w-2xl'>
-                        Connect with event lovers, share experiences, and discover new opportunities
-                    </p>
+                    <h1 className='font-dynapuff text-2xl md:text-3xl font-bold'>Community</h1>
+                    <p className='text-base md:text-lg max-w-2xl'>Connect with event lovers, share experiences, and discover new opportunities</p>
                 </div>
 
                 <div className='flex justify-between gap-2'>
-                    <Link href="/community/photos">
-                        <Button text='Photos' variant="cta" size="sm" iconLeft={<Camera />}>
-
-                        </Button>
-                    </Link>
-                    <Link href="/community/members">
-                        <Button text='Members' variant="cta" size="sm" iconLeft={<Users />}>
-
-                        </Button>
-                    </Link>
-                    <Link href="/community/create-post">
-                        <Button text='New Post' variant="cta" size="sm" iconLeft={<Plus />}>
-
-                        </Button>
-                    </Link>
+                    <Button text='Photos' variant='cta' size='sm' iconLeft={<Camera />} onClick={() => setActiveTab('photos')} />
+                    <Button text='Members' variant='cta' size='sm' iconLeft={<Users />} onClick={() => setActiveTab('members')} />
+                    <Button text='New Post' variant='cta' size='sm' iconLeft={<Plus />} onClick={() => setActiveTab('feed')} />
                 </div>
             </div>
 
-            {/* Tabs Navigation */}
             <div className='mt-6 border-b border-gray-200'>
                 <div className='flex gap-2 py-4 overflow-x-auto'>
-                    <Button text='Feed'
-                        variant="cta"
-                        size="sm"
-                        iconLeft={<Calendar size={16} />}
-                        onClick={() => setActiveTab('feed')}
-                        isActive={activeTab === 'feed'}
-                    ></Button>
-
-                    <Button
-                        text='Trending Topics'
-                        variant="cta"
-                        size="sm"
-                        iconLeft={<TrendingUp size={16} />}
-                        onClick={() => setActiveTab('trending')}
-                        isActive={activeTab === 'trending'}
-                    ></Button>
-
-                    <Button
-                        text='MeetUps'
-                        variant="cta"
-                        size="sm"
-                        iconLeft={<Star size={16} />}
-                        onClick={() => setActiveTab('meetups')}
-                        isActive={activeTab === 'meetups'}
-                    ></Button>
-
-                    <Button
-                        text="Featured Members"
-                        variant="cta"
-                        size="sm"
-                        iconLeft={<Star size={16} />}
-                        onClick={() => setActiveTab('members')}
-                        isActive={activeTab === 'members'}
-                    ></Button>
-
+                    <Button text='Feed' variant='cta' size='sm' iconLeft={<Calendar size={16} />} onClick={() => setActiveTab('feed')} isActive={activeTab === 'feed'} />
+                    <Button text='Photos' variant='cta' size='sm' iconLeft={<Camera size={16} />} onClick={() => setActiveTab('photos')} isActive={activeTab === 'photos'} />
+                    <Button text='Events' variant='cta' size='sm' iconLeft={<Calendar size={16} />} onClick={() => setActiveTab('events')} isActive={activeTab === 'events'} />
+                    <Button text='Trending Topics' variant='cta' size='sm' iconLeft={<TrendingUp size={16} />} onClick={() => setActiveTab('trending')} isActive={activeTab === 'trending'} />
+                    <Button text='MeetUps' variant='cta' size='sm' iconLeft={<Star size={16} />} onClick={() => setActiveTab('meetups')} isActive={activeTab === 'meetups'} />
+                    <Button text='Featured Members' variant='cta' size='sm' iconLeft={<Star size={16} />} onClick={() => setActiveTab('members')} isActive={activeTab === 'members'} />
                 </div>
             </div>
 
-            {/* Content Area */}
             <div className='mt-8'>
-
-                {/* feed */}
                 {activeTab === 'feed' && (
-                    <>
+                    <div className='space-y-8'>
                         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 grid-template-2fr-auto'>
-                            <FeedPost
-                                nameAbv="JD"
-                                name="Jane Doe"
-                                userType="Event Organizer"
-                                timeAgo="2 hours ago"
-                                postContent="Just attended an amazing tech conference! Met so many inspiring people and learned about the latest trends in the industry. 
-                                Can't wait to implement some of these ideas in my own projects."
-                                imgUrl="/images/Business.png"
-                            />
-
-                            <FeedPost
-                                nameAbv="MS"
-                                name="Mark Smith"
-                                userType="Event Enthusiast"
-                                timeAgo="5 hours ago"
-                                postContent="Had a fantastic time at the local art festival this weekend! The creativity and talent on display were truly inspiring. 
-                                Looking forward to more events like this in the future."
-                                imgUrl="/images/FoodFestival.png"
-                            />
+                            {data.feed.map((post) => (
+                                <FeedPost
+                                    key={post.id}
+                                    nameAbv={post.nameAbv}
+                                    name={post.name}
+                                    userType={post.userType}
+                                    timeAgo={post.timeAgo}
+                                    postContent={post.postContent}
+                                    imgUrl={post.imgUrl}
+                                    profileUrl={post.profileUrl}
+                                    likes={post.likes}
+                                    comments={post.comments}
+                                    shares={post.shares}
+                                />
+                            ))}
                         </div>
-                    </>
+
+                        <div>
+                            <div className='flex flex-row items-center justify-between mb-4'>
+                                <h2 className='font-dynapuff text-xl md:text-2xl font-semibold'>Latest Photos</h2>
+                                <Button text='View Photos' variant='secondary' size='sm' onClick={() => setActiveTab('photos')} />
+                            </div>
+                            <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+                                {data.photos.slice(0, 8).map((photo) => (
+                                    <div key={photo.id} className='group relative overflow-hidden rounded-lg cursor-pointer'>
+                                        <img src={photo.src} alt={photo.alt} className='w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300' />
+                                        <div className='absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity'>
+                                            <div className='absolute bottom-3 left-3 right-3 text-white flex justify-between items-center'>
+                                                <div className='flex items-center gap-2'>
+                                                    <Heart size={14} />
+                                                    <span className='text-sm'>{photo.likes}</span>
+                                                    <span className='ml-2 text-sm'>{photo.comments} comments</span>
+                                                </div>
+                                                <span className='text-xs bg-white/20 px-2 py-1 rounded-full'>{photo.category}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className='flex flex-row items-center justify-between mb-4'>
+                                <h2 className='font-dynapuff text-xl md:text-2xl font-semibold'>Upcoming Events</h2>
+                                <Button text='View Events' variant='secondary' size='sm' onClick={() => setActiveTab('events')} />
+                            </div>
+                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                                {data.events.slice(0, 6).map((event) => (
+                                    <EventCard
+                                        key={event._id}
+                                        eventId={event._id}
+                                        tags={event.tags}
+                                        imageUrl={event.images[0] ?? '/images/party.png'}
+                                        imageAlt={event.title}
+                                        title={event.title}
+                                        organizer={`By ${event.organizer?.name ?? 'Event organizer'}`}
+                                        descriptions={[event.description]}
+                                        location={event.venue}
+                                        price={event.ticketTypes.some((ticket) => ticket.price === 0) ? 'Free' : `From Rs.${Math.min(...event.ticketTypes.map((ticket) => ticket.price))}`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 )}
 
-                {/* trending topics */}
+                {activeTab === 'photos' && (
+                    <div>
+                        <div className='flex justify-between items-center mb-4'>
+                            <h3 className='font-dynapuff text-lg md:text-xl font-semibold'>Photo Gallery</h3>
+                            <Button text='Back to Feed' variant='secondary' size='sm' onClick={() => setActiveTab('feed')} />
+                        </div>
+                        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+                            {data.photos.map((photo) => (
+                                <div key={photo.id} className='group relative overflow-hidden rounded-lg cursor-pointer'>
+                                    <img src={photo.src} alt={photo.alt} className='w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300' />
+                                    <div className='absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity'>
+                                        <div className='absolute bottom-3 left-3 right-3 text-white flex justify-between items-center'>
+                                            <div className='flex items-center gap-2'>
+                                                <Heart size={14} />
+                                                <span className='text-sm'>{photo.likes}</span>
+                                                <span className='ml-2 text-sm'>{photo.comments} comments</span>
+                                            </div>
+                                            <span className='text-xs bg-white/20 px-2 py-1 rounded-full'>{photo.category}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'events' && (
+                    <div>
+                        <div className='flex justify-between items-center mb-4'>
+                            <h3 className='font-dynapuff text-lg md:text-xl font-semibold'>Community Events</h3>
+                            <Button text='Back to Feed' variant='secondary' size='sm' onClick={() => setActiveTab('feed')} />
+                        </div>
+                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+                            {data.events.map((event) => (
+                                <EventCard
+                                    key={event._id}
+                                    eventId={event._id}
+                                    tags={event.tags}
+                                    imageUrl={event.images[0] ?? '/images/party.png'}
+                                    imageAlt={event.title}
+                                    title={event.title}
+                                    organizer={`By ${event.organizer?.name ?? 'Event organizer'}`}
+                                    descriptions={[event.description]}
+                                    location={event.venue}
+                                    price={event.ticketTypes.some((ticket) => ticket.price === 0) ? 'Free' : `From Rs.${Math.min(...event.ticketTypes.map((ticket) => ticket.price))}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {activeTab === 'trending' && (
-                    <>
-                        <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6'>
-                            <TrendingTopics
-                                hoverColor='hover:border-purple-500'
-                                iconBoxColor='bg-purple-100'
-                                icon={<Music className={` ${'text-purple-500'}`} />}
-                                title='Music Festivals'
-                                postCount={124}
-                            />
-
-                            <TrendingTopics
-                                hoverColor='hover:border-blue-500'
-                                iconBoxColor='bg-blue-100'
-                                icon={<Briefcase className={` ${'text-blue-500'}`} />}
-                                title='Tech Conferences'
-                                postCount={98}
-                            />
-                            <TrendingTopics
-                                hoverColor='hover:border-green-500'
-                                iconBoxColor='bg-green-100'
-                                icon={<Camera className={` ${'text-green-500'}`} />}
-                                title='Health & Wellness'
-                                postCount={76}
-                            />
-
-                            <TrendingTopics
-                                hoverColor='hover:border-yellow-500'
-                                iconBoxColor='bg-yellow-100'
-                                icon={<Camera className={` ${'text-yellow-500'}`} />}
-                                title='Art Exhibitions'
-                                postCount={54}
-                            />
-                            <TrendingTopics
-                                hoverColor='hover:border-orange-500'
-                                iconBoxColor='bg-orange-100'
-                                icon={<Utensils className={` ${'text-orange-500'}`} />}
-                                title='Food & Wine Expo'
-                                postCount={189}
-                            />
-                            <TrendingTopics
-                                hoverColor='hover:border-red-500'
-                                iconBoxColor='bg-red-100'
-                                icon={<Palette className={` ${'text-red-500'}`} />}
-                                title='Art Exhibitions'
-                                postCount={98}
-                            />
-                        </div>
-                    </>
+                    <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6'>
+                        {data.trendingTopics.map((topic, index) => {
+                            const palette = categoryPalette[index % categoryPalette.length]
+                            return <TrendingTopics key={topic.title} hoverColor={palette.hoverColor} iconBoxColor={palette.iconBoxColor} icon={palette.icon} title={topic.title} postCount={topic.postCount} />
+                        })}
+                    </div>
                 )}
 
                 {activeTab === 'meetups' && (
-                    <>
-                        <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6'>
-                            <MeetUp
-                                title='Pre-Festival Meetup'
-                                relatedEvent='Summer Music Festival'
-                                date='Jul 14, 2025'
-                                time='5:00 PM'
-                                location='Central Park, New York'
-                                attendeesCount='24'
-                                totalSpots='30'
-                            />
-                            <MeetUp
-                                title='Foodie Group Gathering'
-                                relatedEvent='Food & Wine Expo'
-                                date='Aug 21, 2025'
-                                time='6:30 PM'
-                                location='Downtown Wine Bar, San Francisco'
-                                attendeesCount='18'
-                                totalSpots='25'
-                            />
-                            <MeetUp
-                                title='Tech Networking Happy Hour'
-                                relatedEvent='Tech Summit 2025'
-                                date='Sep 10, 2025'
-                                time='7:00 AM'
-                                location='Innovatech Hub, Seattle'
-                                attendeesCount='42'
-                                totalSpots='50'
-                            />
-                            <MeetUp
-                                title='Pre-Festival Meetup'
-                                relatedEvent='Summer Music Festival'
-                                date='Jul 14, 2025'
-                                time='5:00 PM'
-                                location='Central Park, New York'
-                                attendeesCount='24'
-                                totalSpots='50'
-                            />
-                            <MeetUp
-                                title='Pre-Festival Meetup'
-                                relatedEvent='Summer Music Festival'
-                                date='Jul 14, 2025'
-                                time='5:00 PM'
-                                location='Central Park, New York'
-                                attendeesCount='24'
-                                totalSpots='50'
-                            />
-                        </div>
-
-                    </>
+                    <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6'>
+                        {data.meetups.map((meetup) => <MeetUp key={`${meetup.title}-${meetup.date}`} {...meetup} />)}
+                    </div>
                 )}
 
                 {activeTab === 'members' && (
-                    <>
-                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                            <FeaturedMember
-                                name='Alex Turner'
-                                role='Photographer'
-                                tags={['VIP Attendee', 'Music Lover', 'Foodie Explorer']}
-                                followersCount={250}
-                                followingCount={158}
-                            />
-                        </div>
-
-                    </>
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+                        {data.members.map((member) => <FeaturedMember key={member.name} {...member} />)}
+                    </div>
                 )}
-
             </div>
-
-
         </section>
-
     )
 }
-
 
 export default Page

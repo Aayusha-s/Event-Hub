@@ -2,6 +2,8 @@ import { PipelineStage, Types } from "mongoose";
 import Event, { EventDocument } from "@/models/Event";
 import { EventInput, EventStatus } from "@/utils/events/validation";
 import { recordActivity } from "@/services/profiles/profile.service";
+import Ticket from "@/models/Ticket";
+import { HttpError } from "@/utils/api/httpError";
 
 export type EventListFilters = {
 	page: number;
@@ -169,11 +171,45 @@ export const createEvent = async (input: EventInput, organizer: Types.ObjectId) 
 export const findEventForManagement = (id: Types.ObjectId): Promise<EventDocument | null> => Event.findById(id).exec();
 
 export const updateEvent = async (event: EventDocument, input: Partial<EventInput>) => {
+	if (input.ticketTypes || input.capacity !== undefined) {
+		const sold = await Ticket.aggregate<{ _id: string; count: number }>([
+			{ $match: { event: event._id, ticketStatus: "active" } },
+			{ $group: { _id: "$ticketType", count: { $sum: 1 } } },
+		]).exec();
+		const soldByType = new Map(sold.map((item) => [item._id, item.count]));
+		const ticketTypes = input.ticketTypes ?? event.ticketTypes;
+		for (const ticketType of ticketTypes) {
+			if (ticketType.quantity < (soldByType.get(ticketType.name) ?? 0)) {
+				throw new HttpError(409, `Ticket quantity for ${ticketType.name} cannot be lower than tickets already sold.`, "TICKET_QUANTITY_BELOW_SOLD");
+			}
+		}
+		const soldTotal = sold.reduce((total, item) => total + item.count, 0);
+		if ((input.capacity ?? event.capacity) < soldTotal) throw new HttpError(409, "Event capacity cannot be lower than tickets already sold.", "CAPACITY_BELOW_SOLD");
+	}
+	const startDate = input.startDate ?? event.startDate;
+	const endDate = input.endDate ?? event.endDate;
+	if (endDate <= startDate) throw new HttpError(400, "endDate must be after startDate.", "VALIDATION_ERROR");
 	event.set(input);
 	return event.save();
 };
 
 export const deleteEvent = (event: EventDocument) => event.deleteOne();
+
+export const duplicateEvent = async (event: EventDocument, organizer: Types.ObjectId) => {
+	const source = event.toObject();
+	return Event.create({
+		...source,
+		organizer,
+		title: `${source.title} Copy`,
+		status: "draft",
+		featured: false,
+	});
+};
+
+export const updateEventStatus = async (event: EventDocument, status: "draft" | "published" | "cancelled" | "completed") => {
+	event.status = status;
+	return event.save();
+};
 
 export const getTrendingEvents = async (limit = 6) => {
 	return Event.aggregate([

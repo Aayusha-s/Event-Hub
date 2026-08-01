@@ -54,12 +54,12 @@ export async function GET(request: Request) {
 		const pageSize = parsePositiveInteger(searchParams.get("pageSize") ?? searchParams.get("limit"), 12, "pageSize", 100);
 		const search = searchParams.get("search")?.trim();
 		if (search && search.length > 100) throw new HttpError(400, "search must not exceed 100 characters.", "VALIDATION_ERROR");
-		const category = searchParams.get("category")?.trim();
+		const category = searchParams.get("category")?.trim() || searchParams.get("categories")?.split(",").map((item) => item.trim()).filter(Boolean)[0];
 		const tags = searchParams.get("tags")?.split(",").map((tag) => tag.trim()).filter(Boolean);
 		const location = searchParams.get("location")?.trim() || searchParams.get("filterLocation")?.trim();
 		const parsePrice = (value: string | null, field: string) => { if (!value) return undefined; const parsed = Number(value); if (!Number.isFinite(parsed) || parsed < 0) throw new HttpError(400, `${field} must be a non-negative number.`, "VALIDATION_ERROR"); return parsed; };
 		const priceMin = parsePrice(searchParams.get("priceMin"), "priceMin"); const priceMax = parsePrice(searchParams.get("priceMax"), "priceMax");
-		const sort = searchParams.get("sort") as "newest" | "oldest" | "trending" | "popular" | "rating" | "priceAsc" | "priceDesc" | null;
+		const rawSort = searchParams.get("sort") ?? searchParams.get("popularity"); const sortMap: Record<string, "newest" | "oldest" | "trending" | "popular" | "rating" | "priceAsc" | "priceDesc"> = { "most-popular": "popular", "top-rated": "rating", "new": "newest", "price-low": "priceAsc", "price-high": "priceDesc" }; const sort = (sortMap[rawSort ?? ""] ?? rawSort) as "newest" | "oldest" | "trending" | "popular" | "rating" | "priceAsc" | "priceDesc" | null;
 		const rating = parsePrice(searchParams.get("rating"), "rating"); const availability = searchParams.get("availability") as "available" | "soldOut" | null;
 		const booleanParam = (name: string) => { const value = searchParams.get(name); if (value === null) return undefined; if (value !== "true" && value !== "false") throw new HttpError(400, `${name} must be true or false.`, "VALIDATION_ERROR"); return value === "true"; };
 		const free = booleanParam("free"); const online = booleanParam("online");

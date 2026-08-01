@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Button from '@/components/Button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { saveDraft } from '@/lib/createEventDraft';
 
@@ -44,6 +44,7 @@ const Page = () => {
         try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.eventCapacity ?? ''; } catch { return ''; }
     });
     const router = useRouter();
+	const searchParams = useSearchParams();
 
     const handleNext = () => {
         if (!startDate || !endDate || !startTime || !endTime || !venueName || !streetAddress || !city || !state || !eventCapacity) {
@@ -64,7 +65,7 @@ const Page = () => {
 
         saveDraft("eventDetails", EventDetails);
 
-        router.push('/create-event/step-3');
+		router.push(`/create-event/step-3${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`);
 
     }
 
@@ -76,7 +77,7 @@ const Page = () => {
             description="Add the timing, venue, and capacity so guests know exactly where and when to join."
             footer={(
                 <div className='flex items-center justify-between gap-3'>
-                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push('/create-event/step-1')} />
+                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push(`/create-event/step-1${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`)} />
                     <Button text="Next Step" variant='cta' size='sm' onClick={handleNext} />
                 </div>
             )}

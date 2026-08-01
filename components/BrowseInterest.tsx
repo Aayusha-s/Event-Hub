@@ -1,126 +1,48 @@
+'use client';
 import Button from "./Button";
-
 import CategoryCard from "./CategoryCard";
-
 import Link from "next/link";
-
 import { ArrowRight } from "lucide-react";
-
 import SectionContainer from "./SectionContainer";
-
 import SectionHeader from "./SectionHeader";
-
 import FadeInView from "./motion/FadeInView";
-
 import StaggerGrid from "./motion/StaggerGrid";
+import { useEffect, useState } from "react";
 
+type CategoryItem = { name: string; count: number };
 
+const categoryCopy: Record<string, { icon: React.ReactNode; description: string }> = {
+    music: { icon: <i className="fa-solid fa-music text-2xl" aria-hidden="true"></i>, description: "Live performances and festivals" },
+    art: { icon: <i className="fa-solid fa-palette text-2xl" aria-hidden="true"></i>, description: "Exhibitions, galleries, and creative workshops" },
+    tech: { icon: <i className="fa-solid fa-laptop-code text-2xl" aria-hidden="true"></i>, description: "Conferences, hackathons, and coding bootcamps" },
+    sports: { icon: <i className="fa-solid fa-basketball text-2xl" aria-hidden="true"></i>, description: "Games, tournaments, and fitness events" },
+    food: { icon: <i className="fa-solid fa-utensils text-2xl" aria-hidden="true"></i>, description: "Tastings, festivals, and culinary classes" },
+    wellness: { icon: <i className="fa-solid fa-heart-pulse text-2xl" aria-hidden="true"></i>, description: "Yoga, meditation, and wellness retreats" },
+    business: { icon: <i className="fa-solid fa-briefcase text-2xl" aria-hidden="true"></i>, description: "Networking events, seminars, and workshops" },
+    education: { icon: <i className="fa-solid fa-graduation-cap text-2xl" aria-hidden="true"></i>, description: "Lectures, courses, and learning communities" },
+    travel: { icon: <i className="fa-solid fa-plane text-2xl" aria-hidden="true"></i>, description: "Tours, adventures, and travel meetups" },
+    gaming: { icon: <i className="fa-solid fa-gamepad text-2xl" aria-hidden="true"></i>, description: "Tournaments, conventions, and gaming nights" },
+};
+
+const describeCategory = (name: string) => {
+    const key = name.toLowerCase().replace(/[^a-z]/g, "");
+    return categoryCopy[key] ?? { icon: <i className="fa-solid fa-circle-nodes text-2xl" aria-hidden="true"></i>, description: "Discover live events in this category" };
+};
 
 const BrowseInterest = () => {
+    const [categories, setCategories] = useState<CategoryItem[]>([]);
 
-    const categories = [
+    useEffect(() => {
+        let active = true;
+        fetch('/api/events/taxonomy').then(async (response) => {
+            const result = await response.json();
+            if (active && response.ok && result.success) {
+                setCategories(result.data.categories ?? []);
+            }
+        }).catch(() => undefined);
 
-        {
-
-            title: "Music",
-
-            icon: <i className="fa-solid fa-music text-2xl" aria-hidden="true"></i>,
-
-            description: "Live performances and festivals",
-
-        },
-
-        {
-
-            title: "Art",
-
-            icon: <i className="fa-solid fa-palette text-2xl" aria-hidden="true"></i>,
-
-            description: "Exhibitions, galleries, and creative workshops",
-
-        },
-
-        {
-
-            title: "Tech",
-
-            icon: <i className="fa-solid fa-laptop-code text-2xl" aria-hidden="true"></i>,
-
-            description: "Conferences, hackathons, and coding bootcamps",
-
-        },
-
-        {
-
-            title: "Sports",
-
-            icon: <i className="fa-solid fa-basketball text-2xl" aria-hidden="true"></i>,
-
-            description: "Games, tournaments, and fitness events",
-
-        },
-
-        {
-
-            title: "Food & Drink",
-
-            icon: <i className="fa-solid fa-utensils text-2xl" aria-hidden="true"></i>,
-
-            description: "Tastings, festivals, and culinary classes",
-
-        },
-
-        {
-
-            title: "Health & Wellness",
-
-            icon: <i className="fa-solid fa-heart-pulse text-2xl" aria-hidden="true"></i>,
-
-            description: "Yoga, meditation, and wellness retreats",
-
-        },
-
-        {
-
-            title: "Business",
-
-            icon: <i className="fa-solid fa-briefcase text-2xl" aria-hidden="true"></i>,
-
-            description: "Networking events, seminars, and workshops",
-
-        },
-
-        {
-
-            title: "Education",
-
-            icon: <i className="fa-solid fa-graduation-cap text-2xl" aria-hidden="true"></i>,
-
-            description: "Lectures, courses, and learning communities",
-
-        },
-
-        {
-
-            title: "Travel",
-
-            icon: <i className="fa-solid fa-plane text-2xl" aria-hidden="true"></i>,
-
-            description: "Tours, adventures, and travel meetups",
-
-        },
-
-        {
-
-            title: "Gaming",
-
-            icon: <i className="fa-solid fa-gamepad text-2xl" aria-hidden="true"></i>,
-
-            description: "Tournaments, conventions, and gaming nights",
-
-        },
-
-    ];
+        return () => { active = false; };
+    }, []);
 
 
 
@@ -154,21 +76,17 @@ const BrowseInterest = () => {
 
             >
 
-                {categories.map((category) => (
-
-                    <CategoryCard
-
-                        key={category.title}
-
-                        title={category.title}
-
-                        icon={category.icon}
-
-                        description={category.description}
-
-                    />
-
-                ))}
+                {categories.map((category) => {
+                    const copy = describeCategory(category.name);
+                    return (
+                        <CategoryCard
+                            key={category.name}
+                            title={category.name}
+                            icon={copy.icon}
+                            description={copy.description}
+                        />
+                    );
+                })}
 
             </StaggerGrid>
 

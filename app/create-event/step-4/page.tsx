@@ -1,7 +1,7 @@
 'use client';
 import Button from '@/components/Button';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { clearEventDraft, loadDraft } from '@/lib/createEventDraft';
 
@@ -40,6 +40,7 @@ const Page = () => {
     const [eventDetails] = useState<EventDetailsDraft | null>(() => loadDraft<EventDetailsDraft>("eventDetails"));
     const [eventInfo] = useState<EventInfoDraft | null>(() => loadDraft<EventInfoDraft>("eventInfo"));
     const router = useRouter();
+	const searchParams = useSearchParams();
     const [isPublishing, setIsPublishing] = useState(false);
     const [publishError, setPublishError] = useState('');
 
@@ -61,8 +62,9 @@ const Page = () => {
                 throw new Error('Your date, time, or capacity is invalid. Please review Step 2.');
             }
 
-            const response = await fetch('/api/events', {
-                method: 'POST',
+			const eventId = searchParams.get('eventId') || (basicInformation as BasicInformationDraft & { eventId?: string }).eventId;
+			const response = await fetch(eventId ? `/api/events/${eventId}` : '/api/events', {
+				method: eventId ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     title: basicInformation.title,
@@ -76,7 +78,7 @@ const Page = () => {
                     startDate: startDate.toISOString(),
                     endDate: endDate.toISOString(),
                     capacity,
-                    status: 'published',
+					status: 'published',
                     tags: [basicInformation.category],
                     ticketTypes: eventInfo.tickets.map((ticket) => ({
                         name: ticket.ticketName,
@@ -90,12 +92,12 @@ const Page = () => {
             const result: { success?: boolean; data?: { _id?: string }; error?: { message?: string } } =
                 response.headers.get('content-type')?.includes('application/json') ? await response.json() : {};
 
-            if (!response.ok || !result.success || !result.data?._id) {
+			if (!response.ok || !result.success || !result.data?._id) {
                 throw new Error(result.error?.message || 'Unable to publish this event. Please try again.');
             }
 
             clearEventDraft();
-            router.push(`/event-details/${result.data._id}`);
+			router.push(`/event-details/${result.data._id}`);
         } catch (error) {
             setPublishError(error instanceof Error ? error.message : 'Unable to publish this event. Please try again.');
         } finally {
@@ -110,7 +112,7 @@ const Page = () => {
             description="Check your event details before publishing. You can still go back and make changes if needed."
             footer={(
                 <div className='flex items-center justify-between gap-3'>
-                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push('/create-event/step-3')} disabled={isPublishing} />
+                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push(`/create-event/step-3${searchParams.get('eventId') ? `?eventId=${searchParams.get('eventId')}` : ''}`)} disabled={isPublishing} />
                     <Button text={isPublishing ? "Publishing..." : "Publish Event"} variant='cta' size='sm' onClick={handlePublish} disabled={isPublishing} />
                 </div>
             )}

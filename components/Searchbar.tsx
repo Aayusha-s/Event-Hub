@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Filter, Mic, MapPin, Search } from "lucide-react";
@@ -72,6 +72,8 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
     const [showSuggestions, setShowSuggestions] = useState(false);
+	const [activeSuggestion, setActiveSuggestion] = useState(-1);
+	const suggestionRef = useRef<HTMLLabelElement>(null);
     const [filters, setFilters] = useState<FilterState>(() => ({
         dateFrom: searchParams.get("dateFrom") ?? "",
         dateTo: searchParams.get("dateTo") ?? "",
@@ -106,6 +108,7 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
     }, [isFilterOpen]);
 
     useEffect(() => { const timer = window.setTimeout(() => fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`).then(response => response.json()).then(result => { if (result.success) setSuggestions(result.data); }).catch(() => undefined), 180); return () => window.clearTimeout(timer); }, [query]);
+	useEffect(() => { const close = (event: MouseEvent) => { if (suggestionRef.current && !suggestionRef.current.contains(event.target as Node)) setShowSuggestions(false); }; document.addEventListener('mousedown', close); return () => document.removeEventListener('mousedown', close); }, []);
 
     const submitSearch = (nextQuery = query, nextLocation = location) => {
         if (nextQuery.trim()) fetch("/api/search/suggestions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: nextQuery.trim() }) }).catch(() => undefined);
@@ -128,6 +131,8 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
             router.push(targetPath);
         }
     };
+	const suggestionActions = suggestions ? [...suggestions.recent.map(value => () => submitSearch(value)), ...suggestions.popular.map(value => () => submitSearch(value)), ...suggestions.events.map(item => () => router.push(`/event-details/${item._id}`)), ...suggestions.organizers.map(item => () => router.push(`/userprofile?userId=${item._id}`)), ...suggestions.venues.map(value => () => submitSearch(value, value)), ...suggestions.categories.concat(suggestions.tags).map(value => () => router.push(`/explore-events?tags=${encodeURIComponent(value)}`))] : [];
+	const onSearchKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => { if (event.key === 'Escape') { setShowSuggestions(false); return; } if (event.key === 'Tab') { setShowSuggestions(false); return; } if (!showSuggestions || !suggestionActions.length) return; if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); setActiveSuggestion(current => event.key === 'ArrowDown' ? (current + 1) % suggestionActions.length : (current - 1 + suggestionActions.length) % suggestionActions.length); } else if (event.key === 'Enter' && activeSuggestion >= 0) { event.preventDefault(); suggestionActions[activeSuggestion](); setShowSuggestions(false); } };
 
     const toggleFilters = () => setIsFilterOpen((open) => !open);
 
@@ -227,11 +232,11 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
                     compact ? "h-11 flex-row items-center" : "flex-col lg:flex-row"
                 )}
             >
-                <label className={cn("relative flex min-w-0 flex-1 items-center gap-2.5", compact ? "h-full px-4" : "px-4 py-3")}>
+                <label ref={suggestionRef} className={cn("relative flex min-w-0 flex-1 items-center gap-2.5", compact ? "h-full px-4" : "px-4 py-3")}>
                     <Search className="h-4 w-4 shrink-0 text-primary" />
                     <input
                         value={query}
-                        onChange={(event) => setQuery(event.target.value)} onFocus={() => setShowSuggestions(true)}
+                        onChange={(event) => { setQuery(event.target.value); setActiveSuggestion(-1); }} onFocus={() => setShowSuggestions(true)} onKeyDown={onSearchKeyDown}
                         placeholder={compact ? "Search events..." : "Search events, artists, venues"}
                         className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none"
                     />
