@@ -70,9 +70,10 @@ const NAV_LINKS: Record<"guest" | UserRole, NavLink[]> = {
 	],
 	ticket_checker: [
 		{ label: "Dashboard", href: "/ticket-checker" },
-		{ label: "Scanner", href: "/ticket-checker" },
-		{ label: "Manual Check", href: "/ticket-checker" },
-		{ label: "Attendance Log", href: "/ticket-checker" },
+		{ label: "Scanner", href: "/ticket-checker/scanner" },
+		{ label: "Manual", href: "/ticket-checker/manual" },
+		{ label: "Check", href: "/ticket-checker/check" },
+		{ label: "Attendance Log", href: "/ticket-checker/attendance" },
 	],
 };
 

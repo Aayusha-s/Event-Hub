@@ -11,6 +11,8 @@ export interface ITicket {
 	paymentStatus: "pending" | "paid" | "failed" | "refunded";
 	ticketStatus: "active" | "cancelled";
 	checkedIn: boolean;
+	checkedInAt?: Date;
+	checkedInBy?: Types.ObjectId;
 	purchaseDate: Date;
 	cancelledAt?: Date;
 }
@@ -29,6 +31,8 @@ const ticketSchema = new Schema<ITicket>(
 		paymentStatus: { type: String, enum: ["pending", "paid", "failed", "refunded"], default: "pending", required: true },
 		ticketStatus: { type: String, enum: ["active", "cancelled"], default: "active", required: true },
 		checkedIn: { type: Boolean, default: false, required: true },
+		checkedInAt: { type: Date },
+		checkedInBy: { type: Schema.Types.ObjectId, ref: "User", index: true },
 		purchaseDate: { type: Date, default: Date.now, required: true },
 		cancelledAt: { type: Date },
 	},
@@ -37,6 +41,7 @@ const ticketSchema = new Schema<ITicket>(
 
 ticketSchema.index({ user: 1, event: 1, ticketType: 1, ticketStatus: 1 });
 ticketSchema.index({ event: 1, checkedIn: 1 });
+ticketSchema.index({ checkedInBy: 1, checkedInAt: -1 });
 
 export const Ticket: Model<ITicket> =
 	(mongoose.models.Ticket as Model<ITicket> | undefined) ?? mongoose.model<ITicket>("Ticket", ticketSchema);
