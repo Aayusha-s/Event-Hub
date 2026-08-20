@@ -211,6 +211,7 @@ export const getAdminDashboard = async () => {
 		totalVendors,
 		vendorsByStatus,
 		recentUsers,
+		recentEvents,
 	] = await Promise.all([
 		User.countDocuments(),
 		User.aggregate([{ $group: { _id: "$role", count: { $sum: 1 } } }]),
@@ -224,6 +225,7 @@ export const getAdminDashboard = async () => {
 		Vendor.countDocuments(),
 		Vendor.aggregate([{ $group: { _id: "$approvalStatus", count: { $sum: 1 } } }]),
 		User.find().select("-password").sort({ createdAt: -1 }).limit(5).exec(),
+		Event.find().select("title organizer venue startDate status createdAt").populate("organizer", "name").sort({ createdAt: -1 }).limit(5).lean().exec(),
 	]);
 	const [todayTickets, paymentsByStatus, revenueWindows, newUsersThisWeek, newEventsThisWeek, ongoingEvents] = await Promise.all([
 		Ticket.countDocuments({ ticketStatus: "active", purchaseDate: { $gte: startToday } }),
@@ -261,5 +263,6 @@ export const getAdminDashboard = async () => {
 		eventStatuses: statusCounts,
 		vendorStatuses: vendorCounts,
 		recentUsers,
+		recentEvents,
 	};
 };

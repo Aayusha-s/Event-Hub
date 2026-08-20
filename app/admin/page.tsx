@@ -1,57 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-type AdminDashboardData = {
-	summary?: Record<string, number>;
-    [key: string]: unknown;
-};
+type Dashboard = { summary: Record<string, number>; roles: Record<string, number>; recentUsers: Array<{ _id: string; name: string; email: string; role: string; createdAt?: string }>; recentEvents: Array<{ _id: string; title: string; venue: string; status: string; startDate?: string; organizer?: { name?: string } }> };
+const label = (value: string) => value.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').replace(/^./, (item) => item.toUpperCase());
 
-const Page = () => {
-    const [data, setData] = useState<AdminDashboardData | null>(null);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const res = await fetch('/api/admin/dashboard');
-                const json = await res.json();
-                if (!res.ok || !json.success) {
-                    setError(json.error?.message ?? 'Unable to load dashboard.');
-                    return;
-                }
-                setData(json.data);
-            } catch {
-                setError('Unable to load dashboard.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        load();
-    }, []);
-
-    return (
-        <section className="max-w-6xl mx-auto px-4 py-24 font-cause text-text-dark">
-            <h1 className="text-3xl font-dynapuff font-semibold mb-6">Admin Dashboard</h1>
-
-            {loading && <p>Loading dashboard...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-
-            {data && (
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-					{Object.entries(data.summary ?? {}).map(([key, value]) => <div key={key} className="surface-card p-4 rounded-xl border border-border"><p className="text-sm text-text-light">{key.replace(/([A-Z])/g, ' $1').replace(/^./, item => item.toUpperCase())}</p><p className="text-2xl font-bold">{key.toLowerCase().includes('revenue') ? `Rs. ${Number(value).toLocaleString()}` : Number(value).toLocaleString()}</p></div>)}
-				</div>
-            )}
-
-            <div className="flex gap-4">
-                <Link href="/admin/users" className="rounded-lg bg-primary px-4 py-2 text-white">Manage Users</Link>
-                <Link href="/admin/events" className="rounded-lg bg-primary px-4 py-2 text-white">Manage Events</Link>
-                <Link href="/analytics" className="rounded-lg bg-primary px-4 py-2 text-white">Reports</Link>
-            </div>
-        </section>
-    );
-};
-
-export default Page;
+export default function AdminDashboardPage() {
+    const [data, setData] = useState<Dashboard | null>(null); const [error, setError] = useState(''); const [loading, setLoading] = useState(true);
+    useEffect(() => { const load = async () => { try { const res = await fetch('/api/admin/dashboard'); const json = await res.json(); if (!res.ok || !json.success) throw new Error(json.error?.message ?? 'Unable to load dashboard.'); setData(json.data); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to load dashboard.'); } finally { setLoading(false); } }; void load(); }, []);
+    const primaryStats = data ? ['totalUsers', 'totalEvents', 'totalTickets', 'totalRevenue'].map((key) => [key, data.summary[key] ?? 0] as const) : [];
+    return <section className="mx-auto max-w-7xl px-4 py-12 font-cause text-text-dark"><div className="mb-6 flex flex-wrap items-end justify-between gap-4"><div><h1 className="text-3xl font-dynapuff font-semibold">Admin Dashboard</h1><p className="mt-1 text-text-light">Live platform overview from MongoDB.</p></div><div className="flex gap-2"><Link href="/admin/users" className="rounded-lg bg-primary px-4 py-2 font-medium text-white">Manage Users</Link><Link href="/admin/events" className="rounded-lg border border-border px-4 py-2 font-medium hover:bg-surface-hover">Manage Events</Link></div></div>{loading && <p>Loading dashboard...</p>}{error && <p className="text-error">{error}</p>}{data && <><div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{primaryStats.map(([key, value]) => <div key={key} className="rounded-xl border border-border bg-surface p-5"><p className="text-sm text-text-light">{label(key)}</p><p className="mt-1 text-2xl font-semibold">{key === 'totalRevenue' ? `Rs. ${value.toLocaleString()}` : value.toLocaleString()}</p></div>)}</div><div className="grid gap-6 lg:grid-cols-2"><div className="rounded-xl border border-border bg-surface p-5"><h2 className="mb-4 text-lg font-semibold">Users by role</h2><div className="space-y-3">{Object.entries(data.roles).length === 0 ? <p className="text-sm text-text-light">No users yet.</p> : Object.entries(data.roles).map(([role, count]) => <div key={role} className="flex justify-between border-b border-divider pb-2 last:border-0"><span className="capitalize">{role.replace('_', ' ')}</span><span className="font-medium">{count}</span></div>)}</div></div><div className="rounded-xl border border-border bg-surface p-5"><h2 className="mb-4 text-lg font-semibold">Recent users</h2><div className="space-y-3">{data.recentUsers.length === 0 ? <p className="text-sm text-text-light">No users yet.</p> : data.recentUsers.map((user) => <div key={user._id} className="border-b border-divider pb-2 last:border-0"><p className="font-medium">{user.name}</p><p className="text-sm text-text-light">{user.email} · {user.role.replace('_', ' ')}</p></div>)}</div></div><div className="rounded-xl border border-border bg-surface p-5 lg:col-span-2"><h2 className="mb-4 text-lg font-semibold">Recent events</h2><div className="grid gap-3 md:grid-cols-2">{data.recentEvents.length === 0 ? <p className="text-sm text-text-light">No events yet.</p> : data.recentEvents.map((event) => <Link key={event._id} href={`/event-details/${event._id}`} className="rounded-lg border border-border p-3 transition hover:bg-surface-hover"><p className="font-medium">{event.title}</p><p className="text-sm text-text-light">{event.organizer?.name ?? 'Unknown organizer'} · {event.venue}</p><p className="mt-1 text-sm capitalize text-text-light">{event.status}{event.startDate ? ` · ${new Date(event.startDate).toLocaleDateString()}` : ''}</p></Link>)}</div></div></div></>}</section>;
+}

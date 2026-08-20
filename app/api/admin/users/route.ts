@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/middleware/auth/requireRole";
 import { listUsers } from "@/services/users/user.service";
-import { UserRole } from "@/types";
+import { USER_ROLES, UserRole } from "@/types";
 import { HttpError } from "@/utils/api/httpError";
 
 export async function GET(request: Request) {
@@ -12,8 +12,11 @@ export async function GET(request: Request) {
 		const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") ?? "20", 10)));
 		const search = searchParams.get("search")?.trim();
 		const role = searchParams.get("role") as UserRole | undefined;
+		const status = searchParams.get("status") as "active" | "suspended" | undefined;
+		if (role && !USER_ROLES.includes(role)) throw new HttpError(400, "Invalid role filter.", "VALIDATION_ERROR");
+		if (status && !["active", "suspended"].includes(status)) throw new HttpError(400, "Invalid status filter.", "VALIDATION_ERROR");
 
-		const result = await listUsers({ page, pageSize, search, role });
+		const result = await listUsers({ page, pageSize, search, role, status });
 		return NextResponse.json({ success: true, data: result });
 	} catch (error) {
 		if (error instanceof HttpError) {

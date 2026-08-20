@@ -1,91 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-type AdminUser = {
-    _id: string;
-    name: string;
-    email: string;
-    role: string;
-};
+const roles = ['attendee', 'organizer', 'vendor', 'ticket_checker', 'admin'] as const;
+type AdminUser = { _id: string; name: string; email: string; role: typeof roles[number]; status: 'active' | 'suspended'; createdAt?: string };
 
-const Page = () => {
-    const [users, setUsers] = useState<AdminUser[]>([]);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState('');
-
-    const loadUsers = async (query = '') => {
-        setLoading(true);
-        try {
-            const res = await fetch(`/api/admin/users${query ? `?search=${encodeURIComponent(query)}` : ''}`);
-            const json = await res.json();
-            if (!res.ok || !json.success) {
-                setError(json.error?.message ?? 'Unable to load users.');
-                return;
-            }
-            setUsers(json.data.items ?? json.data.users ?? []);
-        } catch {
-            setError('Unable to load users.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        loadUsers();
-    }, []);
-
-    return (
-        <section className="max-w-6xl mx-auto px-4 py-24 font-cause text-text-dark">
-            <h1 className="text-3xl font-dynapuff font-semibold mb-6">Manage Users</h1>
-
-            <div className="flex gap-2 mb-4">
-                <input
-                    type="text"
-                    placeholder="Search by name or email"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="border border-brown-normal rounded-md p-2 flex-1"
-                />
-                <button
-                    onClick={() => loadUsers(search)}
-                    className="rounded-lg bg-primary px-4 py-2 text-white"
-                >
-                    Search
-                </button>
-            </div>
-
-            {loading && <p>Loading users...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-
-            {!loading && !error && (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="border-b border-divider">
-                                <th className="py-2">Name</th>
-                                <th className="py-2">Email</th>
-                                <th className="py-2">Role</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.length === 0 && (
-                                <tr><td colSpan={3} className="py-4 text-text-light">No users found.</td></tr>
-                            )}
-                            {users.map((user) => (
-                                <tr key={user._id} className="border-b border-divider">
-                                    <td className="py-2">{user.name}</td>
-                                    <td className="py-2">{user.email}</td>
-                                    <td className="py-2 capitalize">{user.role?.replace('_', ' ')}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-        </section>
-    );
-};
-
-export default Page;
+export default function AdminUsersPage() {
+    const [users, setUsers] = useState<AdminUser[]>([]); const [error, setError] = useState(''); const [message, setMessage] = useState(''); const [loading, setLoading] = useState(true); const [savingId, setSavingId] = useState(''); const [search, setSearch] = useState(''); const [role, setRole] = useState(''); const [status, setStatus] = useState('');
+    const loadUsers = useCallback(async () => { setLoading(true); setError(''); const params = new URLSearchParams({ pageSize: '50' }); if (search.trim()) params.set('search', search.trim()); if (role) params.set('role', role); if (status) params.set('status', status); try { const res = await fetch(`/api/admin/users?${params}`); const json = await res.json(); if (!res.ok || !json.success) throw new Error(json.error?.message ?? 'Unable to load users.'); setUsers(json.data.items ?? []); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to load users.'); } finally { setLoading(false); } }, [role, search, status]);
+    useEffect(() => { void loadUsers(); }, [loadUsers]);
+    const updateUser = async (id: string, payload: Record<string, string>) => { setSavingId(id); setError(''); setMessage(''); try { const res = await fetch(`/api/admin/users/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const json = await res.json(); if (!res.ok || !json.success) throw new Error(json.error?.message ?? 'Unable to update user.'); setUsers((current) => current.map((user) => user._id === id ? json.data : user)); setMessage('User updated.'); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to update user.'); } finally { setSavingId(''); } };
+    const deactivate = async (user: AdminUser) => { if (!window.confirm(`Deactivate ${user.name}? They will no longer be able to sign in.`)) return; setSavingId(user._id); setError(''); setMessage(''); try { const res = await fetch(`/api/admin/users/${user._id}`, { method: 'DELETE' }); const json = await res.json(); if (!res.ok || !json.success) throw new Error(json.error?.message ?? 'Unable to deactivate user.'); setUsers((current) => current.map((item) => item._id === user._id ? json.data.user : item)); setMessage('User deactivated.'); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to deactivate user.'); } finally { setSavingId(''); } };
+    return <section className="mx-auto max-w-7xl px-4 py-12 font-cause text-text-dark"><h1 className="mb-2 text-3xl font-dynapuff font-semibold">Manage Users</h1><p className="mb-6 text-text-light">Search, manage account access, and assign validated application roles.</p><div className="mb-5 grid gap-3 rounded-xl border border-border bg-surface p-4 md:grid-cols-4"><input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && void loadUsers()} placeholder="Search name or email" className="rounded-lg border border-border px-3 py-2" /><select value={role} onChange={(e) => setRole(e.target.value)} className="rounded-lg border border-border px-3 py-2"><option value="">All roles</option>{roles.map((item) => <option key={item} value={item}>{item.replace('_', ' ')}</option>)}</select><select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-lg border border-border px-3 py-2"><option value="">All statuses</option><option value="active">Active</option><option value="suspended">Suspended</option></select><button onClick={() => void loadUsers()} className="rounded-lg bg-primary px-4 py-2 font-medium text-white">Apply filters</button></div>{message && <p className="mb-4 text-green-700">{message}</p>}{error && <p className="mb-4 text-error">{error}</p>}{loading ? <p>Loading users...</p> : <div className="overflow-x-auto rounded-xl border border-border bg-surface"><table className="w-full min-w-[760px] text-left"><thead><tr className="border-b border-divider text-sm text-text-light"><th className="p-3">User</th><th className="p-3">Role</th><th className="p-3">Status</th><th className="p-3">Registered</th><th className="p-3">Actions</th></tr></thead><tbody>{users.length === 0 ? <tr><td colSpan={5} className="p-5 text-text-light">No users found.</td></tr> : users.map((user) => <tr key={user._id} className="border-b border-divider last:border-0"><td className="p-3"><p className="font-medium">{user.name}</p><p className="text-sm text-text-light">{user.email}</p></td><td className="p-3"><select value={user.role} disabled={savingId === user._id} onChange={(e) => void updateUser(user._id, { role: e.target.value })} className="rounded border border-border bg-background px-2 py-1 capitalize">{roles.map((item) => <option key={item} value={item}>{item.replace('_', ' ')}</option>)}</select></td><td className="p-3 capitalize">{user.status}</td><td className="p-3 text-sm">{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}</td><td className="p-3"><button disabled={savingId === user._id} onClick={() => user.status === 'active' ? void deactivate(user) : void updateUser(user._id, { status: 'active' })} className="rounded-lg border border-border px-3 py-1.5 text-sm hover:bg-surface-hover">{user.status === 'active' ? 'Deactivate' : 'Reactivate'}</button></td></tr>)}</tbody></table></div>}</section>;
+}

@@ -8,6 +8,7 @@ export type UserListFilters = {
 	pageSize: number;
 	search?: string;
 	role?: UserRole;
+	status?: "active" | "suspended";
 };
 
 export const getUserProfile = async (userId: Types.ObjectId | string) => {
@@ -27,6 +28,7 @@ export const listUsers = async (filters: UserListFilters) => {
 	await dbConnect();
 	const match: Record<string, unknown> = {};
 	if (filters.role) match.role = filters.role;
+	if (filters.status) match.status = filters.status;
 	if (filters.search) {
 		const pattern = new RegExp(filters.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
 		match.$or = [{ name: pattern }, { email: pattern }, { phone: pattern }];
@@ -34,7 +36,7 @@ export const listUsers = async (filters: UserListFilters) => {
 
 	const skip = (filters.page - 1) * filters.pageSize;
 	const [users, total] = await Promise.all([
-		User.find(match).select("-password").sort({ createdAt: -1 }).skip(skip).limit(filters.pageSize).exec(),
+		User.find(match).select("name email role status profileImage createdAt").sort({ createdAt: -1 }).skip(skip).limit(filters.pageSize).lean().exec(),
 		User.countDocuments(match),
 	]);
 
@@ -49,13 +51,8 @@ export const listUsers = async (filters: UserListFilters) => {
 
 export const updateUserRoleOrStatus = async (
 	userId: Types.ObjectId | string,
-	data: Partial<{ role: UserRole }>
+	data: Partial<{ role: UserRole; status: "active" | "suspended" }>
 ) => {
 	await dbConnect();
-	return User.findByIdAndUpdate(userId, { $set: data }, { new: true, runValidators: true }).select("-password").exec();
-};
-
-export const deleteUser = async (userId: Types.ObjectId | string) => {
-	await dbConnect();
-	return User.findByIdAndDelete(userId).exec();
+	return User.findByIdAndUpdate(userId, { $set: data }, { new: true, runValidators: true }).select("name email role status profileImage createdAt").lean().exec();
 };
