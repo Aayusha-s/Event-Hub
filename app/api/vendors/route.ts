@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/middleware/auth/requireRole";
-import { createVendorProfile, getVendorProfile, listVendors } from "@/services/vendors/vendor.service";
+import { createVendorProfile, getVendorProfile, listVendors, updateVendorProfile } from "@/services/vendors/vendor.service";
 import { HttpError } from "@/utils/api/httpError";
 
 export async function GET(request: Request) {
@@ -24,6 +24,21 @@ export async function GET(request: Request) {
 		}
 		console.error("Fetch vendor failed:", error);
 		return NextResponse.json({ success: false, error: { message: "Unable to fetch vendor profile." } }, { status: 500 });
+	}
+}
+
+export async function PATCH(request: Request) {
+	try {
+		const session = await requireRole(["vendor"]);
+		const { businessName, description, category, logo } = await request.json();
+		const data = { businessName, description, category, logo };
+		const vendor = await updateVendorProfile(session.user.id, Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined)));
+		if (!vendor) throw new HttpError(404, "Vendor profile not found.", "NOT_FOUND");
+		return NextResponse.json({ success: true, data: vendor });
+	} catch (error) {
+		if (error instanceof HttpError) return NextResponse.json({ success: false, error: { message: error.message, code: error.code } }, { status: error.statusCode });
+		console.error("Vendor profile update failed:", error);
+		return NextResponse.json({ success: false, error: { message: "Unable to update vendor profile." } }, { status: 500 });
 	}
 }
 

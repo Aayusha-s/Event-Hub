@@ -7,6 +7,8 @@ const roleProtectedRoutes: Array<{ prefix: string; roles: UserRole[] }> = [
 	{ prefix: "/admin", roles: ["admin"] },
 	{ prefix: "/organizerdashboard", roles: ["organizer"] },
 	{ prefix: "/vendordashboard", roles: ["vendor"] },
+	{ prefix: "/vendor/events", roles: ["vendor"] },
+	{ prefix: "/vendor/profile", roles: ["vendor"] },
 	{ prefix: "/create-event", roles: ["organizer"] },
 	{ prefix: "/ticket-checker", roles: ["ticket_checker"] },
 ];
@@ -45,7 +47,9 @@ const publicRoutes = [
 	"/event-tags",
 	"/event-details",
 	"/organizer",
-	"/vendor",
+	"/vendor/vendorapplication-1",
+	"/vendor/vendorapplication-2",
+	"/vendor/vendorapplication-3",
 ];
 
 const isPathMatch = (pathname: string, prefix: string) => pathname === prefix || pathname.startsWith(`${prefix}/`);
@@ -124,6 +128,8 @@ export const config = {
 		"/admin/:path*",
 		"/organizerdashboard/:path*",
 		"/vendordashboard/:path*",
+		"/vendor/events/:path*",
+		"/vendor/profile/:path*",
 		"/userdashboard/:path*",
 		"/userprofile/:path*",
 		"/settings/:path*",

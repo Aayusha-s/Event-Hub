@@ -7,7 +7,7 @@ type RouteContext = { params: Promise<{ bookingId: string }> };
 
 export async function DELETE(_request: Request, context: RouteContext) {
 	try {
-		const session = await requireRole(["vendor", "admin"]);
+		const session = await requireRole(["vendor"]);
 		const { bookingId } = await context.params;
 
 		const vendor = await cancelStallBooking(session.user.id, bookingId);

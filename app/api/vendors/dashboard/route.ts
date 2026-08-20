@@ -5,7 +5,7 @@ import { HttpError } from "@/utils/api/httpError";
 
 export async function GET() {
 	try {
-		const session = await requireRole(["vendor", "admin"]);
+		const session = await requireRole(["vendor"]);
 		const data = await getVendorDashboard(session.user.id);
 		return NextResponse.json({ success: true, data });
 	} catch (error) {

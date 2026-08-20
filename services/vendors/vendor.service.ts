@@ -124,13 +124,18 @@ export const cancelStallBooking = async (ownerId: Types.ObjectId | string, event
 export const getVendorDashboard = async (ownerId: Types.ObjectId | string) => {
 	await dbConnect();
 	const vendor = await Vendor.findOne({ owner: new Types.ObjectId(ownerId) })
-		.populate("stallBookings.event", "title startDate venue status images")
+		.populate({ path: "stallBookings.event", select: "title description organizer venue startDate endDate status images category isOnline" })
+		.populate({ path: "stallBookings.event", populate: { path: "organizer", select: "name" } })
 		.exec();
 
 	if (!vendor) throw new HttpError(404, "Vendor profile not found.", "NOT_FOUND");
 
+	const now = new Date();
 	const activeBookings = vendor.stallBookings.filter((b) => b.status !== "cancelled");
-	const confirmedBookings = vendor.stallBookings.filter((b) => b.status === "confirmed");
+	const events = activeBookings.map((booking) => booking.event as unknown as { startDate?: Date; endDate?: Date; status?: string }).filter((event) => event && typeof event === "object");
+	const upcomingEvents = events.filter((event) => event.startDate && new Date(event.startDate) > now);
+	const activeEvents = events.filter((event) => event.startDate && event.endDate && new Date(event.startDate) <= now && new Date(event.endDate) >= now && event.status === "published");
+	const completedEvents = events.filter((event) => event.status === "completed" || (event.endDate && new Date(event.endDate) < now));
 
 	return {
 		vendor,
@@ -138,8 +143,26 @@ export const getVendorDashboard = async (ownerId: Types.ObjectId | string) => {
 			approvalStatus: vendor.approvalStatus,
 			totalBookings: vendor.stallBookings.length,
 			activeBookingsCount: activeBookings.length,
-			confirmedBookingsCount: confirmedBookings.length,
+			upcomingEventsCount: upcomingEvents.length,
+			activeEventsCount: activeEvents.length,
+			completedEventsCount: completedEvents.length,
 		},
 		bookings: vendor.stallBookings,
 	};
+};
+
+export const getVendorAssignedEvents = async (ownerId: Types.ObjectId | string) => {
+	const data = await getVendorDashboard(ownerId);
+	return data.bookings.filter((booking) => booking.status !== "cancelled");
+};
+
+export const getVendorAssignedEvent = async (ownerId: Types.ObjectId | string, eventId: string) => {
+	if (!Types.ObjectId.isValid(eventId)) throw new HttpError(400, "Event id is invalid.", "INVALID_ID");
+	const bookings = await getVendorAssignedEvents(ownerId);
+	const booking = bookings.find((item) => {
+		const event = item.event as unknown as { _id?: Types.ObjectId };
+		return event?._id?.toString() === eventId;
+	});
+	if (!booking) throw new HttpError(404, "Assigned event not found.", "NOT_FOUND");
+	return booking;
 };

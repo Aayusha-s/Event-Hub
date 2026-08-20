@@ -5,7 +5,7 @@ import { HttpError } from "@/utils/api/httpError";
 
 export async function POST(request: Request) {
 	try {
-		const session = await requireRole(["vendor", "admin"]);
+		const session = await requireRole(["vendor"]);
 		const body = await request.json();
 		const { eventId, stallName } = body;
 
