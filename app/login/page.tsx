@@ -46,7 +46,8 @@ const LoginForm = () => {
 
 
     // handle login
-    const handleLogin = async () => {
+    const handleLogin = async (event?: React.FormEvent<HTMLFormElement>) => {
+        event?.preventDefault();
         const emailValidation = validateEmail(email);
         const passwordValidation = validatePassword(password);
 
@@ -141,14 +142,17 @@ const LoginForm = () => {
 
                     {/* form */}
 
-                    <div className="flex flex-col gap-4">
+                    <form className="flex flex-col gap-4" onSubmit={handleLogin} method="post" autoComplete="on">
                         {/* email */}
                         <div>
                             <h2 className="font-bold">Email</h2>
                             <div className="flex items-center gap-2 p-2 border border-brown-normal rounded-md mt-1 focus:outline-brown-normal-active">
                                 <Mail />
                                 <input
+                                    id="email"
+                                    name="email"
                                     type="email"
+                                    autoComplete="username"
                                     placeholder="Enter your email"
                                     className="w-full border-none rounded-md focus:outline-none"
                                     value={email}
@@ -172,7 +176,10 @@ const LoginForm = () => {
                             <div className="flex items-center gap-2 p-2 border border-brown-normal rounded-md mt-1">
                                 <Lock />
                                 <input
+                                    id="password"
+                                    name="password"
                                     type="password"
+                                    autoComplete="current-password"
                                     placeholder="Enter your password"
                                     className="w-full border-none rounded-md focus:outline-none"
                                     value={password}
@@ -192,12 +199,7 @@ const LoginForm = () => {
                             )}
                         </div>
 
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                                <input type="checkbox" id="rememberMe" name="rememberMe" />
-                                <label htmlFor="rememberMe" className="text-sm cursor-pointer">Remember Me</label>
-                            </div>
-
+                        <div className="flex justify-end items-center">
                             <div className="flex items-center gap-2">
                                 <Button
                                     text="Forgot Password?"
@@ -214,8 +216,8 @@ const LoginForm = () => {
                             </div>
                         )}
 
-                        <Button text="Login" variant="cta" size="md" onClick={handleLogin} />
-                    </div>
+                        <Button text="Login" type="submit" variant="cta" size="md" className="w-full" />
+                    </form>
 
 
                     <div className="mt-4 flex justify-center text-md gap-1">
