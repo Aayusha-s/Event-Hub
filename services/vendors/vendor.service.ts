@@ -92,7 +92,7 @@ export const bookStall = async (ownerId: Types.ObjectId | string, eventId: strin
 
 	const event = await Event.findById(eventId).exec();
 	if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
-	if (event.status !== "published") throw new HttpError(409, "Event is not open for stall booking.", "EVENT_NOT_OPEN");
+	if (event.status !== "published" || event.approvalStatus !== "approved") throw new HttpError(409, "No vendor stalls are currently available for this event.", "EVENT_NOT_OPEN");
 
 	const duplicate = vendor.stallBookings.find((b) => b.event.toString() === eventId && b.status !== "cancelled");
 	if (duplicate) throw new HttpError(409, "You already have a stall booking for this event.", "DUPLICATE_BOOKING");
@@ -165,4 +165,25 @@ export const getVendorAssignedEvent = async (ownerId: Types.ObjectId | string, e
 	});
 	if (!booking) throw new HttpError(404, "Assigned event not found.", "NOT_FOUND");
 	return booking;
+};
+
+export const listStallRequests = async (page = 1, pageSize = 50, status?: "pending" | "confirmed" | "cancelled") => {
+	await dbConnect();
+	const vendors = await Vendor.find(status ? { "stallBookings.status": status } : {}).populate("owner", "name email").populate({ path: "stallBookings.event", select: "title approvalStatus status category" }).sort({ createdAt: -1 }).exec();
+	const items = vendors.flatMap((vendor) => vendor.stallBookings.filter((booking) => !status || booking.status === status).map((booking) => ({ vendorId: vendor._id, vendor: { businessName: vendor.businessName, category: vendor.category, owner: vendor.owner }, event: booking.event, stallName: booking.stallName, status: booking.status, bookedAt: booking.bookedAt })));
+	const start = (page - 1) * pageSize;
+	return { items: items.slice(start, start + pageSize), total: items.length, page, pageSize, totalPages: Math.ceil(items.length / pageSize) };
+};
+
+export const updateStallApprovalStatus = async (vendorId: string, eventId: string, status: "confirmed" | "cancelled") => {
+	await dbConnect();
+	if (!Types.ObjectId.isValid(vendorId) || !Types.ObjectId.isValid(eventId)) throw new HttpError(400, "Invalid stall request id.", "INVALID_ID");
+	const vendor = await Vendor.findById(vendorId).exec();
+	if (!vendor) throw new HttpError(404, "Vendor profile not found.", "NOT_FOUND");
+	const booking = vendor.stallBookings.find((item) => item.event.toString() === eventId && item.status === "pending");
+	if (!booking) throw new HttpError(404, "Pending stall request not found.", "NOT_FOUND");
+	booking.status = status;
+	await vendor.save();
+	createNotification(vendor.owner, "vendor_update", `Stall request ${status === "confirmed" ? "approved" : "rejected"}`, `Your stall request has been ${status === "confirmed" ? "approved" : "rejected"} by an administrator.`, "/vendor/events").catch(console.error);
+	return vendor;
 };

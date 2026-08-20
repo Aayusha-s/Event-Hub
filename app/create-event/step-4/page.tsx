@@ -97,7 +97,7 @@ const Page = () => {
             }
 
             clearEventDraft();
-			router.push(`/event-details/${result.data._id}`);
+			router.push('/organizerdashboard?submitted=approval-pending');
         } catch (error) {
             setPublishError(error instanceof Error ? error.message : 'Unable to publish this event. Please try again.');
         } finally {
@@ -109,11 +109,11 @@ const Page = () => {
         <CreateEventStepShell
             stepLabel="Step 4 of 4"
             title="Review and Publish"
-            description="Check your event details before publishing. You can still go back and make changes if needed."
+            description="Check your event details before submitting them for administrator approval."
             footer={(
                 <div className='flex items-center justify-between gap-3'>
                     <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push(`/create-event/step-3${eventIdFromUrl() ? `?eventId=${eventIdFromUrl()}` : ''}`)} disabled={isPublishing} />
-                    <Button text={isPublishing ? "Publishing..." : "Publish Event"} variant='cta' size='sm' onClick={handlePublish} disabled={isPublishing} />
+                    <Button text={isPublishing ? "Submitting..." : "Submit for Approval"} variant='cta' size='sm' onClick={handlePublish} disabled={isPublishing} />
                 </div>
             )}
         >

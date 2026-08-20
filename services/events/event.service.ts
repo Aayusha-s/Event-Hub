@@ -4,6 +4,7 @@ import { EventInput, EventStatus } from "@/utils/events/validation";
 import { recordActivity } from "@/services/profiles/profile.service";
 import Ticket from "@/models/Ticket";
 import { HttpError } from "@/utils/api/httpError";
+import { createNotification } from "@/services/notifications/notification.service";
 
 export type EventListFilters = {
 	page: number;
@@ -13,6 +14,8 @@ export type EventListFilters = {
 	organizer?: Types.ObjectId;
 	featured?: boolean;
 	status?: EventStatus;
+	approvalStatus?: "pending" | "approved" | "rejected";
+	includeUnapproved?: boolean;
 	dateFrom?: Date;
 	dateTo?: Date;
 	tags?: string[];
@@ -103,6 +106,8 @@ const organizerLookup: PipelineStage[] = [
 
 export const listEvents = async (filters: EventListFilters) => {
 	const match: Record<string, unknown> = {};
+	if (!filters.includeUnapproved) match.approvalStatus = "approved";
+	if (filters.approvalStatus) match.approvalStatus = filters.approvalStatus;
 	if (filters.category) match.category = filters.category;
 	if (filters.tags?.length) match.tags = { $in: filters.tags };
 	if (filters.location) match.venue = new RegExp(escapeRegex(filters.location), "i");
@@ -157,16 +162,24 @@ export const listEvents = async (filters: EventListFilters) => {
 	};
 };
 
-export const getEventById = async (id: Types.ObjectId) => {
+export const getEventById = async (id: Types.ObjectId, includeUnapproved = false) => {
 	const [event] = await Event.aggregate([
-		{ $match: { _id: id } },
+		{ $match: includeUnapproved ? { _id: id } : { _id: id, approvalStatus: "approved" } },
 		...ticketAvailabilityLookup,
 		...organizerLookup,
 	]).exec();
 	return event ?? null;
 };
 
-export const createEvent = async (input: EventInput, organizer: Types.ObjectId) => { const event = await Event.create({ ...input, organizer }); await recordActivity(organizer, "created_event", "Created an event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` }); return event; };
+export const createEvent = async (input: EventInput, organizer: Types.ObjectId) => { const event = await Event.create({ ...input, organizer, approvalStatus: "pending" }); await recordActivity(organizer, "created_event", "Created an event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` }); return event; };
+
+export const updateEventApprovalStatus = async (event: EventDocument, approvalStatus: "approved" | "rejected") => {
+	event.approvalStatus = approvalStatus;
+	await event.save();
+	const label = approvalStatus === "approved" ? "approved" : "rejected";
+	createNotification(event.organizer, "organizer_update", `Event ${label}`, `Your event '${event.title}' has been ${label} by an administrator.`, "/organizerdashboard").catch(console.error);
+	return event;
+};
 
 export const findEventForManagement = (id: Types.ObjectId): Promise<EventDocument | null> => Event.findById(id).exec();
 

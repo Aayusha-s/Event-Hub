@@ -210,6 +210,7 @@ export const getAdminDashboard = async () => {
 		paymentsAggregate,
 		totalVendors,
 		vendorsByStatus,
+		pendingStalls,
 		recentUsers,
 		recentEvents,
 	] = await Promise.all([
@@ -224,6 +225,7 @@ export const getAdminDashboard = async () => {
 		]),
 		Vendor.countDocuments(),
 		Vendor.aggregate([{ $group: { _id: "$approvalStatus", count: { $sum: 1 } } }]),
+		Vendor.aggregate([{ $unwind: "$stallBookings" }, { $match: { "stallBookings.status": "pending" } }, { $count: "count" }]),
 		User.find().select("-password").sort({ createdAt: -1 }).limit(5).exec(),
 		Event.find().select("title organizer venue startDate status createdAt").populate("organizer", "name").sort({ createdAt: -1 }).limit(5).lean().exec(),
 	]);
@@ -257,7 +259,7 @@ export const getAdminDashboard = async () => {
 			totalTickets,
 			totalRevenue: paymentsAggregate[0]?.totalRevenue ?? 0,
 			totalVendors,
-			activeEvents: statusCounts.published ?? 0, draftEvents: statusCounts.draft ?? 0, completedEvents: statusCounts.completed ?? 0, cancelledEvents: statusCounts.cancelled ?? 0, upcomingEvents: await Event.countDocuments({ status: "published", startDate: { $gt: now } }), ongoingEvents, ticketsSoldToday: todayTickets, revenueToday: revenueWindows[0]?.today ?? 0, revenueThisWeek: revenueWindows[0]?.week ?? 0, revenueThisMonth: revenueWindows[0]?.month ?? 0, pendingPayments: paymentCounts.pending ?? 0, successfulPayments: paymentCounts.paid ?? 0, failedPayments: paymentCounts.failed ?? 0, refundedPayments: paymentCounts.refunded ?? 0, totalOrganizers: roleCounts.organizer ?? 0, totalAttendees: roleCounts.attendee ?? 0, totalTicketCheckers: roleCounts.ticket_checker ?? 0, newUsersThisWeek, newEventsThisWeek,
+			activeEvents: statusCounts.published ?? 0, draftEvents: statusCounts.draft ?? 0, completedEvents: statusCounts.completed ?? 0, cancelledEvents: statusCounts.cancelled ?? 0, upcomingEvents: await Event.countDocuments({ status: "published", startDate: { $gt: now } }), ongoingEvents, ticketsSoldToday: todayTickets, revenueToday: revenueWindows[0]?.today ?? 0, revenueThisWeek: revenueWindows[0]?.week ?? 0, revenueThisMonth: revenueWindows[0]?.month ?? 0, pendingPayments: paymentCounts.pending ?? 0, successfulPayments: paymentCounts.paid ?? 0, failedPayments: paymentCounts.failed ?? 0, refundedPayments: paymentCounts.refunded ?? 0, totalOrganizers: roleCounts.organizer ?? 0, totalAttendees: roleCounts.attendee ?? 0, totalTicketCheckers: roleCounts.ticket_checker ?? 0, pendingVendors: vendorCounts.pending ?? 0, pendingEvents: await Event.countDocuments({ approvalStatus: "pending" }), pendingStalls: pendingStalls[0]?.count ?? 0, newUsersThisWeek, newEventsThisWeek,
 		},
 		roles: roleCounts,
 		eventStatuses: statusCounts,

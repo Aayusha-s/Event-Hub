@@ -12,8 +12,10 @@ export async function GET(request: Request) {
 		const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get("pageSize") ?? "20", 10)));
 		const search = searchParams.get("search") || undefined;
 		const status = (searchParams.get("status") as EventStatus) || undefined;
+		const approvalStatus = searchParams.get("approvalStatus") as "pending" | "approved" | "rejected" | null;
+		if (approvalStatus && !["pending", "approved", "rejected"].includes(approvalStatus)) throw new HttpError(400, "approvalStatus is invalid.", "VALIDATION_ERROR");
 
-		const result = await listEvents({ page, pageSize, search, status });
+		const result = await listEvents({ page, pageSize, search, status, approvalStatus: approvalStatus ?? undefined, includeUnapproved: true });
 		return NextResponse.json({ success: true, data: result });
 	} catch (error) {
 		if (error instanceof HttpError) {

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Types } from "mongoose";
 import { requireRole } from "@/middleware/auth/requireRole";
-import { findEventForManagement, updateEvent } from "@/services/events/event.service";
+import { findEventForManagement, updateEvent, updateEventApprovalStatus } from "@/services/events/event.service";
 import { HttpError } from "@/utils/api/httpError";
 import { validateEventUpdateInput } from "@/utils/events/validation";
 
@@ -14,10 +14,14 @@ export async function PATCH(request: Request, context: RouteContext) {
 		if (!Types.ObjectId.isValid(id)) throw new HttpError(400, "Invalid event id.", "INVALID_ID");
 
 		const body = await request.json();
-		const input = validateEventUpdateInput(body);
 
 		const event = await findEventForManagement(new Types.ObjectId(id));
 		if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
+		if (body.approvalStatus !== undefined) {
+			if (body.approvalStatus !== "approved" && body.approvalStatus !== "rejected") throw new HttpError(400, "approvalStatus must be approved or rejected.", "VALIDATION_ERROR");
+			return NextResponse.json({ success: true, data: await updateEventApprovalStatus(event, body.approvalStatus) });
+		}
+		const input = validateEventUpdateInput(body);
 
 		const updated = await updateEvent(event, input);
 		return NextResponse.json({ success: true, data: updated });

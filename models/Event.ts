@@ -21,6 +21,7 @@ export interface IEvent {
 	ticketTypes: ITicketType[];
 	capacity: number;
 	status: "draft" | "published" | "cancelled" | "completed";
+	approvalStatus: "pending" | "approved" | "rejected";
 	featured: boolean;
 	tags: string[];
 	isOnline?: boolean;
@@ -53,6 +54,7 @@ const eventSchema = new Schema<IEvent>(
 		ticketTypes: { type: [ticketTypeSchema], required: true, validate: { validator: (value: ITicketType[]) => value.length > 0, message: "At least one ticket type is required." } },
 		capacity: { type: Number, required: true, min: 1, validate: { validator: Number.isInteger, message: "Capacity must be an integer." } },
 		status: { type: String, enum: ["draft", "published", "cancelled", "completed"], default: "draft", required: true },
+		approvalStatus: { type: String, enum: ["pending", "approved", "rejected"], default: "pending", required: true, index: true },
 		featured: { type: Boolean, default: false, required: true },
 		tags: [{ type: String, trim: true, maxlength: 50 }],
 		isOnline: { type: Boolean, default: false },
@@ -64,6 +66,7 @@ eventSchema.path("endDate").validate(function (value: Date) {
 	return value > this.startDate;
 }, "End date must be after the start date.");
 eventSchema.index({ status: 1, startDate: 1 });
+eventSchema.index({ approvalStatus: 1, status: 1, startDate: 1 });
 eventSchema.index({ featured: 1, startDate: 1 });
 eventSchema.index({ category: 1, startDate: 1 });
 eventSchema.index({ tags: 1 });
