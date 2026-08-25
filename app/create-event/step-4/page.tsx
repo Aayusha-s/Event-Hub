@@ -78,7 +78,7 @@ const Page = () => {
                     startDate: startDate.toISOString(),
                     endDate: endDate.toISOString(),
                     capacity,
-					status: 'published',
+					status: 'draft',
                     tags: [basicInformation.category],
                     ticketTypes: eventInfo.tickets.map((ticket) => ({
                         name: ticket.ticketName,

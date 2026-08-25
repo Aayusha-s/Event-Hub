@@ -23,6 +23,7 @@ type DashboardEvent = {
 	attendanceRate: number;
 	remaining: number;
 	status: 'draft' | 'published' | 'cancelled' | 'completed';
+	approvalStatus?: 'pending' | 'approved' | 'rejected';
 	images: string[];
 };
 
@@ -164,7 +165,7 @@ export default function Page() {
 									<Image src={event!.images[0] ?? fallbackImage} alt={event!.title} width={200} height={150} className='rounded-2xl w-[200px] h-auto object-cover' />
 									<div className='flex-1'>
 										<div className='flex flex-col gap-4'>
-											<div className='flex flex-row gap-4 items-center flex-wrap'><h3 className='font-bold text-lg'>{event!.title}</h3><div className='flex items-center gap-1 bg-green-100 px-2 py-1 rounded-full text-xs font-medium'><Clock size={14} className='text-green-700' /><p className='text-green-700 capitalize'>{event!.status}</p></div></div>
+										<div className='flex flex-row gap-4 items-center flex-wrap'><h3 className='font-bold text-lg'>{event!.title}</h3><div className='flex items-center gap-1 bg-green-100 px-2 py-1 rounded-full text-xs font-medium'><Clock size={14} className='text-green-700' /><p className='text-green-700 capitalize'>{event!.approvalStatus ?? event!.status}</p></div></div>
 											<div className='flex flex-col md:flex-row gap-4'><p className='text-sm'><Calendar className='inline mr-1' size={18} /> {formatDate(event!.startDate)}</p><p className='text-sm'><MapPin className='inline mr-1' size={18} /> {event!.venue}</p></div>
 										</div>
 
@@ -178,7 +179,6 @@ export default function Page() {
 												<Button text='Details' variant='cta' size='sm' iconLeft={<ArrowRight size={18} />} onClick={() => router.push(`/event-details/${event!._id}`)} />
 												<Button text='Edit' variant='cta' size='sm' iconLeft={<SquarePen size={18} />} onClick={() => router.push(`/create-event/step-1?eventId=${event!._id}`)} />
 												<Button text='Duplicate' variant='secondary' size='sm' onClick={() => manageEvent(event!._id, 'duplicate')} />
-												<Button text={event!.status === 'published' ? 'Unpublish' : 'Publish'} variant='secondary' size='sm' onClick={() => manageEvent(event!._id, event!.status === 'published' ? 'unpublish' : 'published')} />
 												<Button text='Archive' variant='secondary' size='sm' onClick={() => manageEvent(event!._id, 'archive')} />
 												<Button text='Delete' variant='secondary' size='sm' status='danger' onClick={() => deleteEvent(event!._id)} />
 											</div>

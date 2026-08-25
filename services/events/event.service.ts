@@ -5,6 +5,7 @@ import { recordActivity } from "@/services/profiles/profile.service";
 import Ticket from "@/models/Ticket";
 import { HttpError } from "@/utils/api/httpError";
 import { createNotification } from "@/services/notifications/notification.service";
+import User from "@/models/User";
 
 export type EventListFilters = {
 	page: number;
@@ -171,10 +172,17 @@ export const getEventById = async (id: Types.ObjectId, includeUnapproved = false
 	return event ?? null;
 };
 
-export const createEvent = async (input: EventInput, organizer: Types.ObjectId) => { const event = await Event.create({ ...input, organizer, approvalStatus: "pending" }); await recordActivity(organizer, "created_event", "Created an event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` }); return event; };
+export const createEvent = async (input: EventInput, organizer: Types.ObjectId) => {
+	const event = await Event.create({ ...input, organizer, status: "draft", approvalStatus: "pending" });
+	await recordActivity(organizer, "created_event", "Created an event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` });
+	const admins = await User.find({ role: "admin", status: "active" }).select("_id").lean().exec();
+	await Promise.all(admins.map((admin) => createNotification(admin._id, "admin_update", "New event awaiting approval", `New event '${event.title}' requires approval.`, "/admin/approvals")));
+	return event;
+};
 
 export const updateEventApprovalStatus = async (event: EventDocument, approvalStatus: "approved" | "rejected") => {
 	event.approvalStatus = approvalStatus;
+	if (approvalStatus === "approved" && event.status === "draft") event.status = "published";
 	await event.save();
 	const label = approvalStatus === "approved" ? "approved" : "rejected";
 	createNotification(event.organizer, "organizer_update", `Event ${label}`, `Your event '${event.title}' has been ${label} by an administrator.`, "/organizerdashboard").catch(console.error);
@@ -226,7 +234,7 @@ export const updateEventStatus = async (event: EventDocument, status: "draft" | 
 
 export const getTrendingEvents = async (limit = 6) => {
 	return Event.aggregate([
-		{ $match: { status: "published", startDate: { $gte: new Date() } } },
+		{ $match: { status: "published", approvalStatus: "approved", startDate: { $gte: new Date() } } },
 		{
 			$lookup: {
 				from: "tickets",
@@ -255,6 +263,7 @@ export const getNearbyEvents = async (latitude: number, longitude: number, maxDi
 		{
 			$match: {
 				status: "published",
+				approvalStatus: "approved",
 				startDate: { $gte: new Date() },
 				latitude: { $gte: latitude - latDelta, $lte: latitude + latDelta },
 				longitude: { $gte: longitude - lngDelta, $lte: longitude + lngDelta },

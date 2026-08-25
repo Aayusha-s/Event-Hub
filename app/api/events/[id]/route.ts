@@ -52,6 +52,9 @@ export async function PUT(request: Request, context: RouteContext) {
 		if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
 		assertCanManage(event.organizer, session.user.id, session.user.role);
 		if (typeof body.action === "string") {
+			if (session.user.role !== "admin" && ["published", "unpublish", "archive"].includes(body.action)) {
+				throw new HttpError(403, "Only an administrator can publish or unpublish an event through approval.", "FORBIDDEN");
+			}
 			if (["draft", "published", "cancelled", "completed"].includes(body.action)) {
 				const updated = await updateEventStatus(event, body.action);
 				return NextResponse.json({ success: true, data: updated });
