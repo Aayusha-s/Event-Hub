@@ -12,7 +12,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 
 export const metadata: Metadata = {
-  title: "EventHub",
+  title: "Vivnt",
   description: "Turn Moments into Memories",
 };
 

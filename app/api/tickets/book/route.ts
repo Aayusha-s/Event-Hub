@@ -21,7 +21,7 @@ const errorResponse = (error: unknown) => {
 
 export async function POST(request: Request) {
 	try {
-		const session = await requireRole(["attendee", "organizer", "vendor", "ticket_checker", "admin"]);
+		const session = await requireRole(["attendee"]);
 		const input = validateBookTicketInput(await request.json());
 		const booking = await bookingService.createBooking(new Types.ObjectId(session.user.id), input);
 		return NextResponse.json({ success: true, data: booking }, { status: 201 });

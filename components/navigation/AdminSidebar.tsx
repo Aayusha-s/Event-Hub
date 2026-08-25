@@ -14,9 +14,9 @@ const items = [
 	{ section: "Management", label: "Events", href: "/admin/events", icon: CalendarDays, count: "pendingEvents" as const },
 	{ section: "Management", label: "Vendors", href: "/admin/approvals#vendors", icon: Store, count: "pendingVendors" as const },
 	{ section: "Management", label: "Stalls", href: "/admin/approvals#stalls", icon: Store, count: "pendingStalls" as const },
-	{ section: "Management", label: "Tickets", href: "/analytics", icon: Ticket },
-	{ section: "System", label: "Notifications", href: "/notification", icon: Bell },
-	{ section: "System", label: "Settings", href: "/settings/account", icon: Settings },
+	{ section: "Management", label: "Tickets", href: "/admin/tickets", icon: Ticket },
+	{ section: "System", label: "Notifications", href: "/admin/notifications", icon: Bell },
+	{ section: "System", label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default function AdminSidebar() {
