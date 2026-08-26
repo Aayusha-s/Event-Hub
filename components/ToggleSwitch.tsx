@@ -9,7 +9,10 @@ const ToggleSwitch = ({
 }: ToggleProops) => {
     return (
         <button
+            type="button"
             onClick={onChange}
+            role="switch"
+            aria-checked={checked}
             className={`w-12 h-6 rounded-full transition relative cursor-pointer
                 ${checked ? 'bg-brown-normal' : 'bg-gray-300'}`}
         >

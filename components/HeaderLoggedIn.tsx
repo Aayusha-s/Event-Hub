@@ -15,7 +15,7 @@ const HeaderLoggedIn = () => {
 
     return (
         <header className="fixed left-0 right-0 top-0 z-50 w-full border-b border-border bg-surface/95 text-text-dark shadow-sm backdrop-blur-md">
-            <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div className="navbar-content h-[72px] justify-between">
                 <div className="nav-left">
                     <Link href="/">
                         <div className="relative h-[60px] w-[120px] cursor-pointer">
@@ -30,13 +30,13 @@ const HeaderLoggedIn = () => {
                     </Link>
                 </div>
 
-                <div className="hidden flex-1 max-w-3xl md:flex mx-6">
+                <div className="mx-4 hidden flex-1 max-w-3xl md:flex lg:mx-6">
                     <Suspense fallback={<div className="h-10 w-full rounded-full border border-border bg-surface" />}>
                         <Searchbar />
                     </Suspense>
                 </div>
 
-                <div className="nav-right flex items-center gap-2 text-text-dark cursor-pointer">
+                <div className="nav-right flex items-center gap-3 text-text-dark cursor-pointer">
                     <Link href="/create-event/step-1" className="rounded-full p-2 transition-colors hover:bg-surface-hover hover:text-primary">
                         <CirclePlus size={22} />
                     </Link>

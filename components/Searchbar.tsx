@@ -222,7 +222,7 @@ const Searchbar = ({ className, showLocation = true, compact = false, placeholde
 
     return (
         <form
-            className={cn("w-full", className)}
+            className={cn("w-80%", className)}
             onSubmit={(event) => {
                 event.preventDefault();
                 submitSearch();
@@ -240,7 +240,7 @@ const Searchbar = ({ className, showLocation = true, compact = false, placeholde
                         value={query}
                         onChange={(event) => { setQuery(event.target.value); setActiveSuggestion(-1); }} onFocus={() => setShowSuggestions(true)} onKeyDown={onSearchKeyDown}
                         placeholder={placeholder ?? (compact ? "Search events..." : "Search events, artists, venues")}
-                        className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none"
+                        className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none focus-visible:shadow-none"
                     />
                     {showSuggestions && suggestions && <div className="absolute left-0 top-full z-60 mt-2 w-full min-w-[260px] rounded-xl border border-border bg-surface p-3 shadow-xl"><div className="max-h-72 overflow-y-auto text-sm">{[...suggestions.recent, ...suggestions.popular].slice(0, 5).map(value => <button type="button" key={`q-${value}`} onClick={() => { setQuery(value); submitSearch(value); }} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.events.map(item => <button type="button" key={item._id} onClick={() => router.push(`/event-details/${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.title}</button>)}{suggestions.organizers.map(item => <button type="button" key={item._id} onClick={() => router.push(`/userprofile?userId=${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.name}</button>)}{suggestions.venues.map(value => <button type="button" key={`v-${value}`} onClick={() => submitSearch(value, value)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.categories.concat(suggestions.tags).map(value => <button type="button" key={`f-${value}`} onClick={() => router.push(`/explore-events?tags=${encodeURIComponent(value)}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}</div></div>}
                 </label>
@@ -257,7 +257,7 @@ const Searchbar = ({ className, showLocation = true, compact = false, placeholde
                             value={location}
                             onChange={(event) => setLocation(event.target.value)}
                             placeholder="Location"
-                            className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none"
+                            className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none focus-visible:shadow-none"
                         />
                     </label>
                 )}

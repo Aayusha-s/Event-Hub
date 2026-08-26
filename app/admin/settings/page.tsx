@@ -1,5 +1,5 @@
-import AccountSettingsPage from "@/app/settings/account/page";
+import ProfileSettingsPage from "@/app/settings/profile/page";
 
 export default function AdminSettingsPage() {
-	return <AccountSettingsPage />;
+	return <ProfileSettingsPage />;
 }

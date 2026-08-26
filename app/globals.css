@@ -63,11 +63,17 @@
 }
 
 body {
-    padding-top: 80px;
     background-color: var(--color-background);
     color: var(--color-text-dark);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+    a, button, [role="button"], [role="link"], select, summary { cursor: pointer; }
+    button, a, input, textarea, select { transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select { border-color: var(--color-border); border-radius: 0.625rem; background-color: var(--color-surface); }
+    input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible, [role="button"]:focus-visible, [role="link"]:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-primary); }
 }
 
 /* Reusable layout & surface utilities */
@@ -79,6 +85,12 @@ body {
     .surface-elevated {
         @apply rounded-2xl border border-border bg-surface shadow-sm;
     }
+
+    .app-page { @apply mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8; }
+    .navbar-content { @apply flex h-full w-full items-center gap-5 px-4 sm:gap-6 sm:px-6 lg:gap-8 lg:px-10 xl:px-20; }
+    .page-heading { @apply text-2xl font-semibold tracking-tight text-text-dark md:text-3xl; }
+    .page-subtitle { @apply mt-1 text-sm leading-relaxed text-text-light md:text-base; }
+    .form-control { @apply min-h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm text-text-dark shadow-xs placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-surface-hover disabled:opacity-70; }
 
     .interactive-card {
         @apply transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-brown-normal hover:shadow-md;
@@ -385,8 +397,8 @@ body {
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
+    --primary: #E07A5F;
+    --primary-foreground: #FFFFFF;
     --secondary: oklch(0.97 0 0);
     --secondary-foreground: oklch(0.205 0 0);
     --muted: oklch(0.97 0 0);
@@ -396,7 +408,7 @@ body {
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
+    --ring: #E07A5F;
     --chart-1: oklch(0.646 0.222 41.116);
     --chart-2: oklch(0.6 0.118 184.704);
     --chart-3: oklch(0.398 0.07 227.392);

@@ -39,7 +39,7 @@ const Button = ({
         ),
         tag: "rounded-full border border-[#E8E8E8] bg-white text-text-dark hover:-translate-y-px hover:border-[#E07A5F]/40 hover:bg-[#FDF1EC] hover:shadow-sm active:scale-[0.98]",
         secondary:
-            "border-none bg-transparent text-[#E07A5F] hover:bg-[#FDF1EC] hover:text-[#D66A4B] shadow-none active:scale-[0.98]",
+            "rounded-xl border border-border bg-surface text-text-dark shadow-xs hover:-translate-y-px hover:border-primary/40 hover:bg-primary-light hover:text-primary hover:shadow-sm active:translate-y-0 active:shadow-none",
     };
 
     const sizes = {
@@ -56,10 +56,10 @@ const Button = ({
             lg: "h-9 px-5 text-sm",
         },
         secondary: {
-            vsm: "h-6 px-1 text-xs",
-            sm: "h-7 px-2 text-sm",
-            md: "h-8 px-3 text-sm",
-            lg: "h-10 px-4 text-base",
+            vsm: "h-8 px-3 text-xs",
+            sm: "h-10 px-4 text-sm",
+            md: "h-11 px-5 text-sm",
+            lg: "h-12 px-6 text-base",
         },
     };
 

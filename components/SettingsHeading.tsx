@@ -1,12 +1,10 @@
-import React from 'react'
+"use client";
 
-const SettingsHeading = () => {
-    return (
-        <div className='space-y-2 mb-6'>
-            <h3 className='font-dynapuff text-2xl font-bold'>Settings</h3>
-            <p className='font-bold text-xl'>Manage your account settings and preferences</p>
-        </div>
-    )
+import { useSession } from "next-auth/react";
+
+const roleName = (role?: string) => role === "ticket_checker" ? "Ticket Checker" : role ? role.charAt(0).toUpperCase() + role.slice(1) : "Account";
+
+export default function SettingsHeading() {
+    const { data: session } = useSession();
+    return <div className="mb-7"><p className="text-sm font-semibold text-primary">{roleName(session?.user?.role)} settings</p><h1 className="page-heading mt-1 font-dynapuff">Settings</h1><p className="page-subtitle">Manage your account and preferences.</p></div>;
 }
-
-export default SettingsHeading

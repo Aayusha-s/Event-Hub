@@ -1,192 +1,22 @@
-'use client';
-import React, { useState } from 'react'
-import SettingsHeading from '@/components/SettingsHeading'
-import SettingsTab from '../../../components/SettingsTab'
-import Button from '../../../components/Button';
+"use client";
 
-import {
-    Save,
-    ToggleRight
-} from 'lucide-react';
-import ToggleSwitch from '@/components/ToggleSwitch';
+import { useEffect, useState } from "react";
+import Button from "@/components/Button";
+import SettingsHeading from "@/components/SettingsHeading";
+import SettingsTab from "@/components/SettingsTab";
+import ToggleSwitch from "@/components/ToggleSwitch";
 
-const Page = () => {
-    const [notifications, setNotifications] = useState({
-        email: true,
-        number:false,
-        events:false,
-        messages:true,
-    })
+type PrivacyPreferences = Record<string, boolean>;
+const rows = [
+    { key: "showEmail", title: "Show email address", description: "Display your email on your public profile." },
+    { key: "showPhone", title: "Show phone number", description: "Display your phone number on your public profile." },
+    { key: "showEvents", title: "Show attending events", description: "Allow others to see events you are attending." },
+    { key: "allowMessages", title: "Allow direct messages", description: "Let other users message you through Vivnt." },
+];
 
-    const toggleNotification =(key: keyof typeof notifications)=>{
-        setNotifications(prev => ({
-            ...prev,
-            [key]: !prev[key]
-        }))
-    }
-    return (
-        <section className='my-2 mx-2 px-4 font-cause text-text-dark 
-            md:my-3 md:mx-3 md:px-3
-            lg:my-4 lg:mx-4 lg:px-4
-            xl:my-6 xl:mx-6 xl:px-6
-            2xl:my-8 2xl:mx-8 2xl:px-8'>
-
-            <SettingsHeading />
-
-            <div className='flex flex-col gap-6 lg:flex-row lg:gap-12'>
-                
-
-                    <SettingsTab />
-
-                {/* main tab */}
-                <div className='border border-brown-normal rounded-xl p-4 w-full
-                    lg:p-6
-                    xl:p-8
-                    2xl:p-10'>
-
-                    {/* titles */}
-                    <div className='space-y-2'>
-                        <h3 className='font-dynapuff text-xl'>Privacy Settings</h3>
-                        <p className='text-lg font-bold'>Control who can see your information and activities</p>
-                    </div>
-
-
-                    {/* main tabs */}
-
-                    {/* heading */}
-                    <h4 className='font-bold mt-4 mb-2'>Profile Visibility</h4>
-
-
-                    <div className='flex flex-col gap-3 md:gap-4'>
-                        {/* public tab */}
-                        <label className='flex flex-row items-center gap-3 md:gap-4 
-                        border border-brown-normal rounded-lg p-3 md:p-4 
-                        hover:bg-brown-light transition-colors cursor-pointer'>
-                            <input type="radio" name="profile-visibility" value="public"
-                                className='mt-1 w-4 h-4 text-brown-dark cursor-pointer' />
-                            <div className='flex-1'>
-                                <p className='font-medium'>Public</p>
-                                <p className='text-text-dark/70 text-sm md:text-base'>Anyone can see your profile</p>
-                            </div>
-                        </label>
-
-
-                        {/* friends tab */}
-                        <label className='flex flex-row items-center gap-3 md:gap-4 
-                        border border-brown-normal rounded-lg p-3 md:p-4 
-                        hover:bg-brown-light transition-colors cursor-pointer'>
-                            <input type="radio" name="profile-visibility" value="friends"
-                                className='mt-1 w-4 h-4 text-brown-dark cursor-pointer' />
-                            <div className='flex-1'>
-                                <p className='font-medium'>Friends Only</p>
-                                <p className='text-text-dark/70 text-sm md:text-base'>Only people you follow can see</p>
-                            </div>
-                        </label>
-
-
-                        {/* private tab */}
-                        <label className='flex flex-row items-center gap-3 md:gap-4 
-                        border border-brown-normal rounded-lg p-3 md:p-4 
-                        hover:bg-brown-light transition-colors cursor-pointer'>
-                            <input type="radio" name="profile-visibility" value="private"
-                                className='mt-1 w-4 h-4 text-brown-dark cursor-pointer' />
-                            <div className='flex-1'>
-                                <p className='font-medium'>Private</p>
-                                <p className='text-text-dark/70 text-sm md:text-base'>Only you can see your profile</p>
-                            </div>
-                        </label>
-
-                    </div>
-
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active my-4 md:my-8 '></div>
-
-
-                    {/* Toggle Settings */}
-                    <div className='space-y-4 md:space-y-6'>
-
-                        {/* Email toggle */}
-                        <div className='flex flex-row sm:flex-row items-center justify-between gap-3'>
-                            <div className='flex-1'>
-                                <h4 className='font-bold text-lg mb-1'>Show Email Address</h4>
-                                <p className='text-text-dark/70 text-md md:text-base'>Display email on your public profile</p>
-                            </div>
-                            <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
-                                
-                                <ToggleSwitch
-                                checked={notifications.email}
-                                onChange={()=> toggleNotification('email')}
-                                />
-                            </button>
-                        </div>
-
-                        {/* Divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
-
-                        {/* Phone toggle */}
-                        <div className='flex flex-row items-center justify-between gap-3'>
-                            <div className='flex-1'>
-                                <h4 className='font-bold text-lg mb-1'>Show Phone Number</h4>
-                                <p className='text-text-dark/70 text-md md:text-base'>Display phone on your public profile</p>
-                            </div>
-                            <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
-                                <ToggleSwitch
-                                checked={notifications.number}
-                                onChange={()=> toggleNotification('number')}
-                                />
-                            </button>
-                        </div>
-
-                        {/* Divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
-
-                        {/* Events toggle */}
-                        <div className='flex flex-row items-center justify-between gap-3'>
-                            <div className='flex-1'>
-                                <h4 className='font-bold text-lg mb-1'>Show Attending Events</h4>
-                                <p className='text-text-dark/70 text-md md:text-base'>Let others see events you&apos;re attending</p>
-                            </div>
-                            <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
-                                <ToggleSwitch
-                                checked={notifications.events}
-                                onChange={()=> toggleNotification('events')}
-                                />
-                            </button>
-                        </div>
-
-                        {/* Divider */}
-                        <div className='w-full h-0.5 bg-brown-light-active'></div>
-
-                        {/* Messages toggle */}
-                        <div className='flex flex-row items-center justify-between gap-3'>
-                            <div className='flex-1'>
-                                <h4 className='font-bold text-lg mb-1'>Allow Direct Messages</h4>
-                                <p className='text-text-dark/70 text-md md:text-base'>Let other users message you</p>
-                            </div>
-                            <button className='sm:w-auto w-full max-w-[120px] flex justify-end sm:justify-center'>
-                                <ToggleSwitch
-                                checked={notifications.messages}
-                                onChange={()=> toggleNotification('messages')}
-                                />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active my-6 md:my-8'></div>
-
-                    {/* button */}
-                    <div className='flex justify-end'>
-                        <Button text="Save Settings" variant="cta" iconLeft={<Save />} ></Button>
-                    </div>
-                </div>
-
-
-
-            </div>
-        </section>
-    )
+export default function PrivacySettingsPage() {
+    const [preferences, setPreferences] = useState<PrivacyPreferences>({ showEmail: false, showPhone: false, showEvents: true, allowMessages: true }); const [saving, setSaving] = useState(false); const [message, setMessage] = useState(""); const [error, setError] = useState("");
+    useEffect(() => { fetch("/api/settings", { cache: "no-store" }).then(async (response) => { const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.error?.message ?? "Unable to load privacy preferences."); setPreferences((current) => ({ ...current, ...(result.data.privacy ?? {}) })); }).catch((cause) => setError(cause instanceof Error ? cause.message : "Unable to load privacy preferences.")); }, []);
+    const save = async () => { setSaving(true); setMessage(""); setError(""); try { const response = await fetch("/api/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ privacy: preferences }) }); const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.error?.message ?? "Unable to save privacy preferences."); setMessage("Privacy preferences saved."); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to save privacy preferences."); } finally { setSaving(false); } };
+    return <section className="app-page font-cause text-text-dark"><SettingsHeading /><div className="flex flex-col gap-6 lg:flex-row"><SettingsTab /><div className="surface-card min-w-0 flex-1 p-5 sm:p-7"><h2 className="text-xl font-semibold">Privacy</h2><p className="mt-1 text-sm text-text-light">Control how your account information is shared.</p>{message && <p className="mt-5 rounded-xl border border-success/30 bg-success-light px-3 py-2 text-sm text-green-700">{message}</p>}{error && <p className="mt-5 rounded-xl border border-error/30 bg-error-light px-3 py-2 text-sm text-error">{error}</p>}<div className="mt-5 divide-y divide-divider">{rows.map((item) => <div key={item.key} className="flex min-w-0 items-center justify-between gap-5 py-5"><div className="min-w-0"><h3 className="font-semibold">{item.title}</h3><p className="mt-1 text-sm text-text-light">{item.description}</p></div><ToggleSwitch checked={Boolean(preferences[item.key])} onChange={() => setPreferences((current) => ({ ...current, [item.key]: !current[item.key] }))} /></div>)}</div><div className="mt-6 flex justify-end border-t border-divider pt-5"><Button text={saving ? "Saving…" : "Save Changes"} disabled={saving} onClick={save} /></div></div></div></section>;
 }
-
-export default Page

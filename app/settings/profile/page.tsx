@@ -6,10 +6,12 @@ import {
 import Button from '../../../components/Button';
 import SettingsTab from '../../../components/SettingsTab'
 import SettingsHeading from '@/components/SettingsHeading';
+import { useSession } from 'next-auth/react';
 
 type ProfileData = { name?: string; email?: string; phone?: string; bio?: string; location?: string; website?: string; profileImage?: string };
 
 const Page = () => {
+    const { data: session } = useSession();
     const [profile, setProfile] = useState<ProfileData | null>(null);
     const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', bio: '', location: '', website: '', profileImage: '' });
     const [message, setMessage] = useState('');
@@ -63,29 +65,21 @@ const Page = () => {
     };
 
     return (
-        <section className='my-2 mx-2 px-4 font-cause text-text-dark
-        md:my-3 md:mx-3 md:px-3
-        lg:my-4 lg:mx-4 lg:px-4
-        xl:my-6 xl:mx-6 xl:px-6
-        2xl:my-8 2xl:mx-8 2xl:px-8'>
+        <section className='app-page font-cause text-text-dark'>
 
             <SettingsHeading/>
 
-            <div className='flex flex-col gap-6 lg:flex-row lg:gap-12'>
+            <div className='flex flex-col gap-6 lg:flex-row'>
                 {/* tab */}
                 <SettingsTab />
 
 
                 {/* main tab */}
-                <div className='border border-brown-normal rounded-xl p-4 w-full
-                lg:p-6
-                    xl:p-8
-                    2xl:p-10 
-'>
+                <div className='surface-card w-full p-5 sm:p-7'>
                     {/* titles */}
                     <div className='space-y-2'>
-                        <h3 className='font-dynapuff text-xl'>Profile Information</h3>
-                        <p className='text-lg font-bold'>Update your personal information and profile picture</p>
+                        <h2 className='text-xl font-semibold'>Profile information</h2>
+                        <p className='text-sm text-text-light'>Update the account information for your {session?.user?.role === 'ticket_checker' ? 'ticket checker' : session?.user?.role ?? 'Vivnt'} profile.</p>
                     </div>
 
                     {/* change photo  */}
@@ -113,11 +107,11 @@ const Page = () => {
                         <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
                             <div className='flex flex-col'>
                                 <label className='font-bold mb-1'>First Name</label>
-                                <input type="text" className='border border-brown-normal rounded-md p-2' placeholder='John Doe' value={form.firstName} onChange={(event) => setForm((current) => ({ ...current, firstName: event.target.value }))} />
+                            <input type="text" className='form-control' placeholder='John Doe' value={form.firstName} onChange={(event) => setForm((current) => ({ ...current, firstName: event.target.value }))} />
                             </div>
                             <div className='flex flex-col'>
                                 <label className='font-bold mb-1'>Last Name</label>
-                                <input type="text" className='border border-brown-normal rounded-md p-2' placeholder='John Doe' value={form.lastName} onChange={(event) => setForm((current) => ({ ...current, lastName: event.target.value }))} />
+                            <input type="text" className='form-control' placeholder='Doe' value={form.lastName} onChange={(event) => setForm((current) => ({ ...current, lastName: event.target.value }))} />
                             </div>
                         </div>
 
@@ -125,19 +119,19 @@ const Page = () => {
                         <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
                             <div className='flex flex-col'>
                                 <label className='font-bold mb-1'>Email Address</label>
-                                <input type="email" placeholder='johndoe@gmail.com' className='border border-brown-normal rounded-md p-2' value={form.email} readOnly></input>
+                                <input type="email" placeholder='johndoe@gmail.com' className='form-control' value={form.email} readOnly></input>
                             </div>
 
                             <div className='flex flex-col'>
                                 <label className='font-bold mb-1'>Phone Number</label>
-                                <input type="tel" className='border border-brown-normal rounded-md p-2' placeholder='9876543210' value={form.phone} onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))} />
+                                <input type="tel" className='form-control' placeholder='9876543210' value={form.phone} onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))} />
                             </div>
                         </div>
 
                         {/* bio */}
                         <div className='flex flex-col'>
                             <label className='font-bold mb-1'>Bio</label>
-                            <textarea className='border border-brown-normal rounded-md p-2' rows={4} placeholder='Tell us about yourself...' value={form.bio} onChange={(event) => setForm((current) => ({ ...current, bio: event.target.value }))}></textarea>
+                            <textarea className='form-control min-h-28 py-3' rows={4} placeholder='Tell us about yourself...' value={form.bio} onChange={(event) => setForm((current) => ({ ...current, bio: event.target.value }))}></textarea>
                         </div>
 
 
@@ -145,11 +139,11 @@ const Page = () => {
                         <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
                             <div className='flex flex-col'>
                                 <label className='font-bold mb-1'>Location</label>
-                                <input type="text" placeholder='New York, NY' className='border border-brown-normal rounded-md p-2 ' value={form.location} onChange={(event) => setForm((current) => ({ ...current, location: event.target.value }))} />
+                                <input type="text" placeholder='New York, NY' className='form-control' value={form.location} onChange={(event) => setForm((current) => ({ ...current, location: event.target.value }))} />
                             </div>
                             <div className='flex flex-col'>
                                 <label className='font-bold mb-1'>Website</label>
-                                <input type="url" className='border border-brown-normal rounded-md p-2' placeholder='https://' value={form.website} onChange={(event) => setForm((current) => ({ ...current, website: event.target.value }))} />
+                                <input type="url" className='form-control' placeholder='https://' value={form.website} onChange={(event) => setForm((current) => ({ ...current, website: event.target.value }))} />
                             </div>
                         </div>
                         

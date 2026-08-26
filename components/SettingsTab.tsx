@@ -1,35 +1,19 @@
-import {
-    UserRound,
-    Lock,
-    Bell,
-    Shield,
-    CreditCard
-} from 'lucide-react';
-import Link from 'next/link';
+"use client";
 
-const SettingsTab = () => {
-    return (
-        <div className='lg:flex flex-col gap-4 border border-brown-normal rounded-xl p-4 hidden h-full sticky top-20'>
-            <Link href="/settings/profile">
-                <div className='flex flex-row items-center justify-start gap-4 font-bold text-lg cursor-pointer transform transition duration-300 hover:bg-brown-light hover:scale-105 rounded-md p-1'>
-                    <UserRound />
-                    Profile
-                </div>
-            </Link>
-            <Link href="/settings/account">
-                <div className='flex flex-row items-center justify-start gap-4 font-bold text-lg cursor-pointer transform transition duration-300 ease-in-out hover:scale-105  hover:bg-brown-light rounded-md p-1'>
-                    <Lock />Account</div></Link>
-            <Link href="/settings/notification">
-                <div className='flex flex-row items-center justify-start gap-4 font-bold text-lg cursor-pointer transform transition duration-300 ease-in-out hover:scale-105  hover:bg-brown-light rounded-md p-1'>
-                    <Bell />Notification</div></Link>
-            <Link href="/settings/privacy">
-                <div className='flex flex-row items-center justify-start gap-4 font-bold text-lg cursor-pointer transform transition duration-300 ease-in-out hover:scale-105  hover:bg-brown-light rounded-md p-1'>
-                    <Shield />Privacy</div></Link>
-            <Link href="/settings/billing">
-                <div className='flex flex-row items-center justify-start gap-4 font-bold text-lg cursor-pointer transform transition duration-300 ease-in-out hover:scale-105  hover:bg-brown-light rounded-md p-1'>
-                    <CreditCard />Billing</div></Link>
-        </div>
-    )
+import { Bell, Lock, Shield, UserRound } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+
+const items = [
+    { href: "/settings/profile", label: "Account", icon: UserRound },
+    { href: "/settings/notification", label: "Preferences", icon: Bell },
+    { href: "/settings/account", label: "Security", icon: Lock },
+    { href: "/settings/privacy", label: "Privacy", icon: Shield },
+];
+
+export default function SettingsTab() {
+    const pathname = usePathname();
+    const adminPrefix = pathname.startsWith("/admin/settings") ? "/admin/settings" : "";
+    return <nav aria-label="Settings sections" className="hidden h-fit w-56 shrink-0 rounded-2xl border border-border bg-surface p-2 shadow-xs lg:block">{items.map(({ href, label, icon: Icon }) => { const target = adminPrefix ? href === "/settings/profile" ? adminPrefix : `${adminPrefix}${href.replace("/settings", "")}` : href; return <Link key={href} href={target} className={cn("mb-1 flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors last:mb-0", pathname === target ? "bg-primary-light text-primary" : "text-text-dark hover:bg-surface-hover hover:text-primary")}><Icon size={18} />{label}</Link>; })}</nav>;
 }
-
-export default SettingsTab

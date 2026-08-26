@@ -160,7 +160,8 @@ const LoginForm = () => {
                                         setEmail(e.target.value)
                                         setEmailError(validateEmail(e.target.value))
                                     }}
-                                /></div>
+                                />
+                                </div>
 
                             {emailError && (
                                 <div className="mt-2 flex items-center gap-1">
@@ -222,7 +223,7 @@ const LoginForm = () => {
 
                     <div className="mt-4 flex justify-center text-md gap-1">
                         Don&apos;t have an account?{" "}
-                        <div className="text-brown-normal font-semibold hover:underline" onClick={handleRegister}>
+                        <div className="text-brown-normal font-semibold hover:underline cursor-pointer" onClick={handleRegister} >
                             Register
                         </div>
                     </div>

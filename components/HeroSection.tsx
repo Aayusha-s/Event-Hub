@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { Suspense } from "react";
 import Image from "next/image";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Button from "./Button";
 import SectionContainer from "./SectionContainer";
 import { useMouseParallax } from "@/hooks/use-mouse-parallax";
 import { cn } from "@/lib/utils";
+import Searchbar from "./Searchbar";
 
 const FLOATING_EVENTS = [
     {
@@ -137,9 +139,18 @@ const HeroSection = () => {
                         lifetime. From concerts to conferences, find what moves you.
                     </p>
 
+                    {/* <div
+                        className="motion-hero-enter mt-8 w-full max-w-3xl"
+                        style={{ "--hero-delay": "220ms" } as React.CSSProperties}
+                    >
+                        <Suspense fallback={<div className="h-14 rounded-full border border-border bg-surface shadow-sm" />}>
+                            <Searchbar compact showLocation={false} placeholder="Search public events..." />
+                        </Suspense>
+                    </div> */}
+
                     <div
-                        className="motion-hero-enter mt-8 flex flex-col items-center gap-3 sm:flex-row"
-                        style={{ "--hero-delay": "240ms" } as React.CSSProperties}
+                        className="motion-hero-enter mt-6 flex flex-col items-center gap-3 sm:flex-row"
+                        style={{ "--hero-delay": "300ms" } as React.CSSProperties}
                     >
                         <Link href="/explore-events">
                             <Button
@@ -153,7 +164,7 @@ const HeroSection = () => {
 
                     <p
                         className="motion-hero-enter mt-8 text-sm text-text-light"
-                        style={{ "--hero-delay": "320ms" } as React.CSSProperties}
+                        style={{ "--hero-delay": "380ms" } as React.CSSProperties}
                     >
                         Quick search · Personalized results · Secure booking
                     </p>

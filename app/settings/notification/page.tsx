@@ -1,192 +1,27 @@
-'use client'
-import React, { useState } from 'react'
-import SettingsHeading from '@/components/SettingsHeading'
-import SettingsTab from '../../../components/SettingsTab'
-import Button from '../../../components/Button';
+"use client";
 
-import {
-    ToggleRight
-} from 'lucide-react';
-import ToggleSwitch from '@/components/ToggleSwitch';
+import { useEffect, useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
+import Button from "@/components/Button";
+import SettingsHeading from "@/components/SettingsHeading";
+import SettingsTab from "@/components/SettingsTab";
+import ToggleSwitch from "@/components/ToggleSwitch";
 
-const Page = () => {
-    const [notifications, setNotifications] = useState(
-        {
-            email: true,
-            push: false,
-            reminders: true,
-            tickets: false,
-            promotions: false,
-            weekly: true,
-            vendor: false,
-            organizer: true,
-        }
-    )
+type Preferences = Record<string, boolean>;
+const roleCopy: Record<string, { title: string; description: string; items: { key: string; title: string; description: string }[] }> = {
+    attendee: { title: "Event preferences", description: "Choose updates about events, tickets, and recommendations.", items: [{ key: "eventReminders", title: "Event reminders", description: "Reminders for events you plan to attend." }, { key: "ticketUpdates", title: "Ticket updates", description: "Booking confirmations and ticket changes." }, { key: "recommendations", title: "Event recommendations", description: "Suggested events and weekly discovery updates." }] },
+    organizer: { title: "Organizer preferences", description: "Choose updates about your events and attendee activity.", items: [{ key: "eventActivity", title: "Event activity", description: "Updates about registrations and attendee activity." }, { key: "approvalUpdates", title: "Approval updates", description: "Updates about your event approval status." }, { key: "organizerDigest", title: "Organizer digest", description: "A summary of your event performance." }] },
+    vendor: { title: "Vendor preferences", description: "Choose updates about stall requests and assigned events.", items: [{ key: "stallUpdates", title: "Stall updates", description: "Changes to your stall requests and approvals." }, { key: "vendorEvents", title: "Assigned event updates", description: "Changes to events where you have a stall." }, { key: "vendorDigest", title: "Vendor digest", description: "A summary of your vendor activity." }] },
+    ticket_checker: { title: "Ticket Checker preferences", description: "Choose updates relevant to ticket check-in work.", items: [{ key: "checkinUpdates", title: "Check-in updates", description: "Changes to ticket-checking assignments." }, { key: "eventReminders", title: "Event reminders", description: "Reminders for upcoming check-in shifts." }] },
+    admin: { title: "Admin preferences", description: "Choose updates about platform moderation and administration.", items: [{ key: "approvalUpdates", title: "Approval updates", description: "Pending events, vendors, and stalls." }, { key: "platformAlerts", title: "Platform alerts", description: "Important platform and account alerts." }, { key: "adminDigest", title: "Admin digest", description: "A summary of platform activity." }] },
+};
 
-    const toggleNotification = (key: keyof typeof notifications) => {
-        setNotifications(prev => ({
-            ...prev,
-            [key]: !prev[key],
-        }))
-    }
-    return (
-        <section className='my-2 mx-2 px-4 font-cause text-text-dark 
-            md:my-3 md:mx-3 md:px-3
-            lg:my-4 lg:mx-4 lg:px-4
-            xl:my-6 xl:mx-6 xl:px-6
-            2xl:my-8 2xl:mx-8 2xl:px-8'>
-
-            <SettingsHeading />
-
-            <div className='flex flex-col gap-6 lg:flex-row lg:gap-12'>
-
-                <SettingsTab />
-
-                {/* main tab */}
-                <div className='border border-brown-normal rounded-xl p-4 w-full
-                    lg:p-6
-                    xl:p-8
-                    2xl:p-10'>
-
-                    {/* titles */}
-                    <div className='space-y-2'>
-                        <h3 className='font-dynapuff text-xl'>Notification</h3>
-                        <p className='text-lg font-bold'>Choose how you want to be notified about events and updates</p>
-                    </div>
-
-
-                    {/* main tabs */}
-                    {/* tab 1 */}
-                    <div className='flex flex-row items-center justify-between'>
-                        <div>
-                            <h4 className='font-bold mt-4 mb-2'>Email Notifications</h4>
-                            <p>Receive notification via email</p>
-                        </div>
-                        <ToggleSwitch
-                            checked={notifications.email}
-                            onChange={() => toggleNotification('email')} />
-
-                    </div>
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
-
-
-
-                    {/* tab 2 */}
-                    <div className='flex flex-row items-center justify-between'>
-                        <div>
-                            <h4 className='font-bold mt-4 mb-2'>Push Notifications</h4>
-                            <p>Receive push notification on your device</p>
-                        </div>
-                        <ToggleSwitch
-                            checked={notifications.push}
-                            onChange={() => toggleNotification('push')} />
-                    </div>
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
-
-
-                    {/* tab 3 */}
-                    <div className='flex flex-row items-center justify-between'>
-                        <div>
-                            <h4 className='font-bold mt-4 mb-2'>Event Reminders</h4>
-                            <p>Get reminded about incoming events</p>
-                        </div>
-                        <ToggleSwitch
-                            checked={notifications.reminders}
-                            onChange={() => toggleNotification('reminders')} />                    </div>
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
-
-
-                    {/* tab 4 */}
-                    <div className='flex flex-row items-center justify-between'>
-                        <div>
-                            <h4 className='font-bold mt-4 mb-2'>Ticket Updates</h4>
-                            <p>Updates about your upcoming events</p>
-                        </div>
-                        <ToggleSwitch
-                            checked={notifications.tickets}
-                            onChange={() => toggleNotification('tickets')} />                    </div>
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
-
-
-
-                    {/* tab 5 */}
-                    <div className='flex flex-row items-center justify-between'>
-                        <div>
-                            <h4 className='font-bold mt-4 mb-2'>Promotions & Offers</h4>
-                            <p>Special deals and promotional emails</p>
-                        </div>
-                        <ToggleSwitch
-                            checked={notifications.promotions}
-                            onChange={() => toggleNotification('promotions')} />                    </div>
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
-
-
-
-                    {/* tab 6 */}
-                    <div className='flex flex-row items-center justify-between'>
-                        <div>
-                            <h4 className='font-bold mt-4 mb-2'>Weekly Digest</h4>
-                            <p>Weekly summary of new events</p>
-                        </div>
-                        <ToggleSwitch
-                            checked={notifications.weekly}
-                            onChange={() => toggleNotification('weekly')} />                    </div>
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
-
-
-
-                    {/* tab 7 */}
-                    <div className='flex flex-row items-center justify-between'>
-                        <div>
-                            <h4 className='font-bold mt-4 mb-2'>Vendor Updates</h4>
-                            <p>Notifications about your vendor activities</p>
-                        </div>
-                        <ToggleSwitch
-                            checked={notifications.vendor}
-                            onChange={() => toggleNotification('vendor')} />                    </div>
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
-
-
-
-                    {/* tab 8 */}
-                    <div className='flex flex-row items-center justify-between'>
-                        <div>
-                            <h4 className='font-bold mt-4 mb-2'>Organizer News</h4>
-                            <p>Updates for event organizers</p>
-                        </div>
-                        <ToggleSwitch
-                            checked={notifications.organizer}
-                            onChange={() => toggleNotification('organizer')} />                    </div>
-
-                    {/* divider */}
-                    <div className='w-full h-0.5 bg-brown-light-active mt-3'></div>
-
-                    {/* button */}
-                    <div className='mt-4 flex justify-end'>
-                        <Button text="Save Changes" variant="cta"></Button>
-                    </div>
-                </div>
-
-
-
-            </div>
-        </section>
-    )
+export default function NotificationSettingsPage() {
+    const { data: session } = useSession(); const role = session?.user?.role ?? "attendee"; const config = useMemo(() => roleCopy[role] ?? roleCopy.attendee, [role]);
+    const [preferences, setPreferences] = useState<Preferences>({ email: true, push: false }); const [saving, setSaving] = useState(false); const [message, setMessage] = useState(""); const [error, setError] = useState("");
+    useEffect(() => { fetch("/api/settings", { cache: "no-store" }).then(async (response) => { const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.error?.message ?? "Unable to load preferences."); setPreferences({ email: true, push: false, ...(result.data.notifications ?? {}) }); }).catch((cause) => setError(cause instanceof Error ? cause.message : "Unable to load preferences.")); }, []);
+    const toggle = (key: string) => setPreferences((current) => ({ ...current, [key]: !current[key] }));
+    const save = async () => { setSaving(true); setMessage(""); setError(""); try { const response = await fetch("/api/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notifications: preferences }) }); const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.error?.message ?? "Unable to save preferences."); setMessage("Notification preferences saved."); } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to save preferences."); } finally { setSaving(false); } };
+    const rows = [{ key: "email", title: "Email notifications", description: "Receive updates at your account email." }, { key: "push", title: "Push notifications", description: "Receive updates in supported browsers." }, ...config.items];
+    return <section className="app-page font-cause text-text-dark"><SettingsHeading /><div className="flex gap-6"><SettingsTab /><div className="surface-card min-w-0 flex-1 p-5 sm:p-7"><h2 className="text-xl font-semibold">{config.title}</h2><p className="mt-1 text-sm text-text-light">{config.description}</p>{message && <p className="mt-5 rounded-xl border border-success/30 bg-success-light px-3 py-2 text-sm text-green-700">{message}</p>}{error && <p className="mt-5 rounded-xl border border-error/30 bg-error-light px-3 py-2 text-sm text-error">{error}</p>}<div className="mt-5 divide-y divide-divider">{rows.map((item) => <div key={item.key} className="flex items-center justify-between gap-5 py-5"><div><h3 className="font-semibold">{item.title}</h3><p className="mt-1 text-sm text-text-light">{item.description}</p></div><ToggleSwitch checked={Boolean(preferences[item.key])} onChange={() => toggle(item.key)} /></div>)}</div><div className="mt-6 flex justify-end border-t border-divider pt-5"><Button text={saving ? "Saving…" : "Save Changes"} disabled={saving} onClick={save} /></div></div></div></section>;
 }
-
-
-export default Page
