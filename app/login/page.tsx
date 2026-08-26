@@ -99,10 +99,10 @@ const LoginForm = () => {
                         <Link href="/">
                             <div className="relative w-[140px] h-20 flex items-center justify-center cursor-pointer">
                                 <Image
-                                    src="/images/logo.png"
-                                    alt="EventHub Logo"
+                                    src="/VivntLogo.png"
+                                    alt="Vivnt"
                                     fill
-                                    style={{ objectFit: 'contain' }}
+                                    className="scale-125 object-contain"
                                     sizes="130px"
                                 />
                             </div>

@@ -10,6 +10,8 @@ type SearchbarProps = {
     showLocation?: boolean;
     /** Compact, single-row pill used inside the navbar (fixed height, no vertical stacking). */
     compact?: boolean;
+    /** Contextual copy for the shared navbar search without changing its search behavior. */
+    placeholder?: string;
 };
 type Suggestions = { events: { _id: string; title: string }[]; organizers: { _id: string; name: string }[]; venues: string[]; categories: string[]; tags: string[]; recent: string[]; popular: string[] };
 
@@ -62,7 +64,7 @@ type SpeechRecognitionInstanceLike = {
 
 type SpeechRecognitionConstructorLike = new () => SpeechRecognitionInstanceLike;
 
-const Searchbar = ({ className, showLocation = true, compact = false }: SearchbarProps) => {
+const Searchbar = ({ className, showLocation = true, compact = false, placeholder }: SearchbarProps) => {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -228,8 +230,8 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
         >
             <div
                 className={cn(
-                    "flex overflow-visible rounded-full border border-border bg-surface shadow-sm transition-shadow duration-200 focus-within:shadow-md",
-                    compact ? "h-11 flex-row items-center" : "flex-col lg:flex-row"
+                    "flex overflow-visible rounded-full border border-border bg-surface shadow-sm transition-all duration-200 ease-out hover:border-primary/40 hover:shadow-md focus-within:border-primary focus-within:shadow-lg",
+                    compact ? "h-12 flex-row items-center md:focus-within:scale-[1.015]" : "flex-col lg:flex-row"
                 )}
             >
                 <label ref={suggestionRef} className={cn("relative flex min-w-0 flex-1 items-center gap-2.5", compact ? "h-full px-4" : "px-4 py-3")}>
@@ -237,7 +239,7 @@ const Searchbar = ({ className, showLocation = true, compact = false }: Searchba
                     <input
                         value={query}
                         onChange={(event) => { setQuery(event.target.value); setActiveSuggestion(-1); }} onFocus={() => setShowSuggestions(true)} onKeyDown={onSearchKeyDown}
-                        placeholder={compact ? "Search events..." : "Search events, artists, venues"}
+                        placeholder={placeholder ?? (compact ? "Search events..." : "Search events, artists, venues")}
                         className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none"
                     />
                     {showSuggestions && suggestions && <div className="absolute left-0 top-full z-60 mt-2 w-full min-w-[260px] rounded-xl border border-border bg-surface p-3 shadow-xl"><div className="max-h-72 overflow-y-auto text-sm">{[...suggestions.recent, ...suggestions.popular].slice(0, 5).map(value => <button type="button" key={`q-${value}`} onClick={() => { setQuery(value); submitSearch(value); }} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.events.map(item => <button type="button" key={item._id} onClick={() => router.push(`/event-details/${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.title}</button>)}{suggestions.organizers.map(item => <button type="button" key={item._id} onClick={() => router.push(`/userprofile?userId=${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.name}</button>)}{suggestions.venues.map(value => <button type="button" key={`v-${value}`} onClick={() => submitSearch(value, value)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.categories.concat(suggestions.tags).map(value => <button type="button" key={`f-${value}`} onClick={() => router.push(`/explore-events?tags=${encodeURIComponent(value)}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}</div></div>}

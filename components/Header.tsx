@@ -12,10 +12,10 @@ const Header = () => {
                     <Link href="/">
                         <div className="relative h-[60px] w-[120px] cursor-pointer">
                             <Image
-                                src="/images/logo.png"
-                                alt="EventHub Logo"
+                                src="/VivntLogo.png"
+                                alt="Vivnt Logo"
                                 fill
-                                style={{ objectFit: "contain" }}
+                                className="scale-125 object-contain"
                                 sizes="130px"
                             />
                         </div>

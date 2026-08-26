@@ -44,11 +44,11 @@ const Footer = () => {
                 <div className='lg:col-span-2'>
                     <div className='mb-5'>
                         <Image
-                            src="/images/logo.png"
-                            alt="EventHub Logo"
-                            width={130}
+                            src="/VivntLogo.png"
+                            alt="Vivnt"
+                            width={145}
                             height={52}
-                            className='h-auto w-[130px] cursor-pointer'
+                            className='h-auto w-[145px] cursor-pointer'
                         />
                     </div>
                     <p className='mb-6 max-w-[320px] text-text-light'>
