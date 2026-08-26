@@ -84,8 +84,10 @@ export const updateVendorApprovalStatus = async (vendorId: Types.ObjectId | stri
 	return vendor;
 };
 
-export const bookStall = async (ownerId: Types.ObjectId | string, eventId: string, stallName?: string) => {
+export type StallRequestInput = { eventId: string; stallName: string; description: string; stallType: string; size: string; bookingFee: number };
+export const bookStall = async (ownerId: Types.ObjectId | string, input: StallRequestInput) => {
 	await dbConnect();
+	const { eventId, stallName, description, stallType, size, bookingFee } = input;
 	const vendor = await Vendor.findOne({ owner: new Types.ObjectId(ownerId) }).exec();
 	if (!vendor) throw new HttpError(404, "Vendor profile not found.", "NOT_FOUND");
 	if (vendor.approvalStatus !== "approved") throw new HttpError(403, "Only approved vendors can book stalls.", "FORBIDDEN");
@@ -99,7 +101,11 @@ export const bookStall = async (ownerId: Types.ObjectId | string, eventId: strin
 
 	vendor.stallBookings.push({
 		event: event._id,
-		stallName: stallName || `${vendor.businessName} Stall`,
+		stallName,
+		description,
+		stallType,
+		size,
+		bookingFee,
 		bookedAt: new Date(),
 		status: "pending",
 	});
@@ -131,7 +137,7 @@ export const getVendorDashboard = async (ownerId: Types.ObjectId | string) => {
 	if (!vendor) throw new HttpError(404, "Vendor profile not found.", "NOT_FOUND");
 
 	const now = new Date();
-	const activeBookings = vendor.stallBookings.filter((b) => b.status !== "cancelled");
+	const activeBookings = vendor.stallBookings.filter((b) => b.status === "confirmed");
 	const events = activeBookings.map((booking) => booking.event as unknown as { startDate?: Date; endDate?: Date; status?: string }).filter((event) => event && typeof event === "object");
 	const upcomingEvents = events.filter((event) => event.startDate && new Date(event.startDate) > now);
 	const activeEvents = events.filter((event) => event.startDate && event.endDate && new Date(event.startDate) <= now && new Date(event.endDate) >= now && event.status === "published");
@@ -153,7 +159,7 @@ export const getVendorDashboard = async (ownerId: Types.ObjectId | string) => {
 
 export const getVendorAssignedEvents = async (ownerId: Types.ObjectId | string) => {
 	const data = await getVendorDashboard(ownerId);
-	return data.bookings.filter((booking) => booking.status !== "cancelled");
+	return data.bookings.filter((booking) => booking.status === "confirmed");
 };
 
 export const getVendorAssignedEvent = async (ownerId: Types.ObjectId | string, eventId: string) => {
@@ -170,7 +176,7 @@ export const getVendorAssignedEvent = async (ownerId: Types.ObjectId | string, e
 export const listStallRequests = async (page = 1, pageSize = 50, status?: "pending" | "confirmed" | "cancelled") => {
 	await dbConnect();
 	const vendors = await Vendor.find(status ? { "stallBookings.status": status } : {}).populate("owner", "name email").populate({ path: "stallBookings.event", select: "title approvalStatus status category" }).sort({ createdAt: -1 }).exec();
-	const items = vendors.flatMap((vendor) => vendor.stallBookings.filter((booking) => !status || booking.status === status).map((booking) => ({ vendorId: vendor._id, vendor: { businessName: vendor.businessName, category: vendor.category, owner: vendor.owner }, event: booking.event, stallName: booking.stallName, status: booking.status, bookedAt: booking.bookedAt })));
+	const items = vendors.flatMap((vendor) => vendor.stallBookings.filter((booking) => !status || booking.status === status).map((booking) => ({ vendorId: vendor._id, vendor: { businessName: vendor.businessName, category: vendor.category, owner: vendor.owner }, event: booking.event, stallName: booking.stallName, description: booking.description, stallType: booking.stallType, size: booking.size, bookingFee: booking.bookingFee, status: booking.status, bookedAt: booking.bookedAt })));
 	const start = (page - 1) * pageSize;
 	return { items: items.slice(start, start + pageSize), total: items.length, page, pageSize, totalPages: Math.ceil(items.length / pageSize) };
 };

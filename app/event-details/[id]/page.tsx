@@ -90,11 +90,6 @@ const Page = () => {
     const galleryImages = event.images.length ? event.images : [fallbackImage];
     const role = session?.user?.role;
     const ownsEvent = role === 'organizer' && event.organizer?._id === session?.user?.id;
-    const requestStall = async () => {
-        const response = await fetch('/api/vendors/stalls', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eventId: event._id }) });
-        const result = await response.json();
-        window.alert(response.ok && result.success ? 'Your stall request was submitted.' : result.error?.message ?? 'Unable to request a stall.');
-    };
 
     return (
         <section className='my-2 mx-2 px-4 font-cause text-text-dark md:my-3 md:mx-3 md:px-3 lg:my-4 lg:mx-4 lg:px-4 xl:my-6 xl:mx-6 xl:px-6 2xl:my-8 2xl:mx-8 2xl:px-8'>
@@ -113,7 +108,7 @@ const Page = () => {
                         <p className='ml-2 text-base md:text-lg'>Hosted by <Link href={organizerHref}><span className='font-semibold font-dynapuff hover:text-brown-dark'>{organizerName}</span></Link></p>
                     </div>
                     <p className='text-sm capitalize text-text-dark/80'>Category: {event.category.replaceAll('_', ' ')} • Event type: {event.status}</p>
-                    <div className='mt-4 flex gap-3'>{role === 'attendee' && <Link href={`/booknow?eventId=${event._id}`}><Button text="Book Now" iconRight={<i className="fa-solid fa-arrow-right"></i>} variant="cta" size="lg" /></Link>}{role === 'vendor' && <Button text="Request Stall" variant="cta" size="lg" onClick={() => void requestStall()} />}{ownsEvent && <Link href={`/create-event/step-1?eventId=${event._id}`}><Button text="Manage Event" variant="cta" size="lg" /></Link>}<Button text={saved ? 'Saved' : 'Save Event'} variant='secondary' size='lg' onClick={toggleSaved}/></div>
+                    <div className='mt-4 flex gap-3'>{role === 'attendee' && <Link href={`/booknow?eventId=${event._id}`}><Button text="Book Now" iconRight={<i className="fa-solid fa-arrow-right"></i>} variant="cta" size="lg" /></Link>}{role === 'vendor' && <Link href={`/vendor/stalls?eventId=${event._id}`}><Button text="Create Stall" variant="cta" size="lg" /></Link>}{ownsEvent && <Link href={`/create-event/step-1?eventId=${event._id}`}><Button text="Manage Event" variant="cta" size="lg" /></Link>}<Button text={saved ? 'Saved' : 'Save Event'} variant='secondary' size='lg' onClick={toggleSaved}/></div>
                 </div>
             </div>
             <div className='flex flex-col gap-8 mt-8 lg:flex-row lg:gap-12'>

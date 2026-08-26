@@ -2,7 +2,11 @@ import mongoose, { HydratedDocument, Model, Schema, Types } from "mongoose";
 
 export interface IStallBooking {
 	event: Types.ObjectId;
-	stallName?: string;
+	stallName: string;
+	description: string;
+	stallType: string;
+	size: string;
+	bookingFee: number;
 	bookedAt: Date;
 	status: "pending" | "confirmed" | "cancelled";
 }
@@ -22,7 +26,11 @@ export type VendorDocument = HydratedDocument<IVendor>;
 const stallBookingSchema = new Schema<IStallBooking>(
 	{
 		event: { type: Schema.Types.ObjectId, ref: "Event", required: true },
-		stallName: { type: String, trim: true, maxlength: 100 },
+		stallName: { type: String, required: true, trim: true, minlength: 2, maxlength: 100 },
+		description: { type: String, required: true, trim: true, minlength: 10, maxlength: 1000 },
+		stallType: { type: String, required: true, trim: true, minlength: 2, maxlength: 100 },
+		size: { type: String, required: true, trim: true, maxlength: 100 },
+		bookingFee: { type: Number, required: true, min: 0 },
 		bookedAt: { type: Date, default: Date.now, required: true },
 		status: { type: String, enum: ["pending", "confirmed", "cancelled"], default: "pending", required: true },
 	},

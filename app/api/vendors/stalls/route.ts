@@ -7,13 +7,11 @@ export async function POST(request: Request) {
 	try {
 		const session = await requireRole(["vendor"]);
 		const body = await request.json();
-		const { eventId, stallName } = body;
+		const { eventId, stallName, description, stallType, size, bookingFee } = body;
 
-		if (!eventId) {
-			throw new HttpError(400, "eventId is required for stall booking.", "VALIDATION_ERROR");
-		}
+		if (typeof eventId !== "string" || !eventId || typeof stallName !== "string" || stallName.trim().length < 2 || typeof description !== "string" || description.trim().length < 10 || typeof stallType !== "string" || stallType.trim().length < 2 || typeof size !== "string" || !size.trim() || typeof bookingFee !== "number" || !Number.isFinite(bookingFee) || bookingFee < 0) throw new HttpError(400, "Please provide valid stall details.", "VALIDATION_ERROR");
 
-		const vendor = await bookStall(session.user.id, eventId, stallName);
+		const vendor = await bookStall(session.user.id, { eventId, stallName: stallName.trim(), description: description.trim(), stallType: stallType.trim(), size: size.trim(), bookingFee });
 		return NextResponse.json({ success: true, data: vendor }, { status: 201 });
 	} catch (error) {
 		if (error instanceof HttpError) {

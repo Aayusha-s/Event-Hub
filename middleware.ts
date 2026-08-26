@@ -9,6 +9,7 @@ const roleProtectedRoutes: Array<{ prefix: string; roles: UserRole[] }> = [
 	{ prefix: "/vendordashboard", roles: ["vendor"] },
 	{ prefix: "/vendor/events", roles: ["vendor"] },
 	{ prefix: "/vendor/profile", roles: ["vendor"] },
+	{ prefix: "/vendor/stalls", roles: ["vendor"] },
 	{ prefix: "/create-event", roles: ["organizer"] },
 	{ prefix: "/ticket-checker", roles: ["ticket_checker"] },
 ];
@@ -130,6 +131,7 @@ export const config = {
 		"/vendordashboard/:path*",
 		"/vendor/events/:path*",
 		"/vendor/profile/:path*",
+		"/vendor/stalls/:path*",
 		"/userdashboard/:path*",
 		"/userprofile/:path*",
 		"/settings/:path*",
