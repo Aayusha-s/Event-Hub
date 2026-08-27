@@ -23,6 +23,10 @@ export type TicketDraft = {
     description: string;
 };
 
+export type EventInfoDraft = {
+    tickets: TicketDraft[];
+};
+
 const draftKeys = {
     basicInformation: "BasicInformation",
     eventDetails: "EventDetails",
@@ -64,4 +68,24 @@ export const clearEventDraft = () => {
     window.localStorage.removeItem(draftKeys.basicInformation);
     window.localStorage.removeItem(draftKeys.eventDetails);
     window.localStorage.removeItem(draftKeys.eventInfo);
+};
+
+export const createEmptyTicket = (): TicketDraft => ({
+    ticketName: "",
+    quantity: "",
+    price: "",
+    description: "",
+});
+
+export const loadEventInfoTickets = (): TicketDraft[] => {
+    const draft = loadDraft<EventInfoDraft>("eventInfo");
+    if (Array.isArray(draft?.tickets) && draft.tickets.length > 0) {
+        return draft.tickets;
+    }
+
+    return [createEmptyTicket()];
+};
+
+export const saveEventInfoTickets = (tickets: TicketDraft[]) => {
+    saveDraft("eventInfo", { tickets });
 };

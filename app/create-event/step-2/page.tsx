@@ -1,83 +1,96 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
-import { saveDraft } from '@/lib/createEventDraft';
+import { loadDraft, saveDraft } from '@/lib/createEventDraft';
+
+type EventDetailsDraft = {
+    startDate: string;
+    endDate: string;
+    startTime: string;
+    endTime: string;
+    venueName: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    eventCapacity: string;
+    allowVendorStalls?: boolean;
+    stallOpeningDate?: string;
+    stallApplicationDeadline?: string;
+    stallCapacity?: string;
+    stallCategories?: string;
+};
 
 const Page = () => {
-    
-    const [startDate, setStartDate] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.startDate ?? ''; } catch { return ''; }
-    });
-    const [endDate, setEndDate] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.endDate ?? ''; } catch { return ''; }
-    });
-    const [startTime, setStartTime] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.startTime ?? ''; } catch { return ''; }
-    });
-    const [endTime, setEndTime] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.endTime ?? ''; } catch { return ''; }
-    });
-    const [venueName, setVenueName] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.venueName ?? ''; } catch { return ''; }
-    });
-    const [streetAddress, setStreetAddress] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.streetAddress ?? ''; } catch { return ''; }
-    });
-    const [city, setCity] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.city ?? ''; } catch { return ''; }
-    });
-    const [state, setState] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.state ?? ''; } catch { return ''; }
-    });
-    const [eventCapacity, setEventCapacity] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.eventCapacity ?? ''; } catch { return ''; }
-    });
-    const [allowVendorStalls, setAllowVendorStalls] = useState(() => typeof window !== 'undefined' && JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.allowVendorStalls === true);
-    const [stallOpeningDate, setStallOpeningDate] = useState(() => typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.stallOpeningDate ?? '' : '');
-    const [stallApplicationDeadline, setStallApplicationDeadline] = useState(() => typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.stallApplicationDeadline ?? '' : '');
-    const [stallCapacity, setStallCapacity] = useState(() => typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.stallCapacity ?? '' : '');
-    const [stallCategories, setStallCategories] = useState(() => typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.stallCategories ?? '' : '');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const [venueName, setVenueName] = useState('');
+    const [streetAddress, setStreetAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [eventCapacity, setEventCapacity] = useState('');
+    const [allowVendorStalls, setAllowVendorStalls] = useState(false);
+    const [stallOpeningDate, setStallOpeningDate] = useState('');
+    const [stallApplicationDeadline, setStallApplicationDeadline] = useState('');
+    const [stallCapacity, setStallCapacity] = useState('');
+    const [stallCategories, setStallCategories] = useState('');
     const router = useRouter();
 	const eventId = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
+
+    useEffect(() => {
+        const draft = loadDraft<EventDetailsDraft>('eventDetails');
+        if (!draft) return;
+
+        setStartDate(draft.startDate ?? '');
+        setEndDate(draft.endDate ?? '');
+        setStartTime(draft.startTime ?? '');
+        setEndTime(draft.endTime ?? '');
+        setVenueName(draft.venueName ?? '');
+        setStreetAddress(draft.streetAddress ?? '');
+        setCity(draft.city ?? '');
+        setState(draft.state ?? '');
+        setEventCapacity(draft.eventCapacity ?? '');
+        setAllowVendorStalls(draft.allowVendorStalls === true);
+        setStallOpeningDate(draft.stallOpeningDate ?? '');
+        setStallApplicationDeadline(draft.stallApplicationDeadline ?? '');
+        setStallCapacity(draft.stallCapacity ?? '');
+        setStallCategories(draft.stallCategories ?? '');
+    }, []);
+
+    const buildEventDetails = (): EventDetailsDraft => ({
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        venueName,
+        streetAddress,
+        city,
+        state,
+        eventCapacity,
+        allowVendorStalls,
+        stallOpeningDate,
+        stallApplicationDeadline,
+        stallCapacity,
+        stallCategories,
+    });
 
     const handleNext = () => {
         if (!startDate || !endDate || !startTime || !endTime || !venueName || !streetAddress || !city || !state || !eventCapacity || (allowVendorStalls && (!stallOpeningDate || !stallApplicationDeadline || !stallCapacity))) {
             alert('Please fill in all required fields.');
             return;
         }
-        const EventDetails = {
-            startDate,
-            endDate,
-            startTime,
-            endTime,
-            venueName,
-            streetAddress,
-            city,
-            state,
-            eventCapacity,
-            allowVendorStalls,
-            stallOpeningDate,
-            stallApplicationDeadline,
-            stallCapacity,
-            stallCategories,
-        }
 
-        saveDraft("eventDetails", EventDetails);
-
+        saveDraft("eventDetails", buildEventDetails());
 		router.push(`/create-event/step-3${eventId() ? `?eventId=${eventId()}` : ''}`);
+    };
 
-    }
+    const handlePrevious = () => {
+        saveDraft("eventDetails", buildEventDetails());
+        router.push(`/create-event/step-1${eventId() ? `?eventId=${eventId()}` : ''}`);
+    };
 
 
     return (
@@ -87,7 +100,7 @@ const Page = () => {
             description="Add the timing, venue, and capacity so guests know exactly where and when to join."
             footer={(
                 <div className='flex items-center justify-between gap-3'>
-                    <Button text="Previous Step" variant='secondary' size='sm' onClick={() => router.push(`/create-event/step-1${eventId() ? `?eventId=${eventId()}` : ''}`)} />
+                    <Button text="Previous Step" variant='secondary' size='sm' onClick={handlePrevious} />
                     <Button text="Next Step" variant='cta' size='sm' onClick={handleNext} />
                 </div>
             )}

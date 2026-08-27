@@ -1,65 +1,34 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { CircleX, Plus } from 'lucide-react';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
-import { saveDraft } from '@/lib/createEventDraft';
-
-type TicketDraft = {
-    ticketName: string;
-    quantity: string;
-    price: string;
-    description: string;
-};
+import { useCreateEventTickets } from '@/components/CreateEventDraftProvider';
+import { createEmptyTicket, saveEventInfoTickets } from '@/lib/createEventDraft';
 
 const Page = () => {
     const router = useRouter();
 	const eventId = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
+    const { tickets, setTickets } = useCreateEventTickets();
 
-    // State to hold multiple tickets
-    const [tickets, setTickets] = useState<TicketDraft[]>(() => {
-        if (typeof window === 'undefined') {
-            return [{ ticketName: '', quantity: '', price: '', description: '' }];
-        }
-
-        try {
-            const saved = window.localStorage.getItem('EventInfo');
-            const parsed = saved ? JSON.parse(saved) : null;
-            if (Array.isArray(parsed?.tickets) && parsed.tickets.length > 0) {
-                return parsed.tickets as TicketDraft[];
-            }
-        } catch {
-            return [{ ticketName: '', quantity: '', price: '', description: '' }];
-        }
-
-        return [{ ticketName: '', quantity: '', price: '', description: '' }];
-    });
-
-    // Update a specific ticket field
     const updateTicket = (index: number, field: string, value: string) => {
-        const updated = [...tickets];
-        updated[index] = { ...updated[index], [field]: value };
-        setTickets(updated);
+        setTickets((prev) => {
+            const updated = [...prev];
+            updated[index] = { ...updated[index], [field]: value };
+            return updated;
+        });
     };
 
-    // Add a new ticket form
     const handleAddTicket = () => {
-        setTickets([
-            ...tickets,
-            { ticketName: '', quantity: '', price: '', description: '' }
-        ]);
+        setTickets((prev) => [...prev, createEmptyTicket()]);
     };
 
-    // Remove a ticket form
     const handleRemoveTicket = (index: number) => {
-        if (tickets.length > 1) {
-            setTickets(tickets.filter((_, i) => i !== index));
-        }
+        setTickets((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== index) : prev));
     };
 
     const handleNext = () => {
-        // Validate all tickets
         for (let i = 0; i < tickets.length; i++) {
             const t = tickets[i];
             if (!t.ticketName || !t.quantity || !t.price || !t.description) {
@@ -68,11 +37,12 @@ const Page = () => {
             }
         }
 
-        saveDraft("eventInfo", { tickets });
+        saveEventInfoTickets(tickets);
         router.push(`/create-event/step-4${eventId() ? `?eventId=${eventId()}` : ''}`);
     };
 
     const handlePrevious = () => {
+        saveEventInfoTickets(tickets);
         router.push(`/create-event/step-2${eventId() ? `?eventId=${eventId()}` : ''}`);
     };
 

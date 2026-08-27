@@ -1,16 +1,10 @@
 'use client';
 import Button from '@/components/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
+import { useCreateEventTickets } from '@/components/CreateEventDraftProvider';
 import { clearEventDraft, loadDraft } from '@/lib/createEventDraft';
-
-type TicketDraft = {
-    ticketName: string;
-    quantity: string;
-    price: string;
-    description: string;
-};
 
 type BasicInformationDraft = {
     title: string;
@@ -32,21 +26,25 @@ type EventDetailsDraft = {
 	allowVendorStalls?: boolean; stallOpeningDate?: string; stallApplicationDeadline?: string; stallCapacity?: string; stallCategories?: string;
 };
 
-type EventInfoDraft = {
-    tickets?: TicketDraft[];
-};
-
 const Page = () => {
-    const [basicInformation] = useState<BasicInformationDraft | null>(() => loadDraft<BasicInformationDraft>("basicInformation"));
-    const [eventDetails] = useState<EventDetailsDraft | null>(() => loadDraft<EventDetailsDraft>("eventDetails"));
-    const [eventInfo] = useState<EventInfoDraft | null>(() => loadDraft<EventInfoDraft>("eventInfo"));
+    const [basicInformation, setBasicInformation] = useState<BasicInformationDraft | null>(null);
+    const [eventDetails, setEventDetails] = useState<EventDetailsDraft | null>(null);
+    const { tickets } = useCreateEventTickets();
     const router = useRouter();
+
+    useEffect(() => {
+        setBasicInformation(loadDraft<BasicInformationDraft>("basicInformation"));
+        setEventDetails(loadDraft<EventDetailsDraft>("eventDetails"));
+    }, []);
 	const eventIdFromUrl = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
     const [isPublishing, setIsPublishing] = useState(false);
     const [publishError, setPublishError] = useState('');
 
     const handlePublish = async () => {
-        if (!basicInformation || !eventDetails || !eventInfo?.tickets?.length) {
+        const latestBasicInformation = loadDraft<BasicInformationDraft>("basicInformation") ?? basicInformation;
+        const latestEventDetails = loadDraft<EventDetailsDraft>("eventDetails") ?? eventDetails;
+
+        if (!latestBasicInformation || !latestEventDetails || !tickets.length) {
             setPublishError('Your event draft is incomplete. Please return to the previous steps and complete every required field.');
             return;
         }
@@ -55,38 +53,38 @@ const Page = () => {
         setPublishError('');
 
         try {
-            const startDate = new Date(`${eventDetails.startDate}T${eventDetails.startTime}`);
-            const endDate = new Date(`${eventDetails.endDate}T${eventDetails.endTime}`);
-            const capacity = Number(eventDetails.eventCapacity);
+            const startDate = new Date(`${latestEventDetails.startDate}T${latestEventDetails.startTime}`);
+            const endDate = new Date(`${latestEventDetails.endDate}T${latestEventDetails.endTime}`);
+            const capacity = Number(latestEventDetails.eventCapacity);
 
             if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || !Number.isInteger(capacity) || capacity < 1) {
                 throw new Error('Your date, time, or capacity is invalid. Please review Step 2.');
             }
 
-			const eventId = eventIdFromUrl() || (basicInformation as BasicInformationDraft & { eventId?: string }).eventId;
+			const eventId = eventIdFromUrl() || (latestBasicInformation as BasicInformationDraft & { eventId?: string }).eventId;
 			const response = await fetch(eventId ? `/api/events/${eventId}` : '/api/events', {
 				method: eventId ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    title: basicInformation.title,
-                    description: basicInformation.description,
-                    category: basicInformation.category,
-                    venue: [eventDetails.venueName, eventDetails.streetAddress, eventDetails.city, eventDetails.state].filter(Boolean).join(', '),
+                    title: latestBasicInformation.title,
+                    description: latestBasicInformation.description,
+                    category: latestBasicInformation.category,
+                    venue: [latestEventDetails.venueName, latestEventDetails.streetAddress, latestEventDetails.city, latestEventDetails.state].filter(Boolean).join(', '),
                     // The current form has no map/geocoding input. Store a valid neutral coordinate until location coordinates are captured by that UI.
                     latitude: 0,
                     longitude: 0,
-                    images: basicInformation.images ?? [],
+                    images: latestBasicInformation.images ?? [],
                     startDate: startDate.toISOString(),
                     endDate: endDate.toISOString(),
                     capacity,
-					allowVendorStalls: Boolean(eventDetails.allowVendorStalls),
-					stallOpeningDate: eventDetails.allowVendorStalls ? new Date(`${eventDetails.stallOpeningDate}T00:00:00`).toISOString() : undefined,
-					stallApplicationDeadline: eventDetails.allowVendorStalls ? new Date(`${eventDetails.stallApplicationDeadline}T23:59:59`).toISOString() : undefined,
-					stallCapacity: eventDetails.allowVendorStalls ? Number(eventDetails.stallCapacity) : undefined,
-					stallCategories: eventDetails.allowVendorStalls ? (eventDetails.stallCategories ?? '').split(',').map((item) => item.trim()).filter(Boolean) : [],
+					allowVendorStalls: Boolean(latestEventDetails.allowVendorStalls),
+					stallOpeningDate: latestEventDetails.allowVendorStalls ? new Date(`${latestEventDetails.stallOpeningDate}T00:00:00`).toISOString() : undefined,
+					stallApplicationDeadline: latestEventDetails.allowVendorStalls ? new Date(`${latestEventDetails.stallApplicationDeadline}T23:59:59`).toISOString() : undefined,
+					stallCapacity: latestEventDetails.allowVendorStalls ? Number(latestEventDetails.stallCapacity) : undefined,
+					stallCategories: latestEventDetails.allowVendorStalls ? (latestEventDetails.stallCategories ?? '').split(',').map((item) => item.trim()).filter(Boolean) : [],
 					status: 'draft',
-                    tags: [basicInformation.category],
-                    ticketTypes: eventInfo.tickets.map((ticket) => ({
+                    tags: [latestBasicInformation.category],
+                    ticketTypes: tickets.map((ticket) => ({
                         name: ticket.ticketName,
                         quantity: Number(ticket.quantity),
                         price: Number(ticket.price),
@@ -148,8 +146,8 @@ const Page = () => {
                 <div className='surface-card p-4'>
                     <h3 className='mb-3 text-sm font-semibold text-text-dark'>Tickets</h3>
                     <div className='space-y-3 text-sm text-text-light'>
-                        {eventInfo?.tickets?.length ? (
-                            eventInfo.tickets.map((ticket, index) => (
+                        {tickets.length ? (
+                            tickets.map((ticket, index) => (
                                 <div key={index} className='rounded-xl border border-border bg-surface-hover p-3'>
                                     <p><strong className="text-text-dark">{ticket.ticketName}</strong></p>
                                     <p>Quantity: {ticket.quantity || ''}</p>
