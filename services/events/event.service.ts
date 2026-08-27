@@ -94,6 +94,11 @@ const organizerLookup: PipelineStage[] = [
 			status: 1,
 			featured: 1,
 			tags: 1,
+			allowVendorStalls: 1,
+			stallOpeningDate: 1,
+			stallApplicationDeadline: 1,
+			stallCapacity: 1,
+			stallCategories: 1,
 			createdAt: 1,
 			updatedAt: 1,
 			organizer: {
@@ -186,6 +191,10 @@ export const updateEventApprovalStatus = async (event: EventDocument, approvalSt
 	await event.save();
 	const label = approvalStatus === "approved" ? "approved" : "rejected";
 	createNotification(event.organizer, "organizer_update", `Event ${label}`, `Your event '${event.title}' has been ${label} by an administrator.`, "/organizerdashboard").catch(console.error);
+	if (approvalStatus === "approved" && event.allowVendorStalls) {
+		const { notifyVendorsOfStallOpening } = await import("@/services/vendors/vendor.service");
+		notifyVendorsOfStallOpening(event).catch(console.error);
+	}
 	return event;
 };
 

@@ -108,7 +108,7 @@ const Page = () => {
                         <p className='ml-2 text-base md:text-lg'>Hosted by <Link href={organizerHref}><span className='font-semibold font-dynapuff hover:text-brown-dark'>{organizerName}</span></Link></p>
                     </div>
                     <p className='text-sm capitalize text-text-dark/80'>Category: {event.category.replaceAll('_', ' ')} • Event type: {event.status}</p>
-                    <div className='mt-4 flex gap-3'>{role === 'attendee' && <Link href={`/booknow?eventId=${event._id}`}><Button text="Book Now" iconRight={<i className="fa-solid fa-arrow-right"></i>} variant="cta" size="lg" /></Link>}{role === 'vendor' && <Link href={`/vendor/stalls?eventId=${event._id}`}><Button text="Create Stall" variant="cta" size="lg" /></Link>}{ownsEvent && <Link href={`/create-event/step-1?eventId=${event._id}`}><Button text="Manage Event" variant="cta" size="lg" /></Link>}<Button text={saved ? 'Saved' : 'Save Event'} variant='secondary' size='lg' onClick={toggleSaved}/></div>
+                    <div className='mt-4 flex gap-3'>{role === 'attendee' && <Link href={`/booknow?eventId=${event._id}`}><Button text="Book Now" iconRight={<i className="fa-solid fa-arrow-right"></i>} variant="cta" size="lg" /></Link>}{role === 'vendor' && <Link href={`/vendor/stalls/create/step-1?eventId=${event._id}`}><Button text="Create Stall" variant="cta" size="lg" /></Link>}{ownsEvent && <Link href={`/create-event/step-1?eventId=${event._id}`}><Button text="Manage Event" variant="cta" size="lg" /></Link>}<Button text={saved ? 'Saved' : 'Save Event'} variant='secondary' size='lg' onClick={toggleSaved}/></div>
                 </div>
             </div>
             <div className='flex flex-col gap-8 mt-8 lg:flex-row lg:gap-12'>

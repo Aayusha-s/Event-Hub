@@ -25,6 +25,11 @@ export interface IEvent {
 	featured: boolean;
 	tags: string[];
 	isOnline?: boolean;
+	allowVendorStalls: boolean;
+	stallOpeningDate?: Date;
+	stallApplicationDeadline?: Date;
+	stallCapacity?: number;
+	stallCategories: string[];
 }
 
 export type EventDocument = HydratedDocument<IEvent>;
@@ -58,6 +63,11 @@ const eventSchema = new Schema<IEvent>(
 		featured: { type: Boolean, default: false, required: true },
 		tags: [{ type: String, trim: true, maxlength: 50 }],
 		isOnline: { type: Boolean, default: false },
+		allowVendorStalls: { type: Boolean, default: false, required: true },
+		stallOpeningDate: { type: Date },
+		stallApplicationDeadline: { type: Date },
+		stallCapacity: { type: Number, min: 1, validate: { validator: Number.isInteger, message: "Stall capacity must be an integer." } },
+		stallCategories: [{ type: String, trim: true, maxlength: 100 }],
 	},
 	{ timestamps: true, versionKey: false }
 );

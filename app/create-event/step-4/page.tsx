@@ -29,6 +29,7 @@ type EventDetailsDraft = {
     city: string;
     state: string;
     eventCapacity: string;
+	allowVendorStalls?: boolean; stallOpeningDate?: string; stallApplicationDeadline?: string; stallCapacity?: string; stallCategories?: string;
 };
 
 type EventInfoDraft = {
@@ -78,6 +79,11 @@ const Page = () => {
                     startDate: startDate.toISOString(),
                     endDate: endDate.toISOString(),
                     capacity,
+					allowVendorStalls: Boolean(eventDetails.allowVendorStalls),
+					stallOpeningDate: eventDetails.allowVendorStalls ? new Date(`${eventDetails.stallOpeningDate}T00:00:00`).toISOString() : undefined,
+					stallApplicationDeadline: eventDetails.allowVendorStalls ? new Date(`${eventDetails.stallApplicationDeadline}T23:59:59`).toISOString() : undefined,
+					stallCapacity: eventDetails.allowVendorStalls ? Number(eventDetails.stallCapacity) : undefined,
+					stallCategories: eventDetails.allowVendorStalls ? (eventDetails.stallCategories ?? '').split(',').map((item) => item.trim()).filter(Boolean) : [],
 					status: 'draft',
                     tags: [basicInformation.category],
                     ticketTypes: eventInfo.tickets.map((ticket) => ({
@@ -135,6 +141,7 @@ const Page = () => {
                         <p><strong className="text-text-dark">End Time:</strong> {eventDetails?.endTime || ''}</p>
                         <p><strong className="text-text-dark">Venue:</strong> {eventDetails?.venueName || ''}</p>
                         <p><strong className="text-text-dark">Capacity:</strong> {eventDetails?.eventCapacity || ''}</p>
+						<p><strong className="text-text-dark">Vendor stalls:</strong> {eventDetails?.allowVendorStalls ? `Open from ${eventDetails.stallOpeningDate} until ${eventDetails.stallApplicationDeadline} (${eventDetails.stallCapacity} stalls)` : 'Not available'}</p>
                     </div>
                 </div>
 

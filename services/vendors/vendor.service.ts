@@ -1,10 +1,10 @@
 import { Types } from "mongoose";
 import dbConnect from "@/lib/mongodb";
 import Vendor from "@/models/Vendor";
-import Event from "@/models/Event";
+import Event, { EventDocument } from "@/models/Event";
 import User from "@/models/User";
 import { HttpError } from "@/utils/api/httpError";
-import { createNotification } from "@/services/notifications/notification.service";
+import { createNotification, createNotificationOnce } from "@/services/notifications/notification.service";
 
 export interface RegisterVendorInput {
 	businessName: string;
@@ -85,6 +85,43 @@ export const updateVendorApprovalStatus = async (vendorId: Types.ObjectId | stri
 };
 
 export type StallRequestInput = { eventId: string; stallName: string; description: string; stallType: string; size: string; bookingFee: number };
+
+const assertStallOpportunity = (event: EventDocument, now = new Date()) => {
+	if (event.status !== "published" || event.approvalStatus !== "approved" || !event.allowVendorStalls || !event.stallOpeningDate || !event.stallApplicationDeadline || !event.stallCapacity) throw new HttpError(409, "No vendor stalls are currently available for this event.", "EVENT_NOT_OPEN");
+	if (now < event.stallOpeningDate || now > event.stallApplicationDeadline) throw new HttpError(409, "The stall application window is closed.", "STALL_WINDOW_CLOSED");
+};
+
+export const notifyVendorsOfStallOpening = async (event: EventDocument) => {
+	const vendors = await Vendor.find({ approvalStatus: "approved" }).select("owner").populate("owner", "location").lean().exec();
+	const eventVenue = event.venue?.toLowerCase() ?? "";
+	// Filter to nearby/eligible vendors: those whose user location appears in the event venue, or all if no matches
+	const nearbyVendors = vendors.filter((vendor) => {
+		const userLocation = (vendor.owner as unknown as { location?: string })?.location?.toLowerCase() ?? "";
+		return userLocation && eventVenue.includes(userLocation);
+	});
+	const targets = nearbyVendors.length > 0 ? nearbyVendors : vendors;
+	const link = `/vendor/stalls/create/step-1?eventId=${event._id}`;
+	await Promise.all(targets.map((vendor) => createNotificationOnce(vendor.owner, "stall_opportunity", `Stalls open: ${event.title}`, `Vendor stalls are now available for ${event.title}. Apply before ${event.stallApplicationDeadline?.toLocaleDateString() ?? "the deadline"}.`, link)));
+};
+
+export const sendStallDeadlineReminders = async (ownerId: Types.ObjectId | string) => {
+	const now = new Date();
+	const deadline = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+	const events = await Event.find({ status: "published", approvalStatus: "approved", allowVendorStalls: true, stallOpeningDate: { $lte: now }, stallApplicationDeadline: { $gte: now, $lte: deadline } }).select("title stallApplicationDeadline").lean().exec();
+	const vendor = await Vendor.findOne({ owner: new Types.ObjectId(ownerId), approvalStatus: "approved" }).select("stallBookings").lean().exec();
+	if (!vendor) return;
+	await Promise.all(events.filter((event) => !vendor.stallBookings.some((booking) => booking.event.toString() === event._id.toString() && booking.status !== "cancelled")).map((event) => createNotificationOnce(ownerId, "stall_deadline", `Stall deadline approaching: ${event.title}`, `Apply for a stall before ${event.stallApplicationDeadline?.toLocaleDateString()}.`, `/vendor/stalls/create/step-1?eventId=${event._id}`)));
+};
+
+export const listVendorStallOpportunities = async (ownerId: Types.ObjectId | string) => {
+	await dbConnect();
+	await sendStallDeadlineReminders(ownerId);
+	const now = new Date();
+	return Event.find({ status: "published", approvalStatus: "approved", allowVendorStalls: true, stallOpeningDate: { $lte: now }, stallApplicationDeadline: { $gte: now } })
+		.select("title venue startDate endDate category images stallApplicationDeadline stallCapacity stallCategories")
+		.sort({ stallApplicationDeadline: 1 })
+		.lean().exec();
+};
 export const bookStall = async (ownerId: Types.ObjectId | string, input: StallRequestInput) => {
 	await dbConnect();
 	const { eventId, stallName, description, stallType, size, bookingFee } = input;
@@ -94,7 +131,8 @@ export const bookStall = async (ownerId: Types.ObjectId | string, input: StallRe
 
 	const event = await Event.findById(eventId).exec();
 	if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
-	if (event.status !== "published" || event.approvalStatus !== "approved") throw new HttpError(409, "No vendor stalls are currently available for this event.", "EVENT_NOT_OPEN");
+	assertStallOpportunity(event);
+	if (event.stallCategories.length && !event.stallCategories.map((category) => category.toLowerCase()).includes(stallType.toLowerCase())) throw new HttpError(400, "This stall category is not offered by the event.", "STALL_CATEGORY_NOT_ALLOWED");
 
 	const duplicate = vendor.stallBookings.find((b) => b.event.toString() === eventId && b.status !== "cancelled");
 	if (duplicate) throw new HttpError(409, "You already have a stall booking for this event.", "DUPLICATE_BOOKING");
@@ -188,6 +226,13 @@ export const updateStallApprovalStatus = async (vendorId: string, eventId: strin
 	if (!vendor) throw new HttpError(404, "Vendor profile not found.", "NOT_FOUND");
 	const booking = vendor.stallBookings.find((item) => item.event.toString() === eventId && item.status === "pending");
 	if (!booking) throw new HttpError(404, "Pending stall request not found.", "NOT_FOUND");
+	if (status === "confirmed") {
+		const event = await Event.findById(eventId).exec();
+		if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
+		assertStallOpportunity(event);
+		const confirmed = await Vendor.countDocuments({ stallBookings: { $elemMatch: { event: event._id, status: "confirmed" } } });
+		if (confirmed >= event.stallCapacity!) throw new HttpError(409, "All available vendor stalls have been approved.", "STALL_CAPACITY_REACHED");
+	}
 	booking.status = status;
 	await vendor.save();
 	createNotification(vendor.owner, "vendor_update", `Stall request ${status === "confirmed" ? "approved" : "rejected"}`, `Your stall request has been ${status === "confirmed" ? "approved" : "rejected"} by an administrator.`, "/vendor/events").catch(console.error);

@@ -43,11 +43,16 @@ const Page = () => {
         if (typeof window === 'undefined') return '';
         try { return JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.eventCapacity ?? ''; } catch { return ''; }
     });
+    const [allowVendorStalls, setAllowVendorStalls] = useState(() => typeof window !== 'undefined' && JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.allowVendorStalls === true);
+    const [stallOpeningDate, setStallOpeningDate] = useState(() => typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.stallOpeningDate ?? '' : '');
+    const [stallApplicationDeadline, setStallApplicationDeadline] = useState(() => typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.stallApplicationDeadline ?? '' : '');
+    const [stallCapacity, setStallCapacity] = useState(() => typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.stallCapacity ?? '' : '');
+    const [stallCategories, setStallCategories] = useState(() => typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('EventDetails') || 'null')?.stallCategories ?? '' : '');
     const router = useRouter();
 	const eventId = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
 
     const handleNext = () => {
-        if (!startDate || !endDate || !startTime || !endTime || !venueName || !streetAddress || !city || !state || !eventCapacity) {
+        if (!startDate || !endDate || !startTime || !endTime || !venueName || !streetAddress || !city || !state || !eventCapacity || (allowVendorStalls && (!stallOpeningDate || !stallApplicationDeadline || !stallCapacity))) {
             alert('Please fill in all required fields.');
             return;
         }
@@ -61,6 +66,11 @@ const Page = () => {
             city,
             state,
             eventCapacity,
+            allowVendorStalls,
+            stallOpeningDate,
+            stallApplicationDeadline,
+            stallCapacity,
+            stallCategories,
         }
 
         saveDraft("eventDetails", EventDetails);
@@ -125,6 +135,10 @@ const Page = () => {
                     <h2 className="mb-2 text-sm font-medium text-text-dark">Event Capacity *</h2>
                     <input type='number' min={1} placeholder="e.g., 500" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={eventCapacity} onChange={(e) => setEventCapacity(e.target.value)} />
                 </div>
+            </div>
+            <div className="rounded-xl border border-border bg-surface-hover p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-semibold text-text-dark">Allow Vendor Stalls?</h2><p className="text-sm text-text-light">Approved vendors can apply only after this event is approved.</p></div><div className="flex gap-2"><Button type="button" text="Yes" size="sm" variant={allowVendorStalls ? "cta" : "secondary"} onClick={() => setAllowVendorStalls(true)} /><Button type="button" text="No" size="sm" variant={!allowVendorStalls ? "cta" : "secondary"} onClick={() => setAllowVendorStalls(false)} /></div></div>
+                {allowVendorStalls && <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4"><label className="text-sm font-medium">Opening date<input type="date" className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-3 focus-ring" value={stallOpeningDate} onChange={(e) => setStallOpeningDate(e.target.value)} required /></label><label className="text-sm font-medium">Application deadline<input type="date" className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-3 focus-ring" value={stallApplicationDeadline} onChange={(e) => setStallApplicationDeadline(e.target.value)} required /></label><label className="text-sm font-medium">Stall capacity<input type="number" min={1} className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-3 focus-ring" value={stallCapacity} onChange={(e) => setStallCapacity(e.target.value)} required /></label><label className="text-sm font-medium">Categories (optional)<input className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-3 focus-ring" placeholder="Food, Retail" value={stallCategories} onChange={(e) => setStallCategories(e.target.value)} /></label></div>}
             </div>
         </CreateEventStepShell>
     )

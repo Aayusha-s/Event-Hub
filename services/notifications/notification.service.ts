@@ -19,6 +19,13 @@ export const createNotification = async (
 	});
 };
 
+export const createNotificationOnce = async (userId: Types.ObjectId | string, type: INotification["type"], title: string, message: string, link?: string) => {
+	await dbConnect();
+	const user = new Types.ObjectId(userId);
+	if (await Notification.exists({ user, type, title, link })) return null;
+	return Notification.create({ user, type, title, message, link });
+};
+
 export const getUserNotifications = async (userId: Types.ObjectId | string, page = 1, pageSize = 20, query?: string, type?: string) => {
 	await dbConnect();
 	const userObjId = new Types.ObjectId(userId);

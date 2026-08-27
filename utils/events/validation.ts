@@ -18,6 +18,11 @@ export type EventInput = {
 	status?: EventStatus;
 	featured?: boolean;
 	tags?: string[];
+	allowVendorStalls: boolean;
+	stallOpeningDate?: Date;
+	stallApplicationDeadline?: Date;
+	stallCapacity?: number;
+	stallCategories: string[];
 };
 
 const eventStatuses: EventStatus[] = ["draft", "published", "cancelled", "completed"];
@@ -102,6 +107,19 @@ const tags = (value: unknown) => {
 	return [...new Set(value.map((tag) => tag.trim()))];
 };
 
+const stallFields = (payload: Record<string, unknown>) => {
+	const allowVendorStalls = payload.allowVendorStalls === undefined ? false : payload.allowVendorStalls;
+	if (typeof allowVendorStalls !== "boolean") throw new HttpError(400, "allowVendorStalls must be a boolean.", "VALIDATION_ERROR");
+	if (!allowVendorStalls) return { allowVendorStalls, stallOpeningDate: undefined, stallApplicationDeadline: undefined, stallCapacity: undefined, stallCategories: [] as string[] };
+	const stallOpeningDate = dateValue(payload.stallOpeningDate, "stallOpeningDate");
+	const stallApplicationDeadline = dateValue(payload.stallApplicationDeadline, "stallApplicationDeadline");
+	if (stallApplicationDeadline < stallOpeningDate) throw new HttpError(400, "Stall application deadline must be after the opening date.", "VALIDATION_ERROR");
+	const stallCapacity = numberValue(payload.stallCapacity, "stallCapacity", 1, Number.MAX_SAFE_INTEGER, true);
+	const rawCategories = payload.stallCategories ?? [];
+	if (!Array.isArray(rawCategories) || rawCategories.length > 20 || rawCategories.some((item) => typeof item !== "string" || !item.trim() || item.trim().length > 100)) throw new HttpError(400, "stallCategories must contain up to 20 valid categories.", "VALIDATION_ERROR");
+	return { allowVendorStalls, stallOpeningDate, stallApplicationDeadline, stallCapacity, stallCategories: [...new Set(rawCategories.map((item) => item.trim()))] };
+};
+
 export const validateEventCreateInput = (value: unknown): EventInput => {
 	const payload = asPayload(value);
 	const startDate = dateValue(payload.startDate, "startDate");
@@ -122,6 +140,8 @@ export const validateEventCreateInput = (value: unknown): EventInput => {
 		throw new HttpError(400, "The total ticket quantity cannot exceed event capacity.", "VALIDATION_ERROR");
 	}
 
+	const stalls = stallFields(payload);
+	if (stalls.allowVendorStalls && stalls.stallApplicationDeadline! > startDate) throw new HttpError(400, "Stall application deadline must be on or before the event start.", "VALIDATION_ERROR");
 	return {
 		title: requiredString(payload, "title", 3, 200),
 		description: requiredString(payload, "description", 10, 5000),
@@ -137,12 +157,13 @@ export const validateEventCreateInput = (value: unknown): EventInput => {
 		status: payload.status as EventStatus | undefined,
 		featured: payload.featured as boolean | undefined,
 		tags: payload.tags === undefined ? [] : tags(payload.tags),
+		...stalls,
 	};
 };
 
 export const validateEventUpdateInput = (value: unknown): Partial<EventInput> => {
 	const payload = asPayload(value);
-	const allowedFields = ["title", "description", "venue", "latitude", "longitude", "category", "images", "startDate", "endDate", "ticketTypes", "capacity", "status", "featured", "tags"];
+	const allowedFields = ["title", "description", "venue", "latitude", "longitude", "category", "images", "startDate", "endDate", "ticketTypes", "capacity", "status", "featured", "tags", "allowVendorStalls", "stallOpeningDate", "stallApplicationDeadline", "stallCapacity", "stallCategories"];
 	const updates: Record<string, unknown> = {};
 
 	for (const field of Object.keys(payload)) {
@@ -173,6 +194,7 @@ export const validateEventUpdateInput = (value: unknown): Partial<EventInput> =>
 		if (typeof payload.featured !== "boolean") throw new HttpError(400, "featured must be a boolean.", "VALIDATION_ERROR");
 		updates.featured = payload.featured;
 	}
+	if (["allowVendorStalls", "stallOpeningDate", "stallApplicationDeadline", "stallCapacity", "stallCategories"].some((field) => payload[field] !== undefined)) Object.assign(updates, stallFields({ ...payload, allowVendorStalls: payload.allowVendorStalls ?? true }));
 
 	if (Object.keys(updates).length === 0) {
 		throw new HttpError(400, "Provide at least one event field to update.", "VALIDATION_ERROR");
