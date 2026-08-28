@@ -113,6 +113,7 @@ const organizerLookup: PipelineStage[] = [
 export const listEvents = async (filters: EventListFilters) => {
 	const match: Record<string, unknown> = {};
 	if (!filters.includeUnapproved) match.approvalStatus = "approved";
+	if (!filters.includeUnapproved && !filters.status) match.status = { $nin: ["cancelled", "completed"] };
 	if (filters.approvalStatus) match.approvalStatus = filters.approvalStatus;
 	if (filters.category) match.category = filters.category;
 	if (filters.tags?.length) match.tags = { $in: filters.tags };

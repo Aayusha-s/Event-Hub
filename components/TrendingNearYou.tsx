@@ -16,6 +16,7 @@ export default function TrendingNearYou() {
     const [events, setEvents] = useState<Event[]>([]);
     const [locations, setLocations] = useState<string[]>([]);
     const [location, setLocation] = useState("");
+    const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -23,14 +24,14 @@ export default function TrendingNearYou() {
         const load = (url: string) => fetch(url).then((response) => response.json()).then((result) => { if (!alive || !result.success) return; setEvents(result.data.items ?? result.data); }).finally(() => { if (alive) setLoading(false); });
         fetch("/api/events?status=published&pageSize=100", { cache: "no-store" }).then((response) => response.json()).then((result) => { if (!alive || !result.success) return; const values = [...new Set((result.data.items as Event[]).map((event) => event.venue).filter(Boolean))]; setLocations(values); }).catch(() => undefined);
         if (!navigator.geolocation) { load("/api/events/trending?limit=6"); return () => { alive = false; }; }
-        navigator.geolocation.getCurrentPosition((position) => { if (!alive) return; setLocation("__nearby__"); load(`/api/events/nearby?lat=${position.coords.latitude}&lng=${position.coords.longitude}&limit=6`); }, () => load("/api/events/trending?limit=6"), { maximumAge: 300000, timeout: 8000 });
+        navigator.geolocation.getCurrentPosition((position) => { if (!alive) return; const nextCoordinates = { lat: position.coords.latitude, lng: position.coords.longitude }; setCoordinates(nextCoordinates); setLocation("__nearby__"); load(`/api/events/nearby?lat=${nextCoordinates.lat}&lng=${nextCoordinates.lng}&limit=6`); }, () => load("/api/events/trending?limit=6"), { maximumAge: 300000, timeout: 8000 });
         return () => { alive = false; };
     }, []);
 
     const selectLocation = (value: string) => {
         setLocation(value);
         setLoading(true);
-        const url = value === "__nearby__" ? "/api/events/trending?limit=6" : value ? `/api/events?status=published&pageSize=6&location=${encodeURIComponent(value)}` : "/api/events/trending?limit=6";
+        const url = value === "__nearby__" && coordinates ? `/api/events/nearby?lat=${coordinates.lat}&lng=${coordinates.lng}&limit=6` : value === "__nearby__" ? "/api/events/trending?limit=6" : value ? `/api/events?status=published&pageSize=6&location=${encodeURIComponent(value)}` : "/api/events/trending?limit=6";
         fetch(url).then((response) => response.json()).then((result) => { if (result.success) setEvents(result.data.items ?? result.data); }).finally(() => setLoading(false));
     };
 

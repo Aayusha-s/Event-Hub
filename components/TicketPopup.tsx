@@ -1,7 +1,7 @@
 'use client';
 import { Calendar, Download, MapPin, QrCode, Share2, X } from "lucide-react";
 import Button from "./Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SharePopup from "./SharePopup";
 
 type TicketPopupProps = {
@@ -19,6 +19,15 @@ export default function TicketPopup(
 ) {
     const [sharePopupOpen, setSharePopupOpen] = useState(false);
 
+    useEffect(() => {
+        if (!isOpen) return;
+        const previousOverflow = document.body.style.overflow;
+        const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+        document.body.style.overflow = 'hidden';
+        document.addEventListener('keydown', closeOnEscape);
+        return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', closeOnEscape); };
+    }, [isOpen, onClose]);
+
     if (!isOpen) return null;
 
     if (sharePopupOpen) {
@@ -31,8 +40,8 @@ export default function TicketPopup(
     }
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-4 m-2 rounded-lg">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+            <div className="bg-white p-4 m-2 rounded-lg" onMouseDown={(event) => event.stopPropagation()}>
                 <div >
                     <div className="grid grid-cols-[3fr_1fr] gap-2">
                         <div className="space-y-3">

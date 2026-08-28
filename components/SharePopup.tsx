@@ -11,10 +11,11 @@ const SharePopup = (
         isOpen,
         onClose
     }: SharePopupProps) => {
+    React.useEffect(() => { if (!isOpen) return; const previousOverflow = document.body.style.overflow; const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); }; document.body.style.overflow = 'hidden'; document.addEventListener('keydown', closeOnEscape); return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', closeOnEscape); }; }, [isOpen, onClose]);
     if (!isOpen) return null;
     return (
-        <div className='fixed inset-0 bg-text-dark/20 flex items-center justify-center z-50 p-4'>
-            <div className="surface-card w-full max-w-md p-6 shadow-lg">
+        <div className='fixed inset-0 bg-text-dark/20 flex items-center justify-center z-50 p-4' onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+            <div className="surface-card w-full max-w-md p-6 shadow-lg" onMouseDown={(event) => event.stopPropagation()}>
                 <h1 className='text-2xl font-semibold tracking-tight text-text-dark mb-4'>Share Event</h1>
 
                 {/* event details */}

@@ -12,12 +12,12 @@ const ReviewPopup = ({
     onclose, onSubmit
 }: ReviewPopupProps) => {
 
+    React.useEffect(() => { if (!isOpen) return; const previousOverflow = document.body.style.overflow; const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onclose(); }; document.body.style.overflow = 'hidden'; document.addEventListener('keydown', closeOnEscape); return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', closeOnEscape); }; }, [isOpen, onclose]);
     const [rating, setRating] = React.useState(5); const [text, setText] = React.useState(''); const [error, setError] = React.useState('');
     if (!isOpen) return null;
-
     return (
-        <div className='fixed inset-0 bg-text-dark/20 flex items-center justify-center z-50 p-4'>
-            <div className='surface-card w-full max-w-md p-6 shadow-lg'>
+        <div className='fixed inset-0 bg-text-dark/20 flex items-center justify-center z-50 p-4' onMouseDown={(event) => { if (event.target === event.currentTarget) onclose(); }}>
+            <div className='surface-card w-full max-w-md p-6 shadow-lg' onMouseDown={(event) => event.stopPropagation()}>
                 <h2 className='text-2xl font-semibold tracking-tight text-text-dark mb-4'>Write a Review</h2>
                 
                 <div>

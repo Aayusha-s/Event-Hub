@@ -80,6 +80,8 @@ const describeCategory = (name: string) => {
   );
 };
 
+const formatCategoryTitle = (name: string) => name.split('_').filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join(' ');
+
 const BrowseInterest = () => {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
 
@@ -119,7 +121,7 @@ const BrowseInterest = () => {
           return (
             <CategoryCard
               key={category.name}
-              title={category.name}
+              title={formatCategoryTitle(category.name)}
               icon={copy.icon}
               description={copy.description}
             />

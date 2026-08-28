@@ -132,7 +132,6 @@ export const bookStall = async (ownerId: Types.ObjectId | string, input: StallRe
 	const event = await Event.findById(eventId).exec();
 	if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
 	assertStallOpportunity(event);
-	if (event.stallCategories.length && !event.stallCategories.map((category) => category.toLowerCase()).includes(stallType.toLowerCase())) throw new HttpError(400, "This stall category is not offered by the event.", "STALL_CATEGORY_NOT_ALLOWED");
 
 	const duplicate = vendor.stallBookings.find((b) => b.event.toString() === eventId && b.status !== "cancelled");
 	if (duplicate) throw new HttpError(409, "You already have a stall booking for this event.", "DUPLICATE_BOOKING");

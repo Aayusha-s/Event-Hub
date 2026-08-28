@@ -1,15 +1,13 @@
 'use client';
 import Link from 'next/link';
 import React, { Suspense, useState } from 'react';
-import { Bell, ChevronDown, CirclePlus, CircleUserRound, LogOut, Settings, User } from 'lucide-react';
+import { Bell, ChevronDown, CirclePlus, CircleUserRound, LogOut, Settings } from 'lucide-react';
 import Image from 'next/image';
-import ManageRoles from './ManageRoles';
 import Logout from './Logout';
 import Searchbar from './Searchbar';
 
 const HeaderLoggedIn = () => {
     const [open, setOpen] = useState(false);
-    const [isRolePopupOpen, setIsRolePopupOpen] = useState(false);
     const [isLogoutOpen, setIsLogoutOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
@@ -92,13 +90,6 @@ const HeaderLoggedIn = () => {
                         <p className="px-4 py-3 text-lg font-semibold text-text-dark">John Doe</p>
                         <div className="my-0.5 border-t border-divider"></div>
 
-                        <div className="cursor-pointer px-4 py-3 transition duration-200 ease-in-out hover:bg-surface-hover" onClick={() => { setOpen(false); setIsRolePopupOpen(true); }}>
-                            <div className="flex flex-row items-center gap-1">
-                                <User size={18} />
-                                <p>Manage Roles</p>
-                            </div>
-                        </div>
-
                         <Link href="/settings/profile" onClick={() => setOpen(false)}>
                             <div className="flex cursor-pointer flex-row items-center gap-1 px-4 py-3 transition duration-200 ease-in-out hover:bg-surface-hover">
                                 <Settings size={18} />
@@ -119,13 +110,6 @@ const HeaderLoggedIn = () => {
                     isOpen={isLogoutOpen}
                     onClose={() => {
                         setIsLogoutOpen(false);
-                        setOpen(false);
-                    }}
-                />
-                <ManageRoles
-                    isOpen={isRolePopupOpen}
-                    onClose={() => {
-                        setIsRolePopupOpen(false);
                         setOpen(false);
                     }}
                 />

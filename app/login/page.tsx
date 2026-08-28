@@ -5,6 +5,8 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import GoogleIcon from "@mui/icons-material/Google";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import AuthShell from "@/components/AuthShell";
 import Button from "@/components/Button";
 
@@ -35,7 +37,7 @@ function LoginForm() {
       response.ok ? response.json() : null,
     );
     const destinations: Record<string, string> = {
-      admin: "/admin/dashboard",
+      admin: "/admin",
       ticket_checker: "/ticket-checker",
       organizer: "/organizerdashboard",
       attendee: "/userdashboard",
@@ -78,14 +80,14 @@ function LoginForm() {
           onClick={() => void oauth("google")}
           className="flex w-full items-center justify-center gap-3 rounded-xl border border-border px-4 py-3 font-semibold transition hover:bg-surface-hover"
         >
-          <span className="font-bold text-red-500">G</span> Continue with Google
+          <GoogleIcon fontSize="small" /> Continue with Google
         </button>
         <button
           type="button"
           onClick={() => void oauth("github")}
           className="flex w-full items-center justify-center gap-3 rounded-xl border border-border px-4 py-3 font-semibold transition hover:bg-surface-hover"
         >
-          <span className="text-lg">GH</span> Continue with GitHub
+          <GitHubIcon fontSize="small" /> Continue with GitHub
         </button>
       </div>
       <div className="my-7 flex items-center gap-3 text-xs uppercase tracking-widest text-text-muted">

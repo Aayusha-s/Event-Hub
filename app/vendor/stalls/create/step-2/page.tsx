@@ -51,15 +51,19 @@ const Page = () => {
             return '';
         }
     });
+    const [customCategory, setCustomCategory] = useState('');
 
     const stallCategories = eventDraft?.stallCategories ?? [];
+    const predefinedCategories = ['Food & Beverages', 'Clothing & Fashion', 'Arts & Crafts', 'Beauty & Wellness', 'Electronics & Technology', 'Home & Lifestyle', 'Books & Education', 'Jewelry & Accessories', 'Services'];
+    const isCustomCategory = stallType === '__custom__' || (!predefinedCategories.includes(stallType) && !stallCategories.includes(stallType) && stallType !== '');
 
     const handleNext = () => {
         if (!stallName.trim() || stallName.trim().length < 2) {
             alert('Please enter a stall name (at least 2 characters).');
             return;
         }
-        if (!stallType.trim() || stallType.trim().length < 2) {
+        const selectedCategory = stallType === '__custom__' ? customCategory : stallType;
+        if (!selectedCategory.trim() || selectedCategory === '__custom__' || selectedCategory.trim().length < 2) {
             alert('Please select or enter a stall type.');
             return;
         }
@@ -78,7 +82,7 @@ const Page = () => {
 
         const details: StallDetailsDraft = {
             stallName: stallName.trim(),
-            stallType: stallType.trim(),
+            stallType: selectedCategory.trim(),
             size: size.trim(),
             bookingFee: bookingFee.trim(),
             description: description.trim(),
@@ -128,28 +132,31 @@ const Page = () => {
                 </div>
                 <div>
                     <h2 className="mb-2 text-sm font-medium text-text-dark">Stall Type / Category *</h2>
-                    {stallCategories.length > 0 ? (
+                    <>
                         <select
                             className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring"
                             required
-                            value={stallType}
-                            onChange={(e) => setStallType(e.target.value)}
+                            value={stallType === '__custom__' || (customCategory && stallType === customCategory) ? '__custom__' : stallType}
+                            onChange={(e) => { setStallType(e.target.value); if (e.target.value !== '__custom__') setCustomCategory(''); }}
                         >
                             <option value="" disabled>Select a category</option>
                             {stallCategories.map((cat) => (
                                 <option key={cat} value={cat}>{cat}</option>
                             ))}
+                            {predefinedCategories.filter((cat) => !stallCategories.includes(cat)).map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                            <option value="__custom__">Other / Custom</option>
                         </select>
-                    ) : (
+                        {isCustomCategory && (
                         <input
                             type="text"
-                            placeholder="e.g., Food, Retail, Services"
-                            value={stallType}
-                            onChange={(e) => setStallType(e.target.value)}
-                            className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring"
+                            placeholder="Enter your custom category"
+                            value={customCategory || (stallType !== '__custom__' ? stallType : '')}
+                            onChange={(e) => { setCustomCategory(e.target.value); setStallType(e.target.value); }}
+                            className="w-full rounded-xl border border-border bg-surface px-3 py-3 my-4 text-text-dark focus-ring"
                             required
                         />
-                    )}
+                        )}
+                    </>
                 </div>
                 <div>
                     <h2 className="mb-2 text-sm font-medium text-text-dark">Size *</h2>
