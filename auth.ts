@@ -1,6 +1,9 @@
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+import { randomBytes } from "crypto";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { UserRole } from "@/types";
@@ -18,6 +21,8 @@ export const authOptions: NextAuthOptions = {
 		signIn: "/login",
 	},
 	providers: [
+		...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [GoogleProvider({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET })] : []),
+		...(process.env.GITHUB_ID && process.env.GITHUB_SECRET ? [GitHubProvider({ clientId: process.env.GITHUB_ID, clientSecret: process.env.GITHUB_SECRET })] : []),
 		CredentialsProvider({
 			name: "Credentials",
 			credentials: {
@@ -33,7 +38,6 @@ export const authOptions: NextAuthOptions = {
 				if (!user || !(await bcrypt.compare(password, user.password))) {
 					return null;
 				}
-
 				return {
 					id: user._id.toString(),
 					name: user.name,
@@ -45,6 +49,16 @@ export const authOptions: NextAuthOptions = {
 		}),
 	],
 	callbacks: {
+		async signIn({ user, account }) {
+			if (!account || account.provider === "credentials") return true;
+			if (!user.email) return false;
+			await dbConnect();
+			const existing = await User.findOne({ email: user.email }).select("_id role").exec();
+			const linked = existing ?? await User.create({ name: user.name ?? "Vivnt member", email: user.email, password: await bcrypt.hash(randomBytes(32).toString("hex"), 12), role: "attendee", interests: [] });
+			user.id = linked._id.toString();
+			user.role = linked.role as UserRole;
+			return true;
+		},
 		async jwt({ token, user, trigger }) {
 			if (user) {
 				token.id = user.id;

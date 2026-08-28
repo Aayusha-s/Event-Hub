@@ -1,273 +1,164 @@
-'use client';
+"use client";
+
 import Link from "next/link";
-import Button from "@/components/Button";
-import Image from "next/image";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { CircleAlert, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import AuthShell from "@/components/AuthShell";
+import Button from "@/components/Button";
 
-const LoginForm = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const router = useRouter();
-    const searchParams = useSearchParams();
+function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-    const [emailError, setEmailError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-    const [authError, setAuthError] = useState("");
-
-
-    // email validation
-    const validateEmail = (value: string): string => {
-        if (!value) {
-            return "Email is required!";
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
-            return "Invalid email format!";
-        }
-        return "";
+  const login = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError("");
+    setBusy(true);
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+    if (result?.error) {
+      setError("Invalid email or password.");
+      setBusy(false);
+      return;
     }
-
-
-    // password validation
-    const validatePassword = (value: string): string => {
-        if (!value) {
-            return "Password is required!";
-        }
-
-        if (value.length < 8) {
-            return "Password must be at least 8 characters long!";
-        }
-        return "";
-    }
-
-
-    // handle login
-    const handleLogin = async (event?: React.FormEvent<HTMLFormElement>) => {
-        event?.preventDefault();
-        const emailValidation = validateEmail(email);
-        const passwordValidation = validatePassword(password);
-
-        setEmailError(emailValidation);
-        setPasswordError(passwordValidation);
-        setAuthError("");
-
-        if (emailValidation || passwordValidation) {
-            return;
-        }
-
-        const result = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
-
-        if (result?.error) {
-            setAuthError("Invalid email or password.");
-            return;
-        }
-
-        const role = (await fetch('/api/users/me').then(response => response.ok ? response.json() : null))?.data?.role;
-        const destinations: Record<string, string> = { admin: '/admin/dashboard', ticket_checker: '/ticket-checker', organizer: '/organizerdashboard', attendee: '/userdashboard', vendor: '/vendordashboard' };
-        const callbackUrl = searchParams.get("callbackUrl") ?? destinations[role] ?? "/";
-        router.replace(callbackUrl);
-        router.refresh();
-    }
-
-    {/* handle register button */ }
-    const handleRegister = () => {
-        router.push('/signup')
-    }
-
-    return (
-        <section className="flex justify-center
-        my-4 mx-2 px-4 font-cause text-text-dark 
-            md:my-3 md:mx-3 md:px-3
-            lg:my-4 lg:mx-4 lg:px-4
-            xl:my-6 xl:mx-6 xl:px-6
-            2xl:my-8 2xl:mx-8 2xl:px-8">
-
-            <div className="w-full max-w-4xl border border-brown-light-active shadow-xl rounded-xl grid md:grid-cols-2 gap-2 bg-brown-light">
-
-                {/* LEFT SIDE */}
-                <div className="flex-1 items-center justify-center p-4 md:pr-2">
-                    {/* logo + text */}
-                    <div className="flex flex-col gap-4 mb-6 justify-center items-center">
-                        <Link href="/">
-                            <div className="relative w-[140px] h-20 flex items-center justify-center cursor-pointer">
-                                <Image
-                                    src="/VivntLogo.png"
-                                    alt="Vivnt"
-                                    fill
-                                    className="scale-125 object-contain"
-                                    sizes="130px"
-                                />
-                            </div>
-                        </Link>
-
-                        <h3 className="font-dynapuff text-2xl sm:text-3xl md:text-3xl lg:text-3xl font-semibold">
-                            Welcome Back
-                        </h3>
-                        <p className="text-md sm:text-base text-center font-bold">
-                            Sign in to discover and manage your events
-                        </p>
-                    </div>
-
-                    <div className="flex flex-col gap-3 mb-4">
-                        <Button
-                            text="Continue with Google"
-                            variant="cta"
-                            size="md"
-                            className="w-full"
-                            iconLeft={<i className="fa-brands fa-google"></i>}
-                        />
-                        <Button
-                            text="Continue with GitHub"
-                            variant="cta"
-                            size="md"
-                            className="w-full"
-                            iconLeft={<i className="fa-brands fa-github"></i>}
-                        />
-
-                        <div className="flex items-center justify-between">
-                            <hr className="border border-brown-normal mt-2 w-23 md:w-15 lg:w-25 " />
-                            <p className="text-center text-sm mt-2"> or continue with email</p>
-
-                            <hr className="border border-brown-normal mt-2 w-23 md:w-15 lg:w-25 " />
-                        </div>
-                    </div>
-
-                    {/* form */}
-
-                    <form className="flex flex-col gap-4" onSubmit={handleLogin} method="post" autoComplete="on">
-                        {/* email */}
-                        <div>
-                            <h2 className="font-bold">Email</h2>
-                            <div className="flex items-center gap-2 p-2 border border-brown-normal rounded-md mt-1 focus:outline-brown-normal-active">
-                                <Mail />
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="username"
-                                    placeholder="Enter your email"
-                                    className="w-full border-none rounded-md focus:outline-none"
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value)
-                                        setEmailError(validateEmail(e.target.value))
-                                    }}
-                                />
-                                </div>
-
-                            {emailError && (
-                                <div className="mt-2 flex items-center gap-1">
-                                    <CircleAlert className="text-red-500" />
-                                    <p className="text-sm text-red-500 ">{emailError}</p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* password */}
-                        <div>
-                            <h2 className="font-bold">Password</h2>
-                            <div className="flex items-center gap-2 p-2 border border-brown-normal rounded-md mt-1">
-                                <Lock />
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    autoComplete="current-password"
-                                    placeholder="Enter your password"
-                                    className="w-full border-none rounded-md focus:outline-none"
-                                    value={password}
-                                    onChange={(e) => {
-                                        setPassword(e.target.value)
-                                        setPasswordError(validatePassword(e.target.value))
-
-                                    }}
-                                />
-                            </div>
-
-                            {passwordError && (
-                                <div className="mt-2 flex items-center gap-1">
-                                    <CircleAlert className="text-red-500" />
-                                    <p className="text-sm text-red-500 ">{passwordError}</p>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex justify-end items-center">
-                            <div className="flex items-center gap-2">
-                                <Button
-                                    text="Forgot Password?"
-                                    variant="secondary"
-                                    size="sm"
-                                    className="text-lg"
-                                />
-                            </div>
-                        </div>
-
-                        {authError && (
-                            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-                                {authError}
-                            </div>
-                        )}
-
-                        <Button text="Login" type="submit" variant="cta" size="md" className="w-full" />
-                    </form>
-
-
-                    <div className="mt-4 flex justify-center text-md gap-1">
-                        Don&apos;t have an account?{" "}
-                        <div className="text-brown-normal font-semibold hover:underline cursor-pointer" onClick={handleRegister} >
-                            Register
-                        </div>
-                    </div>
-                </div>
-
-
-                {/* DIVIDER */}
-
-                {/* <div className="hidden md:block border-l border-brown-normal"></div> */}
-
-                {/* RIGHT SIDE */}
-                <div className="hidden flex-1 md:flex md:flex-col lg:flex lg:flex-col 
-                    justify-center items-center p-4 rounded-lg text-center 
-                    relative h-full w-full overflow-hidden">
-
-                    {/* background layer */}
-                    <div
-                        className="absolute inset-0 
-                        bg-[url('/images/doodle1.webp')] 
-                        bg-center bg-repeat-y opacity-30
-                        hidden md:block border-l-2 border-brown-normal">
-                    </div>
-
-                    {/* content layer */}
-                    <div className="relative z-10">
-                        <h3 className="font-dynapuff font-bold text-3xl">
-                            Discover Amazing Events
-                        </h3>
-                        <p className="font-semibold text-lg mt-4">
-                            Join millions of people finding and creating unforgettable
-                            experiences every day.
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
+    const profile = await fetch("/api/users/me").then((response) =>
+      response.ok ? response.json() : null,
     );
-};
+    const destinations: Record<string, string> = {
+      admin: "/admin/dashboard",
+      ticket_checker: "/ticket-checker",
+      organizer: "/organizerdashboard",
+      attendee: "/userdashboard",
+      vendor: "/vendordashboard",
+    };
+    router.replace(
+      searchParams.get("callbackUrl") ??
+        destinations[profile?.data?.role] ??
+        "/",
+    );
+    router.refresh();
+  };
+  const oauth = async (provider: "google" | "github") => {
+    setError("");
+    const result = await signIn(provider, {
+      callbackUrl: searchParams.get("callbackUrl") ?? "/",
+    });
+    if (result?.error) setError("Unable to sign in with this provider.");
+  };
 
-const Page = () => (
-    <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center">Loading...</div>}>
-        <LoginForm />
+  return (
+    <AuthShell
+      title="Welcome back"
+      subtitle="Sign in to discover, attend, and manage your next experience."
+      footer={
+        <>
+          New to Vivnt?{" "}
+          <Link
+            href="/signup"
+            className="font-semibold text-brown-dark hover:underline"
+          >
+            Create an account
+          </Link>
+        </>
+      }
+    >
+      <div className="space-y-3">
+        <button
+          type="button"
+          onClick={() => void oauth("google")}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-border px-4 py-3 font-semibold transition hover:bg-surface-hover"
+        >
+          <span className="font-bold text-red-500">G</span> Continue with Google
+        </button>
+        <button
+          type="button"
+          onClick={() => void oauth("github")}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-border px-4 py-3 font-semibold transition hover:bg-surface-hover"
+        >
+          <span className="text-lg">GH</span> Continue with GitHub
+        </button>
+      </div>
+      <div className="my-7 flex items-center gap-3 text-xs uppercase tracking-widest text-text-muted">
+        <span className="h-px flex-1 bg-divider" />
+        or email
+        <span className="h-px flex-1 bg-divider" />
+      </div>
+      <form onSubmit={login} className="space-y-5">
+        <label className="block text-sm font-semibold">
+          Email
+          <div className="mt-2 flex items-center gap-3 rounded-xl border border-border px-4 py-3 focus-within:border-brown-normal">
+            <Mail size={18} className="text-text-muted" />
+            <input
+              required
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className="w-full bg-transparent focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-none "
+              placeholder="you@example.com"
+            />
+          </div>
+        </label>
+        <label className="block text-sm font-semibold">
+          Password
+          <div className="mt-2 flex items-center gap-3 rounded-xl border border-border px-4 py-3 focus-within:border-brown-normal">
+            <Lock size={18} className="text-text-muted" />
+            <input
+              required
+              minLength={8}
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="w-full bg-transparent focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-none"
+              placeholder="Your password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </label>
+        <div className="text-right">
+          <Link
+            href="/forgot-password"
+            className="text-sm font-semibold text-brown-dark hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
+        {error && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </p>
+        )}
+        <Button
+          text={busy ? "Signing in..." : "Sign in"}
+          type="submit"
+          variant="cta"
+          className="w-full"
+          disabled={busy}
+        />
+      </form>
+    </AuthShell>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<main className="p-10 text-center">Loading...</main>}>
+      <LoginForm />
     </Suspense>
-);
-
-export default Page;
+  );
+}

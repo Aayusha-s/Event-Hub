@@ -46,6 +46,8 @@ const publicRoutes = [
 	"/categories",
 	"/challenges",
 	"/event-tags",
+	"/forgot-password",
+	"/reset-password",
 	"/event-details",
 	"/organizer",
 	"/vendor/vendorapplication-1",

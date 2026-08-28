@@ -46,12 +46,13 @@ type ProfileResponse = {
     counts: { followers: number; following: number; friends: number };
     events: {
         hosted: Array<{ _id: string; title: string; venue: string; images: string[]; tags: string[]; description: string; ticketTypes: { price: number }[] }>;
+        archived: Array<{ _id: string; title: string; venue: string; images: string[]; tags: string[]; description: string; ticketTypes: { price: number }[] }>;
         attended: Array<{ _id: string; title?: string; venue?: string; startDate?: string; endDate?: string; images?: string[]; ticketTypes?: { price: number }[]; organizer?: { name?: string } }>;
         upcoming: Array<{ _id: string; title?: string; venue?: string; startDate?: string; endDate?: string; images?: string[]; ticketTypes?: { price: number }[]; organizer?: { name?: string } }>;
         past: Array<{ _id: string; title?: string; venue?: string; startDate?: string; endDate?: string; images?: string[]; ticketTypes?: { price: number }[]; organizer?: { name?: string } }>;
         saved: Array<{ _id?: string; title?: string; venue?: string; images?: string[]; ticketTypes?: { price: number }[]; startDate?: string; endDate?: string; organizer?: { name?: string } }>;
     };
-    reviews: Array<{ _id: string; rating: number; text?: string; createdAt?: string; event?: { _id?: string; title?: string } }>;
+    reviews: Array<{ _id: string; rating: number; text?: string; createdAt?: string; user?: { name?: string; profileImage?: string }; event?: { _id?: string; title?: string; images?: string[] } }>;
     photos: Array<{ _id: string; imageUrl: string; caption?: string; likes?: string[]; comments?: Array<{ text?: string }> }>;
     activity: Array<{ _id: string; title: string; description?: string; link?: string; createdAt: string }>;
 };
@@ -63,7 +64,7 @@ const ProfilePage = () => {
     const { data: session } = useSession();
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<'events' | 'reviews' | 'photos' | 'activity'>('events');
+    const [activeTab, setActiveTab] = useState<'events' | 'archived' | 'reviews' | 'photos' | 'activity'>('events');
     const [profile, setProfile] = useState<ProfileResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -131,6 +132,13 @@ const ProfilePage = () => {
             setFollowListError(listError instanceof Error ? listError.message : 'Unable to load list.');
         }
     };
+
+    useEffect(() => {
+        if (!followList) return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => { document.body.style.overflow = previousOverflow; };
+    }, [followList]);
 
     const shareProfile = async () => {
         const url = window.location.href;
@@ -262,7 +270,7 @@ const ProfilePage = () => {
             <div className='h-px bg-gray-200 my-6'></div>
 
             <div className='flex flex-wrap gap-2 mb-6'>
-                {['events', 'reviews', 'photos', 'activity'].map((tab) => (
+                {['events', ...(profile.user.role === 'organizer' && profile.owner ? ['archived'] : []), 'reviews', 'photos', 'activity'].map((tab) => (
                     <Button text={tab.charAt(0).toUpperCase() + tab.slice(1)} key={tab} variant={activeTab === tab ? 'secondary' : 'cta'} size='md' onClick={() => setActiveTab(tab as typeof activeTab)} />
                 ))}
             </div>
@@ -292,6 +300,10 @@ const ProfilePage = () => {
                 </div>
             )}
 
+            {activeTab === 'archived' && profile.user.role === 'organizer' && profile.owner && (
+                <div><h3 className='mb-4 font-dynapuff text-lg font-semibold'>Archived Events</h3><div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>{profile.events.archived.length ? profile.events.archived.map((event) => <EventCard key={event._id} eventId={event._id} tags={event.tags ?? []} imageUrl={event.images?.[0] ?? fallbackImage} imageAlt={event.title} title={event.title} organizer={`By ${profile.user.name ?? 'Event organizer'}`} descriptions={[event.description]} location={event.venue} price={event.ticketTypes?.some((ticket) => ticket.price === 0) ? 'Free' : `From Rs.${Math.min(...event.ticketTypes.map((ticket) => ticket.price))}`} />) : <p className='text-gray-500'>No archived events yet.</p>}</div></div>
+            )}
+
             {activeTab === 'reviews' && (
                 <div>
                     <div className='flex justify-between items-center mb-4'>
@@ -303,12 +315,13 @@ const ProfilePage = () => {
                             <div key={review._id} className='border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow'>
                                 <div className='flex gap-4'>
                                     <div className='w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shrink-0 bg-brown-light'>
-                                        <img src={profileImage} alt={review.event?.title ?? 'Review'} className='w-full h-full object-cover' />
+                                        <img src={review.event?.images?.[0] ?? fallbackImage} alt={review.event?.title ?? 'Review'} className='w-full h-full object-cover' />
                                     </div>
                                     <div className='flex-1'>
                                         <div className='flex flex-col md:flex-row md:items-start justify-between'>
                                             <div>
                                                 <h3 className='font-bold text-gray-900'>{review.event?.title ?? 'Review'}</h3>
+                                                <p className='text-sm text-gray-500'>By {review.user?.name ?? 'Vivnt member'}</p>
                                                 <div className='flex flex-wrap items-center gap-2 mt-1'>
                                                     <div className='flex'>
                                                         {[...Array(5)].map((_, i) => <Star key={i} size={16} className={i < Math.floor(review.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'} />)}

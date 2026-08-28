@@ -226,11 +226,15 @@ export const updateEvent = async (event: EventDocument, input: Partial<EventInpu
 export const deleteEvent = (event: EventDocument) => event.deleteOne();
 
 export const duplicateEvent = async (event: EventDocument, organizer: Types.ObjectId) => {
-	const source = event.toObject();
+	const source = event.toObject() as EventDocument & { createdAt?: Date; updatedAt?: Date };
+	const eventData = { ...source };
+	delete (eventData as Record<string, unknown>)._id;
+	delete (eventData as Record<string, unknown>).createdAt;
+	delete (eventData as Record<string, unknown>).updatedAt;
 	return Event.create({
-		...source,
+		...eventData,
 		organizer,
-		title: `${source.title} Copy`,
+		title: `${eventData.title} Copy`,
 		status: "draft",
 		featured: false,
 	});

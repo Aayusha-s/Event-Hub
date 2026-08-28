@@ -65,8 +65,11 @@ const categoryCopy: Record<
   },
 };
 
+const categoryAliases: Record<string, keyof typeof categoryCopy> = { art_theater: "art", food_drinks: "food", sports_fitness: "sports", learning_education: "education", gaming_esports: "gaming", book_literature: "education", wellness_health: "wellness" };
+
 const describeCategory = (name: string) => {
-  const key = name.toLowerCase().replace(/[^a-z]/g, "");
+  const rawKey = name.toLowerCase().replace(/[^a-z_]/g, "");
+  const key = categoryAliases[rawKey] ?? rawKey.replace(/[^a-z]/g, "");
   return (
     categoryCopy[key] ?? {
       icon: (

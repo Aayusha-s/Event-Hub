@@ -29,7 +29,7 @@ export const organizerNav: NavItem[] = [
 	{ label: "Home", href: "/" },
 	{ label: "Explore", href: "/explore-events" },
 	{ label: "Create Event", href: "/create-event/step-1" },
-	{ label: "My Events", href: "/explore-events?organizer=me" },
+	{ label: "My Events", href: "/organizerdashboard/events" },
 	{ label: "Organizer Dashboard", href: "/organizerdashboard" },
 	{ label: "Messages", href: "/messages" },
 	{ label: "Notifications", href: "/notification" },
@@ -63,7 +63,6 @@ export const adminNav: NavItem[] = [
 	{ label: "Manage Events", href: "/admin/events" },
 	{ label: "Reports", href: "/analytics" },
 	{ label: "Notifications", href: "/notification" },
-	{ label: "Profile", href: "/userprofile" },
 ];
 
 export const getNavItemsForRole = (role?: UserRole | null): NavItem[] => {

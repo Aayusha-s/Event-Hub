@@ -32,7 +32,7 @@ export async function GET() {
             { $sort: { count: -1, _id: 1 } },
         ]),
         User.aggregate([
-            { $match: { privacy: 'public' } },
+            { $match: { privacy: 'public', role: { $ne: 'admin' } } },
             { $lookup: { from: 'follows', localField: '_id', foreignField: 'following', as: 'followers' } },
             { $lookup: { from: 'follows', localField: '_id', foreignField: 'follower', as: 'following' } },
             {

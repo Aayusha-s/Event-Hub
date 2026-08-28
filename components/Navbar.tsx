@@ -13,13 +13,13 @@ import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
 
 type Notice = { _id: string; title: string; message: string; read: boolean; link?: string; createdAt?: string };
-const primaryByRole: Record<UserRole, { label: string; href: string }> = { attendee: { label: "Events", href: "/explore-events" }, organizer: { label: "My Events", href: "/organizerdashboard" }, vendor: { label: "My Stalls", href: "/vendordashboard" }, ticket_checker: { label: "Check Tickets", href: "/ticket-checker" }, admin: { label: "", href: "/admin" } };
+const primaryByRole: Record<UserRole, { label: string; href: string }> = { attendee: { label: "Events", href: "/explore-events" }, organizer: { label: "Events", href: "/organizerdashboard/events" }, vendor: { label: "My Stalls", href: "/vendordashboard" }, ticket_checker: { label: "Check Tickets", href: "/ticket-checker" }, admin: { label: "", href: "/admin" } };
 const profileLinks: Record<UserRole, { label: string; href: string }[]> = {
 	attendee: [{ label: "Profile", href: "/userprofile" }, { label: "My Tickets", href: "/userdashboard" }, { label: "Saved Events", href: "/saved-events" }, { label: "Settings", href: "/settings/profile" }],
 	organizer: [{ label: "Organizer Dashboard", href: "/organizerdashboard" }, { label: "Profile", href: "/userprofile" }, { label: "Settings", href: "/settings/profile" }, { label: "View Public Site", href: "/" }],
 	vendor: [{ label: "Vendor Dashboard", href: "/vendordashboard" }, { label: "Profile", href: "/userprofile" }, { label: "Settings", href: "/settings/profile" }, { label: "View Public Site", href: "/" }],
 	ticket_checker: [{ label: "Ticket Checker Dashboard", href: "/ticket-checker" }, { label: "Profile", href: "/userprofile" }, { label: "Settings", href: "/settings/profile" }],
-	admin: [{ label: "Admin Dashboard", href: "/admin" }, { label: "Profile", href: "/userprofile" }, { label: "Settings", href: "/settings/account" }, { label: "View Public Site", href: "/" }],
+	admin: [{ label: "Admin Dashboard", href: "/admin" }, { label: "Settings", href: "/settings/account" }, { label: "View Public Site", href: "/" }],
 };
 const searchPlaceholderByRole: Record<UserRole, string> = {
 	attendee: "Search events...",

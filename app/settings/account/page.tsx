@@ -50,8 +50,7 @@ export default function AccountSettingsPage() {
       setSaving(false);
     }
   };
-  return;
-  <section className="app-page font-cause text-text-dark">
+  return <section className="app-page font-cause text-text-dark">
     <SettingsHeading />
     <div className="flex gap-6">
       <SettingsTab />
