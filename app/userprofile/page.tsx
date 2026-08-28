@@ -22,6 +22,7 @@ import {
     Utensils,
     Music,
     Laptop,
+    X,
 } from 'lucide-react'
 import Button from '@/components/Button'
 import EventCard from '@/components/EventCard'
@@ -54,6 +55,7 @@ type ProfileResponse = {
     photos: Array<{ _id: string; imageUrl: string; caption?: string; likes?: string[]; comments?: Array<{ text?: string }> }>;
     activity: Array<{ _id: string; title: string; description?: string; link?: string; createdAt: string }>;
 };
+type FollowUser = { _id: string; name?: string; username?: string; profileImage?: string; role?: string };
 
 const fallbackImage = '/images/party.png';
 
@@ -66,6 +68,8 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [actionError, setActionError] = useState('');
+    const [followList, setFollowList] = useState<{ type: 'followers' | 'following'; users: FollowUser[] } | null>(null);
+    const [followListError, setFollowListError] = useState('');
 
     const identifier = useMemo(() => {
         const queryIdentifier = searchParams.get('userId') ?? searchParams.get('username');
@@ -116,6 +120,18 @@ const ProfilePage = () => {
         }
     };
 
+    const openFollowList = async (type: 'followers' | 'following') => {
+        try {
+            setFollowListError('');
+            const response = await fetch(`/api/profiles/${encodeURIComponent(identifier)}/follow?type=${type}`, { cache: 'no-store' });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.error?.message || 'Unable to load list.');
+            setFollowList({ type, users: result.data as FollowUser[] });
+        } catch (listError) {
+            setFollowListError(listError instanceof Error ? listError.message : 'Unable to load list.');
+        }
+    };
+
     const shareProfile = async () => {
         const url = window.location.href;
         if (navigator.share) {
@@ -147,7 +163,7 @@ const ProfilePage = () => {
             xl:my-6 xl:mx-6 xl:px-6
             2xl:my-8 2xl:mx-8 2xl:px-8'>
             <div className='flex flex-col sm:flex-row items-start sm:items-center gap-6'>
-                <div className='shrink-0 overflow-hidden rounded-full border-4 border-white bg-linear-to-br from-blue-100 to-purple-100 shadow-lg w-24 h-24 md:w-28 md:h-28'>
+                <div className='shrink-0 overflow-hidden rounded-full border-4 border-white shadow-lg w-24 h-24 md:w-28 md:h-28'>
                     <img src={profileImage} alt={profile.user.name ?? 'Profile'} className='h-full w-full object-cover' />
                 </div>
 
@@ -163,15 +179,15 @@ const ProfilePage = () => {
                             <span className='text-gray-500 text-sm'>Events</span>
                         </div>
                         <div className='w-px h-6 bg-gray-300'></div>
-                        <div className='flex flex-col items-center'>
+                        <button type='button' className='flex flex-col items-center' onClick={() => openFollowList('followers')}>
                             <span className='font-bold text-gray-900'>{profile.counts.followers}</span>
                             <span className='text-gray-500 text-sm'>Followers</span>
-                        </div>
+                        </button>
                         <div className='w-px h-6 bg-gray-300'></div>
-                        <div className='flex flex-col items-center'>
+                        <button type='button' className='flex flex-col items-center' onClick={() => openFollowList('following')}>
                             <span className='font-bold text-gray-900'>{profile.counts.following}</span>
                             <span className='text-gray-500 text-sm'>Following</span>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -369,6 +385,13 @@ const ProfilePage = () => {
                     </div>
                 </div>
             )}
+            {followList && <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' role='dialog' aria-modal='true'>
+                <div className='w-full max-w-md rounded-xl border border-border bg-surface p-5 shadow-xl'>
+                    <div className='flex items-center justify-between'><h2 className='font-dynapuff text-xl font-semibold'>{followList.type === 'followers' ? 'Followers' : 'Following'}</h2><button type='button' onClick={() => setFollowList(null)} aria-label='Close'><X size={20} /></button></div>
+                    {followListError && <p className='mt-3 text-sm text-red-600'>{followListError}</p>}
+                    <div className='mt-4 max-h-96 space-y-3 overflow-y-auto'>{followList.users.length ? followList.users.map((user) => <Link key={user._id} href={user.username ? `/userprofile?username=${encodeURIComponent(user.username)}` : `/userprofile?userId=${user._id}`} className='flex items-center gap-3 rounded-lg p-2 hover:bg-surface-hover'><img src={user.profileImage ?? '/images/user-avatar.png'} alt={user.name ?? 'User'} className='h-10 w-10 rounded-full object-cover' /><span><strong className='block'>{user.name ?? 'User'}</strong><small className='text-text-light'>{user.username ? `@${user.username}` : user.role ?? ''}</small></span></Link>) : <p className='py-6 text-center text-text-light'>No {followList.type} yet.</p>}</div>
+                </div>
+            </div>}
         </section>
     )
 }

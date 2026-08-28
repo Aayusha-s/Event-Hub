@@ -33,9 +33,9 @@ const CategoryCard = ({ title, icon, description }: CategoryCardProps) => {
                 <Button
                     text="Explore"
                     variant="secondary"
-                    size="sm"
+                    size="vsm"
                     iconRight={<ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />}
-                    className="!h-auto !px-0 !text-sm"
+                    // className="!h-auto !px-0 !text-sm"
                 />
             </Link>
         </div>

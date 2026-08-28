@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import mongoose, { Types } from "mongoose";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 import dbConnect from "@/lib/mongodb";
 import { requireRole } from "@/middleware/auth/requireRole";
 import { HttpError } from "@/utils/api/httpError";
@@ -34,7 +36,12 @@ export async function GET(_request: Request, context: RouteContext) {
 	try {
 		const { id } = await context.params;
 		await dbConnect();
-		const event = await getEventById(getObjectId(id));
+		const eventId = getObjectId(id);
+		const session = await getServerSession(authOptions);
+		const canViewUnapproved = session?.user?.id && ["organizer", "admin"].includes(session.user.role)
+			? await findEventForManagement(eventId).then((candidate) => candidate && (session.user.role === "admin" || candidate.organizer.toString() === session.user.id))
+			: false;
+		const event = await getEventById(eventId, Boolean(canViewUnapproved));
 		if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
 		return NextResponse.json({ success: true, data: event });
 	} catch (error) {
@@ -52,7 +59,7 @@ export async function PUT(request: Request, context: RouteContext) {
 		if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
 		assertCanManage(event.organizer, session.user.id, session.user.role);
 		if (typeof body.action === "string") {
-			if (session.user.role !== "admin" && ["published", "unpublish", "archive"].includes(body.action)) {
+			if (session.user.role !== "admin" && ["published", "unpublish"].includes(body.action)) {
 				throw new HttpError(403, "Only an administrator can publish or unpublish an event through approval.", "FORBIDDEN");
 			}
 			if (["draft", "published", "cancelled", "completed"].includes(body.action)) {

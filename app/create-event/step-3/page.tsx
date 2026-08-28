@@ -31,7 +31,7 @@ const Page = () => {
     const handleNext = () => {
         for (let i = 0; i < tickets.length; i++) {
             const t = tickets[i];
-            if (!t.ticketName || !t.quantity || !t.price || !t.description) {
+            if (!t.ticketName || !t.quantity || t.price === '' || !t.description) {
                 alert(`Please fill in all required fields for Ticket ${i + 1}.`);
                 return;
             }

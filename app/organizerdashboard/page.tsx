@@ -155,7 +155,7 @@ export default function Page() {
 				<div className='flex flex-col justify-between mt-10'>
 					<div className='flex flex-row items-center justify-between'>
 						<h2 className='text-xl md:text-xl lg:text-2xl font-bold'>Upcoming Events</h2>
-						<Button text='View All' variant='secondary' size='sm' iconRight={<ArrowRight size={18} />} onClick={() => router.push('/explore-events')} />
+						<Button text='View All' variant='secondary' size='sm' iconRight={<ArrowRight size={18} />} onClick={() => router.push('/organizerdashboard/events')} />
 					</div>
 
 					<div className='border border-brown-normal rounded-xl mt-6 p-4 w-full grid grid-cols-1 xl:grid-cols-2 gap-4'>
@@ -213,7 +213,7 @@ export default function Page() {
 					<div className='flex flex-col mt-10'>
 						<div className='flex flex-row items-center justify-between'>
 							<h2 className='text-lg md:text-xl lg:text-2xl font-bold'>Recent Activity</h2>
-							<Button text='View All' variant='secondary' size='sm' iconRight={<ArrowRight size={18} />} onClick={() => router.push('/analytics')} />
+							<Button text='View All' variant='secondary' size='sm' iconRight={<ArrowRight size={18} />} onClick={() => router.push('/activity')} />
 						</div>
 
 						<div className='border border-brown-normal rounded-xl mt-6 p-4 w-full justify-items-center'>
@@ -228,7 +228,7 @@ export default function Page() {
 							))}
 
 							<div className='w-full h-0.5 bg-brown-light-hover my-4' />
-							<Button text='View All Activity' variant='cta' onClick={() => router.push('/analytics')} />
+							<Button text='View All Activity' variant='cta' onClick={() => router.push('/activity')} />
 						</div>
 					</div>
 				</div>

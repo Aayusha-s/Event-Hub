@@ -78,7 +78,7 @@ const Page = () => {
     });
 
     const handleNext = () => {
-        if (!startDate || !endDate || !startTime || !endTime || !venueName || !streetAddress || !city || !state || !eventCapacity || (allowVendorStalls && (!stallOpeningDate || !stallApplicationDeadline || !stallCapacity))) {
+        if (!startDate || !endDate || !startTime || !endTime || !venueName || !eventCapacity || (allowVendorStalls && (!stallOpeningDate || !stallApplicationDeadline || !stallCapacity))) {
             alert('Please fill in all required fields.');
             return;
         }

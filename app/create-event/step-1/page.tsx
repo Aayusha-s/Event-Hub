@@ -6,11 +6,14 @@ import { useRouter } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { loadDraft, saveDraft, type BasicInformationDraft } from '@/lib/createEventDraft';
 
+type EditableBasicInformationDraft = BasicInformationDraft & { images?: string[] };
+
 
 const Page = () => {
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
+    const [images, setImages] = useState<string[]>([]);
     const router = useRouter();
 	const eventId = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
 
@@ -27,15 +30,17 @@ const Page = () => {
                 setTitle(event.title);
                 setCategory(event.category);
                 setDescription(event.description);
+                setImages(event.images ?? []);
             });
             return;
         }
 
-        const draft = loadDraft<BasicInformationDraft>('basicInformation');
+        const draft = loadDraft<EditableBasicInformationDraft>('basicInformation');
         if (draft) {
             setTitle(draft.title);
             setCategory(draft.category);
             setDescription(draft.description);
+            setImages(draft.images ?? []);
         }
     }, []);
 
@@ -49,6 +54,8 @@ const Page = () => {
             title,
             category,
             description,
+            images,
+            ...(eventId() ? { eventId: eventId() } : {}),
         }
 
         saveDraft("basicInformation", BasicInformation);

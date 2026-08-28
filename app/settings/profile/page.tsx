@@ -11,11 +11,12 @@ import { useSession } from 'next-auth/react';
 type ProfileData = { name?: string; email?: string; phone?: string; bio?: string; location?: string; website?: string; profileImage?: string };
 
 const Page = () => {
-    const { data: session } = useSession();
+    const { data: session, update: updateSession } = useSession();
     const [profile, setProfile] = useState<ProfileData | null>(null);
     const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', bio: '', location: '', website: '', profileImage: '' });
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         let active = true;
@@ -64,6 +65,27 @@ const Page = () => {
         }
     };
 
+    const uploadPhoto = async (file: File) => {
+        try {
+            setUploading(true);
+            setMessage('');
+            setError('');
+            const body = new FormData();
+            body.append('file', file);
+            const response = await fetch('/api/users/me/profile-image', { method: 'POST', body });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.error?.message || 'Unable to upload profile image.');
+            setForm((current) => ({ ...current, profileImage: result.data.profileImage }));
+            setProfile((current) => current ? { ...current, profileImage: result.data.profileImage } : current);
+            await updateSession({ image: result.data.profileImage });
+            setMessage('Profile photo updated successfully.');
+        } catch (uploadError) {
+            setError(uploadError instanceof Error ? uploadError.message : 'Unable to upload profile image.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
     return (
         <section className='app-page font-cause text-text-dark'>
 
@@ -85,11 +107,12 @@ const Page = () => {
                     {/* change photo  */}
                     <div className='flex flex-row items-center gap-6 mt-6'>
                         <span className='border border-brown-normal rounded-full w-24 h-24 flex items-center justify-center font-bold text-xl'>
-                            {(profile?.name ?? 'JD').split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}
+                            {profile?.profileImage ? <img src={profile.profileImage} alt={profile.name ?? 'Profile'} className='h-full w-full rounded-full object-cover' /> : (profile?.name ?? 'JD').split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}
                         </span>
 
                         <div className='space-y-2'>
-                            <Button text="Change Photo" variant="cta" iconLeft={<Camera />} size='sm' onClick={() => undefined}></Button>
+                            <Button text={uploading ? 'Uploading...' : 'Change Photo'} variant="cta" iconLeft={<Camera />} size='sm' onClick={() => document.getElementById('profilePhoto')?.click()} disabled={uploading}></Button>
+                            <input id='profilePhoto' type='file' accept='image/jpeg,image/png,image/gif' className='hidden' onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadPhoto(file); event.target.value = ''; }} />
                             <p>JPG, PNG or GIF. Max size 5MB</p>
                         </div>
                     </div>

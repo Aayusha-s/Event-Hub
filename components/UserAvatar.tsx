@@ -16,7 +16,7 @@ const UserAvatar = ({ nameAbv, name, width = 16, height = 16, href }: UserAvatar
     return (
         <Link href={profileHref} className='shrink-0'>
             <div
-                className='flex items-center justify-center rounded-full bg-linear-to-br from-blue-100 to-purple-100 border-2 border-white shadow'
+                className='flex items-center justify-center rounded-full border-2 border-white shadow'
                 style={{ width: `${width * 0.25}rem`, height: `${height * 0.25}rem` }}
             >
                 <span className='text-xl font-semibold'>{initials}</span>
