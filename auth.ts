@@ -50,13 +50,41 @@ export const authOptions: NextAuthOptions = {
 	],
 	callbacks: {
 		async signIn({ user, account }) {
+			// Allow credentials sign-in
 			if (!account || account.provider === "credentials") return true;
+			
+			// Require email for OAuth providers
 			if (!user.email) return false;
+			
 			await dbConnect();
-			const existing = await User.findOne({ email: user.email }).select("_id role").exec();
-			const linked = existing ?? await User.create({ name: user.name ?? "Vivnt member", email: user.email, password: await bcrypt.hash(randomBytes(32).toString("hex"), 12), role: "attendee", interests: [] });
-			user.id = linked._id.toString();
-			user.role = linked.role as UserRole;
+			
+			// Find or create user from OAuth
+			const existingUser = await User.findOne({ email: user.email }).select("_id role status").exec();
+			
+			// Check if account is suspended
+			if (existingUser?.status === "suspended") return false;
+			
+			// If user exists, link the OAuth account
+			if (existingUser) {
+				user.id = existingUser._id.toString();
+				user.role = existingUser.role;
+				return true;
+			}
+			
+			// Create new user for OAuth signup
+			const newUser = await User.create({
+				name: user.name ?? "Vivnt member",
+				email: user.email,
+				// Generate random password for OAuth users
+				password: await bcrypt.hash(randomBytes(32).toString("hex"), 12),
+				role: "attendee",
+				status: "active",
+				interests: [],
+				profileImage: user.image ?? undefined,
+			});
+			
+			user.id = newUser._id.toString();
+			user.role = newUser.role;
 			return true;
 		},
 		async jwt({ token, user, trigger }) {
@@ -69,8 +97,11 @@ export const authOptions: NextAuthOptions = {
 			}
 			if (trigger === "update" && token.id) {
 				await dbConnect();
-				const currentUser = await User.findById(token.id).select("name email role profileImage").lean().exec();
+				const currentUser = await User.findById(token.id).select("name email role profileImage status").lean().exec();
 				if (currentUser) {
+					if (currentUser.status === "suspended") {
+						return null;
+					}
 					token.role = currentUser.role as UserRole;
 					token.name = currentUser.name;
 					token.email = currentUser.email;

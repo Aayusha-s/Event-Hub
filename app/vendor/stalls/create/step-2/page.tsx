@@ -51,38 +51,62 @@ const Page = () => {
             return '';
         }
     });
-    const [customCategory, setCustomCategory] = useState('');
+    const [customCategory, setCustomCategory] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        try {
+            return JSON.parse(window.localStorage.getItem('StallDetails') || 'null')?.customCategory ?? '';
+        } catch {
+            return '';
+        }
+    });
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const stallCategories = eventDraft?.stallCategories ?? [];
     const predefinedCategories = ['Food & Beverages', 'Clothing & Fashion', 'Arts & Crafts', 'Beauty & Wellness', 'Electronics & Technology', 'Home & Lifestyle', 'Books & Education', 'Jewelry & Accessories', 'Services'];
     const isCustomCategory = stallType === '__custom__' || (!predefinedCategories.includes(stallType) && !stallCategories.includes(stallType) && stallType !== '');
 
     const handleNext = () => {
+        const newErrors: Record<string, string> = {};
+
+        // Validate stall name
         if (!stallName.trim() || stallName.trim().length < 2) {
-            alert('Please enter a stall name (at least 2 characters).');
-            return;
+            newErrors.stallName = 'Please enter a stall name (at least 2 characters).';
         }
-        const selectedCategory = stallType === '__custom__' ? customCategory : stallType;
-        if (!selectedCategory.trim() || selectedCategory === '__custom__' || selectedCategory.trim().length < 2) {
-            alert('Please select or enter a stall type.');
-            return;
+
+        // Determine the final stall type value
+        const selectedCategory = stallType === '__custom__' ? customCategory.trim() : stallType.trim();
+        if (!selectedCategory || selectedCategory === '__custom__' || selectedCategory.length < 2) {
+            newErrors.stallType = 'Please select or enter a stall type/category.';
         }
+
+        // Validate size
         if (!size.trim()) {
-            alert('Please enter a stall size.');
-            return;
+            newErrors.size = 'Please enter a stall size (e.g., 3m x 3m).';
         }
-        if (!bookingFee.trim() || Number.isNaN(Number(bookingFee)) || Number(bookingFee) < 0) {
-            alert('Please enter a valid booking fee.');
-            return;
+
+        // Validate booking fee
+        const feeNumber = Number(bookingFee);
+        if (!bookingFee.trim() || Number.isNaN(feeNumber) || feeNumber < 0) {
+            newErrors.bookingFee = 'Please enter a valid booking fee (non-negative number).';
         }
+
+        // Validate description
         if (!description.trim() || description.trim().length < 10) {
-            alert('Please enter a description (at least 10 characters).');
+            newErrors.description = 'Please enter a description (at least 10 characters).';
+        }
+
+        // If there are errors, display them and return
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
             return;
         }
 
+        setErrors({});
+
+        // All validations passed, save the draft
         const details: StallDetailsDraft = {
             stallName: stallName.trim(),
-            stallType: selectedCategory.trim(),
+            stallType: selectedCategory,
             size: size.trim(),
             bookingFee: bookingFee.trim(),
             description: description.trim(),
@@ -125,38 +149,58 @@ const Page = () => {
                         type="text"
                         placeholder="e.g., Fresh Bakes Corner"
                         value={stallName}
-                        onChange={(e) => setStallName(e.target.value)}
-                        className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring"
+                        onChange={(e) => {
+                            setStallName(e.target.value);
+                            if (errors.stallName) setErrors({ ...errors, stallName: '' });
+                        }}
+                        className={`w-full rounded-xl border ${errors.stallName ? 'border-red-500' : 'border-border'} bg-surface px-3 py-3 text-text-dark focus-ring`}
                         required
                     />
+                    {errors.stallName && <p className="mt-1 text-xs text-red-600">{errors.stallName}</p>}
                 </div>
                 <div>
                     <h2 className="mb-2 text-sm font-medium text-text-dark">Stall Type / Category *</h2>
-                    <>
+                    <div className="space-y-2">
                         <select
-                            className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring"
+                            className={`w-full rounded-xl border ${errors.stallType ? 'border-red-500' : 'border-border'} bg-surface px-3 py-3 text-text-dark focus-ring`}
                             required
                             value={stallType === '__custom__' || (customCategory && stallType === customCategory) ? '__custom__' : stallType}
-                            onChange={(e) => { setStallType(e.target.value); if (e.target.value !== '__custom__') setCustomCategory(''); }}
+                            onChange={(e) => {
+                                setStallType(e.target.value);
+                                if (e.target.value !== '__custom__') setCustomCategory('');
+                                if (errors.stallType) setErrors({ ...errors, stallType: '' });
+                            }}
                         >
-                            <option value="" disabled>Select a category</option>
+                            <option value="" disabled>
+                                Select a category
+                            </option>
                             {stallCategories.map((cat) => (
-                                <option key={cat} value={cat}>{cat}</option>
+                                <option key={cat} value={cat}>
+                                    {cat}
+                                </option>
                             ))}
-                            {predefinedCategories.filter((cat) => !stallCategories.includes(cat)).map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                            {predefinedCategories.filter((cat) => !stallCategories.includes(cat)).map((cat) => (
+                                <option key={cat} value={cat}>
+                                    {cat}
+                                </option>
+                            ))}
                             <option value="__custom__">Other / Custom</option>
                         </select>
-                        {isCustomCategory && (
-                        <input
-                            type="text"
-                            placeholder="Enter your custom category"
-                            value={customCategory || (stallType !== '__custom__' ? stallType : '')}
-                            onChange={(e) => { setCustomCategory(e.target.value); setStallType(e.target.value); }}
-                            className="w-full rounded-xl border border-border bg-surface px-3 py-3 my-4 text-text-dark focus-ring"
-                            required
-                        />
+                        {stallType === '__custom__' && (
+                            <input
+                                type="text"
+                                placeholder="Enter your custom category (e.g., Photography, Crafts)"
+                                value={customCategory}
+                                onChange={(e) => {
+                                    setCustomCategory(e.target.value);
+                                    if (errors.stallType) setErrors({ ...errors, stallType: '' });
+                                }}
+                                className={`w-full rounded-xl border ${errors.stallType ? 'border-red-500' : 'border-border'} bg-surface px-3 py-3 text-text-dark focus-ring`}
+                                required
+                            />
                         )}
-                    </>
+                        {errors.stallType && <p className="text-xs text-red-600">{errors.stallType}</p>}
+                    </div>
                 </div>
                 <div>
                     <h2 className="mb-2 text-sm font-medium text-text-dark">Size *</h2>
@@ -164,10 +208,14 @@ const Page = () => {
                         type="text"
                         placeholder="e.g., 3m x 3m"
                         value={size}
-                        onChange={(e) => setSize(e.target.value)}
-                        className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring"
+                        onChange={(e) => {
+                            setSize(e.target.value);
+                            if (errors.size) setErrors({ ...errors, size: '' });
+                        }}
+                        className={`w-full rounded-xl border ${errors.size ? 'border-red-500' : 'border-border'} bg-surface px-3 py-3 text-text-dark focus-ring`}
                         required
                     />
+                    {errors.size && <p className="mt-1 text-xs text-red-600">{errors.size}</p>}
                 </div>
                 <div>
                     <h2 className="mb-2 text-sm font-medium text-text-dark">Booking Fee (Rs.) *</h2>
@@ -177,22 +225,30 @@ const Page = () => {
                         step="0.01"
                         placeholder="e.g., 5000"
                         value={bookingFee}
-                        onChange={(e) => setBookingFee(e.target.value)}
-                        className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring"
+                        onChange={(e) => {
+                            setBookingFee(e.target.value);
+                            if (errors.bookingFee) setErrors({ ...errors, bookingFee: '' });
+                        }}
+                        className={`w-full rounded-xl border ${errors.bookingFee ? 'border-red-500' : 'border-border'} bg-surface px-3 py-3 text-text-dark focus-ring`}
                         required
                     />
+                    {errors.bookingFee && <p className="mt-1 text-xs text-red-600">{errors.bookingFee}</p>}
                 </div>
             </div>
 
             <div>
                 <h2 className="mb-2 text-sm font-medium text-text-dark">Description *</h2>
                 <textarea
-                    placeholder="Describe what you will offer at your stall..."
+                    placeholder="Describe what you will offer at your stall (minimum 10 characters)..."
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="h-32 w-full resize-none rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring"
+                    onChange={(e) => {
+                        setDescription(e.target.value);
+                        if (errors.description) setErrors({ ...errors, description: '' });
+                    }}
+                    className={`h-32 w-full resize-none rounded-xl border ${errors.description ? 'border-red-500' : 'border-border'} bg-surface px-3 py-3 text-text-dark focus-ring`}
                     required
                 />
+                {errors.description && <p className="mt-1 text-xs text-red-600">{errors.description}</p>}
             </div>
         </CreateEventStepShell>
     );

@@ -136,8 +136,10 @@ const ProfilePage = () => {
     useEffect(() => {
         if (!followList) return;
         const previousOverflow = document.body.style.overflow;
+        const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setFollowList(null); };
         document.body.style.overflow = 'hidden';
-        return () => { document.body.style.overflow = previousOverflow; };
+        document.addEventListener('keydown', closeOnEscape);
+        return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', closeOnEscape); };
     }, [followList]);
 
     const shareProfile = async () => {
@@ -398,8 +400,8 @@ const ProfilePage = () => {
                     </div>
                 </div>
             )}
-            {followList && <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' role='dialog' aria-modal='true'>
-                <div className='w-full max-w-md rounded-xl border border-border bg-surface p-5 shadow-xl'>
+            {followList && <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4' role='dialog' aria-modal='true' onMouseDown={(event) => { if (event.target === event.currentTarget) setFollowList(null); }}>
+                <div className='w-full max-w-md rounded-xl border border-border bg-surface p-5 shadow-xl' onMouseDown={(event) => event.stopPropagation()}>
                     <div className='flex items-center justify-between'><h2 className='font-dynapuff text-xl font-semibold'>{followList.type === 'followers' ? 'Followers' : 'Following'}</h2><button type='button' onClick={() => setFollowList(null)} aria-label='Close'><X size={20} /></button></div>
                     {followListError && <p className='mt-3 text-sm text-red-600'>{followListError}</p>}
                     <div className='mt-4 max-h-96 space-y-3 overflow-y-auto'>{followList.users.length ? followList.users.map((user) => <Link key={user._id} href={user.username ? `/userprofile?username=${encodeURIComponent(user.username)}` : `/userprofile?userId=${user._id}`} className='flex items-center gap-3 rounded-lg p-2 hover:bg-surface-hover'><img src={user.profileImage ?? '/images/user-avatar.png'} alt={user.name ?? 'User'} className='h-10 w-10 rounded-full object-cover' /><span><strong className='block'>{user.name ?? 'User'}</strong><small className='text-text-light'>{user.username ? `@${user.username}` : user.role ?? ''}</small></span></Link>) : <p className='py-6 text-center text-text-light'>No {followList.type} yet.</p>}</div>

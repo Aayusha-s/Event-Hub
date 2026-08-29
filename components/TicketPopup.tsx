@@ -1,6 +1,7 @@
 'use client';
 import { Calendar, Download, MapPin, QrCode, Share2, X } from "lucide-react";
 import Button from "./Button";
+import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 import SharePopup from "./SharePopup";
 
@@ -18,28 +19,34 @@ export default function TicketPopup(
     }: TicketPopupProps
 ) {
     const [sharePopupOpen, setSharePopupOpen] = useState(false);
-
     useEffect(() => {
         if (!isOpen) return;
         const previousOverflow = document.body.style.overflow;
+        const previousPosition = document.body.style.position;
+        const previousTop = document.body.style.top;
+        const previousWidth = document.body.style.width;
+        const scrollY = window.scrollY;
         const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
         document.body.style.overflow = 'hidden';
         document.addEventListener('keydown', closeOnEscape);
-        return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', closeOnEscape); };
+        return () => { document.body.style.overflow = previousOverflow; document.body.style.position = previousPosition; document.body.style.top = previousTop; document.body.style.width = previousWidth; document.removeEventListener('keydown', closeOnEscape); window.scrollTo(0, scrollY); };
     }, [isOpen, onClose]);
 
-    if (!isOpen) return null;
+    if (!isOpen || typeof document === 'undefined') return null;
 
     if (sharePopupOpen) {
-        return (
+        return createPortal(
             <SharePopup
                 isOpen={sharePopupOpen}
                 onClose={() => setSharePopupOpen(false)}
-            />
+            />, document.body
         )
     }
 
-    return (
+    return createPortal((
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
             <div className="bg-white p-4 m-2 rounded-lg" onMouseDown={(event) => event.stopPropagation()}>
                 <div >
@@ -110,5 +117,5 @@ export default function TicketPopup(
 
             </div>
         </div>
-    );
+    ), document.body);
 }
