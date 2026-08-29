@@ -79,6 +79,11 @@ export default withAuth(
 		}
 
 		const routeAccess = getRouteAccess(pathname);
+		if (request.nextauth.token?.suspended) {
+			const loginUrl = new URL("/login", request.url);
+			loginUrl.searchParams.set("callbackUrl", request.url);
+			return NextResponse.redirect(loginUrl);
+		}
 		const role = request.nextauth.token?.role as UserRole | undefined;
 
 		if (routeAccess.type === "public") {
@@ -112,6 +117,9 @@ export default withAuth(
 				}
 
 				if (!token) {
+					return false;
+				}
+				if (token.suspended) {
 					return false;
 				}
 

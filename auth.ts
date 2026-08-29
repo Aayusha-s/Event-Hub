@@ -87,30 +87,37 @@ export const authOptions: NextAuthOptions = {
 			user.role = newUser.role;
 			return true;
 		},
-		async jwt({ token, user, trigger }) {
+		async jwt({ token, user }) {
 			if (user) {
 				token.id = user.id;
 				token.role = (user.role as UserRole) ?? "attendee";
 				token.name = user.name;
 				token.email = user.email;
 				token.picture = (user as { image?: string | null }).image ?? null;
+				token.suspended = false;
 			}
-			if (trigger === "update" && token.id) {
+			if (token.id) {
 				await dbConnect();
 				const currentUser = await User.findById(token.id).select("name email role profileImage status").lean().exec();
-				if (currentUser) {
-					if (currentUser.status === "suspended") {
-						return null;
-					}
-					token.role = currentUser.role as UserRole;
-					token.name = currentUser.name;
-					token.email = currentUser.email;
-					token.picture = currentUser.profileImage ?? null;
+				if (!currentUser || currentUser.status === "suspended") {
+					token.suspended = true;
+					return token;
 				}
+
+				token.suspended = false;
+				token.role = currentUser.role as UserRole;
+				token.name = currentUser.name;
+				token.email = currentUser.email;
+				token.picture = currentUser.profileImage ?? null;
 			}
 			return token;
 		},
 		async session({ session, token }) {
+			if (token.suspended) {
+				session.user = undefined;
+				return session;
+			}
+
 			if (session.user) {
 				session.user.id = (token.id as string) ?? "";
 				session.user.role = (token.role as UserRole) ?? "attendee";
