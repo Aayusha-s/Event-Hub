@@ -63,8 +63,20 @@ const Page = () => {
         loadEvent();
         return () => { active = false; };
     }, [id]);
-    useEffect(() => { if (!id) return; fetch('/api/saved-events').then(response => response.json()).then(result => { if (result.success) setSaved(result.data.items.some((item: { event: { _id: string } }) => item.event._id === id)); }).catch(() => undefined); }, [id]);
-    const toggleSaved = async () => { if (!event) return; const response = await fetch('/api/saved-events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eventId: event._id }) }); const result = await response.json(); if (result.success) setSaved(result.data.saved); };
+
+    useEffect(() => { 
+        if (!id) return; 
+        fetch('/api/saved-events').then(response => response.json()).then(result => { 
+            if (result.success) setSaved(result.data.items.some((item: { event: { _id: string } }) => item.event._id === id)); 
+        }).catch(() => undefined); 
+    }, [id]);
+
+    const toggleSaved = async () => { 
+        if (!event) return; 
+        const response = await fetch('/api/saved-events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eventId: event._id }) }); 
+        const result = await response.json(); 
+        if (result.success) setSaved(result.data.saved); 
+    };
 
     const details = useMemo(() => {
         if (!event) return [];
@@ -79,51 +91,247 @@ const Page = () => {
         ];
     }, [event]);
 
-    if (loading) return <section className='my-10 px-4 font-cause text-text-dark'>Loading event…</section>;
-    if (notFound || !event) return <section className='my-10 px-4 font-cause text-text-dark'><h1 className='font-dynapuff text-3xl font-bold'>Event not found</h1><p className='mt-3'>This event may have been removed or the link is invalid.</p></section>;
+    if (loading) return <section className='py-16 px-4 text-center font-cause text-text-dark'>Loading event…</section>;
+    if (notFound || !event) return <section className='py-16 px-4 text-center font-cause text-text-dark'><h1 className='font-dynapuff text-3xl font-bold'>Event not found</h1><p className='mt-3 text-text-dark/70'>This event may have been removed or the link is invalid.</p></section>;
 
     const organizerName = event.organizer?.name ?? 'Event organizer';
     const organizerHref = `/userprofile?userId=${event.organizer?._id ?? ''}`;
     const coverImage = event.images[0] ?? fallbackImage;
-    const mapQuery = event.latitude !== 0 || event.longitude !== 0 ? `${event.latitude},${event.longitude}` : event.venue;
-    const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
     const galleryImages = event.images.length ? event.images : [fallbackImage];
     const role = session?.user?.role;
     const ownsEvent = role === 'organizer' && event.organizer?._id === session?.user?.id;
+    const remainingSeats = Math.max(0, event.capacity - (event.ticketsSold ?? 0));
 
     return (
-        <section className='my-2 mx-2 px-4 font-cause text-text-dark md:my-3 md:mx-3 md:px-3 lg:my-4 lg:mx-4 lg:px-4 xl:my-6 xl:mx-6 xl:px-6 2xl:my-8 2xl:mx-8 2xl:px-8'>
-            <div className='flex flex-col gap-8 lg:flex-row lg:gap-12'>
-                <div className='hidden lg:block relative w-full lg:w-2/5 xl:w-2/5'>
-                    <div className='absolute inset-0 bg-brown-normal rotate-3 rounded-xl'></div>
-                    <img src={coverImage} alt={event.title} className='absolute inset-0 w-full h-full object-cover rounded-xl' />
+        <main className='bg-white text-text-dark font-cause'>
+            {/* Hero Section */}
+            <div className='relative h-64 md:h-96 lg:h-[500px] overflow-hidden bg-gray-200 flex items-center justify-center'>
+                <img src={coverImage} alt={event.title} className='w-full h-full object-cover' />
+                <div className='absolute inset-0 bg-gradient-to-t from-black/30 to-transparent'></div>
+                <div className='absolute top-4 right-4 flex gap-2'>
+                    <button onClick={toggleSaved} className='bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all'>
+                        <i className={`fa-solid fa-bookmark text-lg ${saved ? 'text-brown-normal' : 'text-text-dark'}`}></i>
+                    </button>
                 </div>
-                <div className='flex flex-col gap-4 lg:w-3/5'>
-                    <h1 className='text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mt-2 lg:mt-5 font-dynapuff'>{event.title}</h1>
-                    <div className='flex flex-row gap-3 items-center'><i className="fa-solid fa-star text-yellow-500 text-lg md:text-xl"></i><p className='text-base md:text-lg'>{`${event.ticketsSold ?? 0} attendees • ${event.status}`}</p></div>
-                    <div className='flex flex-row items-center gap-3'>
-                        <div className='border-2 border-brown-normal rounded-full p-2 md:p-3 flex items-center justify-center w-12 h-12 md:w-14 md:h-14 overflow-hidden'>
-                            <Link href={organizerHref}>{event.organizer?.profileImage ? <img src={event.organizer.profileImage} alt={organizerName} className='w-full h-full object-cover rounded-full' /> : <i className="fa-solid fa-user text-xl md:text-2xl"></i>}</Link>
+            </div>
+
+            <div className='max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12'>
+                {/* Main Content Grid */}
+                <div className='grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10'>
+                    {/* Left Column - Main Content */}
+                    <div className='lg:col-span-2 space-y-8'>
+                        {/* Title & Category */}
+                        <div className='space-y-3'>
+                            <div className='flex items-center gap-2 flex-wrap'>
+                                <span className='inline-block px-3 py-1 bg-brown-light text-brown-normal rounded-full text-sm font-semibold capitalize'>{event.category.replaceAll('_', ' ')}</span>
+                                <span className='inline-block px-3 py-1 bg-gray-100 text-text-dark rounded-full text-sm'>{event.status}</span>
+                            </div>
+                            <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold font-dynapuff leading-tight'>{event.title}</h1>
+                            <div className='flex items-center gap-4 pt-2'>
+                                <div className='flex items-center gap-2'>
+                                    <i className="fa-solid fa-users text-brown-normal"></i>
+                                    <span className='text-text-dark/70'>{event.ticketsSold ?? 0} attendees</span>
+                                </div>
+                                {remainingSeats > 0 && (
+                                    <div className='flex items-center gap-2'>
+                                        <i className="fa-solid fa-check-circle text-green-600"></i>
+                                        <span className='text-green-700 font-semibold'>{remainingSeats} seats left</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <p className='ml-2 text-base md:text-lg'>Hosted by <Link href={organizerHref}><span className='font-semibold font-dynapuff hover:text-brown-dark'>{organizerName}</span></Link></p>
+
+                        {/* Organizer Card */}
+                        <div className='bg-gradient-to-r from-brown-light to-brown-light/50 rounded-xl p-6 flex items-center gap-4'>
+                            <div className='w-16 h-16 rounded-full border-3 border-brown-normal flex items-center justify-center shrink-0 bg-white overflow-hidden'>
+                                {event.organizer?.profileImage ? 
+                                    <img src={event.organizer.profileImage} alt={organizerName} className='w-full h-full object-cover' /> 
+                                    : <i className="fa-solid fa-user text-2xl text-brown-normal"></i>
+                                }
+                            </div>
+                            <div className='flex-1 min-w-0'>
+                                <p className='text-sm text-text-dark/70 mb-1'>Hosted by</p>
+                                <Link href={organizerHref} className='hover:text-brown-dark transition-colors'>
+                                    <h3 className='text-xl font-bold font-dynapuff truncate'>{organizerName}</h3>
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Event Details Grid */}
+                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                            {details.map((item) => (
+                                <div key={item.title} className='flex gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-brown-normal hover:bg-brown-light/20 transition-all'>
+                                    <div className='text-brown-normal text-xl mt-1 shrink-0 w-6 text-center'>
+                                        <i className={item.icon}></i>
+                                    </div>
+                                    <div className='min-w-0'>
+                                        <p className='text-sm font-semibold text-text-dark/70'>{item.title}</p>
+                                        <p className='text-base font-semibold text-text-dark truncate'>{item.text}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Location Map */}
+                        <div className='border-t pt-8'>
+                            <Map mapId={1} latitude={event.latitude} longitude={event.longitude} venue={event.venue} />
+                        </div>
+
+                        {/* Event Description */}
+                        <div className='border-t pt-8 space-y-6'>
+                            <div>
+                                <h2 className='text-2xl font-bold font-dynapuff mb-4'>About This Event</h2>
+                                <p className='text-base md:text-lg leading-relaxed text-text-dark/80 whitespace-pre-wrap'>{event.description}</p>
+                            </div>
+                        </div>
+
+                        {/* Ticket Types */}
+                        <div className='border-t pt-8 space-y-4'>
+                            <h2 className='text-2xl font-bold font-dynapuff'>Tickets</h2>
+                            <div className='space-y-3'>
+                                {event.ticketTypes.map((ticket) => (
+                                    <div key={ticket.name} className='flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-brown-normal transition-all'>
+                                        <div className='min-w-0'>
+                                            <h3 className='font-semibold text-text-dark'>{ticket.name}</h3>
+                                            {ticket.description && <p className='text-sm text-text-dark/70 mt-1'>{ticket.description}</p>}
+                                            <p className='text-xs text-text-dark/60 mt-2'>{ticket.quantity} available</p>
+                                        </div>
+                                        <div className='shrink-0 text-right ml-4'>
+                                            <p className='text-xl font-bold text-brown-normal'>{ticket.price === 0 ? 'Free' : `Rs. ${ticket.price.toLocaleString()}`}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Photos Gallery */}
+                        <div className='border-t pt-8 space-y-4'>
+                            <div className='flex items-center justify-between'>
+                                <h2 className='text-2xl font-bold font-dynapuff'>Gallery</h2>
+                                {galleryImages.length > 5 && (
+                                    <button onClick={() => setShowAllPhotos(!showAllPhotos)} className='text-brown-normal font-semibold hover:text-brown-dark transition-colors'>
+                                        {showAllPhotos ? 'Show Less' : 'View All'}
+                                    </button>
+                                )}
+                            </div>
+                            <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+                                {galleryImages.slice(0, showAllPhotos ? galleryImages.length : 6).map((image, index) => (
+                                    <div key={`${image}-${index}`} className='aspect-square rounded-lg overflow-hidden bg-gray-200 hover:shadow-lg transition-shadow'>
+                                        <img src={image} alt={`${event.title} ${index + 1}`} className='w-full h-full object-cover hover:scale-110 transition-transform duration-300' />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Tags */}
+                        <div className='border-t pt-8 space-y-4'>
+                            <h3 className='text-lg font-semibold'>Tags</h3>
+                            <div className='flex flex-wrap gap-2'>
+                                {event.tags.map((tag) => (
+                                    <Link key={tag} href={`/event-tags?tag=${encodeURIComponent(tag)}`} className='px-4 py-2 bg-gray-100 text-text-dark rounded-full hover:bg-brown-light hover:text-brown-dark transition-colors text-sm font-medium'>
+                                        {tag}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Similar Events */}
+                        {similarEvents.length > 0 && (
+                            <div className='border-t pt-8 space-y-6'>
+                                <div className='flex items-center justify-between'>
+                                    <h2 className='text-2xl font-bold font-dynapuff'>Similar Events</h2>
+                                    <Link href={`/explore-events?category=${encodeURIComponent(event.category)}`} className='text-brown-normal font-semibold hover:text-brown-dark transition-colors'>
+                                        View More →
+                                    </Link>
+                                </div>
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                                    {similarEvents.map((similar) => (
+                                        <EventCard key={similar._id} eventId={similar._id} tags={similar.tags} imageUrl={similar.images[0] ?? fallbackImage} imageAlt={similar.title} title={similar.title} organizer={`By ${similar.organizer?.name ?? 'Event organizer'}`} descriptions={[similar.description]} location={similar.venue} price={similar.ticketTypes.some((ticket) => ticket.price === 0) ? 'Free' : `From Rs. ${Math.min(...similar.ticketTypes.map((ticket) => ticket.price)).toLocaleString()}`} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Event Stalls */}
+                        <div className='border-t pt-8'>
+                            <EventStalls eventId={event._id} />
+                        </div>
+
+                        {/* Event Social */}
+                        <div className='border-t pt-8'>
+                            <EventSocial eventId={event._id} />
+                        </div>
                     </div>
-                    <p className='text-sm capitalize text-text-dark/80'>Category: {event.category.replaceAll('_', ' ')} • Event type: {event.status}</p>
-                    <div className='mt-4 flex gap-3'>{role === 'attendee' && <Link href={`/booknow?eventId=${event._id}`}><Button text="Book Now" iconRight={<i className="fa-solid fa-arrow-right"></i>} variant="cta" size="lg" /></Link>}{role === 'vendor' && <Link href={`/vendor/stalls/create/step-1?eventId=${event._id}`}><Button text="Create Stall" variant="cta" size="lg" /></Link>}{ownsEvent && <Link href={`/create-event/step-1?eventId=${event._id}`}><Button text="Manage Event" variant="cta" size="lg" /></Link>}<Button text={saved ? 'Saved' : 'Save Event'} variant='secondary' size='lg' onClick={toggleSaved}/></div>
+
+                    {/* Right Column - Sticky Booking Card */}
+                    <div className='lg:col-span-1'>
+                        <div className='sticky top-4 bg-white rounded-xl border-2 border-brown-normal p-6 shadow-lg space-y-4'>
+                            {/* Price Summary */}
+                            <div className='space-y-2 pb-4 border-b'>
+                                <p className='text-sm text-text-dark/70'>Starting from</p>
+                                <p className='text-3xl font-bold text-brown-normal font-dynapuff'>
+                                    {event.ticketTypes.some((t) => t.price === 0) 
+                                        ? 'Free' 
+                                        : `Rs. ${Math.min(...event.ticketTypes.map((t) => t.price)).toLocaleString()}`
+                                    }
+                                </p>
+                            </div>
+
+                            {/* Availability Status */}
+                            <div className={`p-3 rounded-lg text-sm font-semibold text-center ${remainingSeats > 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                                {remainingSeats > 0 
+                                    ? `${remainingSeats} tickets available` 
+                                    : 'Event is sold out'
+                                }
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className='space-y-3'>
+                                {role === 'attendee' && (
+                                    <Link href={`/booknow?eventId=${event._id}`} className='block'>
+                                        <Button text="Book Now" variant="cta" size="lg" className='w-full' />
+                                    </Link>
+                                )}
+                                {role === 'vendor' && (
+                                    <Link href={`/vendor/stalls/create/step-1?eventId=${event._id}`} className='block'>
+                                        <Button text="Create Stall" variant="cta" size="lg" className='w-full' />
+                                    </Link>
+                                )}
+                                {ownsEvent && (
+                                    <Link href={`/create-event/step-1?eventId=${event._id}`} className='block'>
+                                        <Button text="Manage Event" variant="cta" size="lg" className='w-full' />
+                                    </Link>
+                                )}
+                                {!role && (
+                                    <Link href='/login' className='block'>
+                                        <Button text="Sign in to Book" variant="cta" size="lg" className='w-full' />
+                                    </Link>
+                                )}
+                            </div>
+
+                            {/* Share & Save */}
+                            <div className='flex gap-2 pt-4 border-t'>
+                                <button className='flex-1 py-2 px-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2 text-text-dark font-semibold'>
+                                    <i className="fa-solid fa-share-alt"></i>
+                                    <span className='hidden sm:inline'>Share</span>
+                                </button>
+                                <button onClick={toggleSaved} className={`flex-1 py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold ${saved ? 'bg-brown-light text-brown-normal' : 'bg-gray-100 hover:bg-gray-200 text-text-dark'}`}>
+                                    <i className="fa-solid fa-bookmark"></i>
+                                    <span className='hidden sm:inline'>{saved ? 'Saved' : 'Save'}</span>
+                                </button>
+                            </div>
+
+                            {/* Important Info */}
+                            <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800 space-y-1'>
+                                <p><strong>✓</strong> Secure payment</p>
+                                <p><strong>✓</strong> Mobile e-tickets</p>
+                                <p><strong>✓</strong> Money-back guarantee</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div className='flex flex-col gap-8 mt-8 lg:flex-row lg:gap-12'>
-                <div className='lg:w-1/3'>
-                    <div className='w-full border-2 border-brown-normal rounded-xl p-4 md:p-6'><h2 className='font-dynapuff font-bold text-xl md:text-xl lg:text-xl mb-4 md:mb-6'>Event Details</h2><div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 '>{details.map((item) => <div key={item.title} className="flex items-start gap-3 md:gap-4"><div className="border-2 border-brown-normal rounded-xl bg-brown-light p-3 flex items-center justify-center shrink-0"><i className={`${item.icon} text-xl md:text-2xl`}></i></div><div className="min-w-0"><h4 className="font-semibold text-base md:text-lg">{item.title}</h4><p className="text-sm md:text-base text-text-dark/80">{item.text}</p></div></div>)}</div></div>
-                    <div className='mt-6 md:mt-8'><Map mapId={1} mapUrl={mapUrl} /></div>
-                    <div className='mt-6 md:mt-8'><h2 className='font-dynapuff font-bold text-xl md:text-xl lg:text-xl mb-3 md:mb-4'>Tags</h2><div className='flex flex-wrap gap-2'>{event.tags.map((tag) => <Link href={`/event-tags?tag=${encodeURIComponent(tag)}`} key={tag}><Button text={tag} variant='tag' size='sm' /></Link>)}</div></div>
-                </div>
-                <div className='w-full lg:w-2/3 border-2 border-brown-normal rounded-xl p-4 md:p-6 mt-5 lg:mt-0'><h2 className='font-dynapuff font-bold text-xl md:text-xl lg:text-xl mb-4 md:mb-6'>Event Description</h2><div className='space-y-4'><p className='leading-relaxed text-base md:text-lg whitespace-pre-wrap'>{event.description}</p><p className='leading-relaxed text-base md:text-lg font-semibold'>Ticket Types</p><ul className='list-disc list-inside space-y-2 text-base md:text-lg'>{event.ticketTypes.map((ticket) => <li key={ticket.name}>{ticket.name} — {ticket.price === 0 ? 'Free' : `Rs. ${ticket.price.toLocaleString()}`} ({ticket.quantity} available){ticket.description ? `: ${ticket.description}` : ''}</li>)}</ul></div></div>
-            </div>
-            <div className='mt-8 md:mt-12'><div className='flex flex-row sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6'><h2 className='font-dynapuff font-bold text-xl md:text-xl lg:text-xl mb-3 sm:mb-0'>Photos</h2><Button text={showAllPhotos ? 'Show Less' : 'View All'} variant='cta' size='sm' iconRight={<i className="fa-solid fa-arrow-right"></i>} onClick={() => setShowAllPhotos((visible) => !visible)} /></div><div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>{galleryImages.slice(0, showAllPhotos ? galleryImages.length : 5).map((image, index) => <div key={`${image}-${index}`} className='relative w-full h-48 md:h-56 lg:h-48 xl:h-56 transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg cursor-pointer'><div className={`absolute inset-0 rotate-3 rounded-xl ${index % 5 === 0 ? 'bg-red-200' : index % 5 === 1 ? 'bg-green-200' : index % 5 === 2 ? 'bg-blue-200' : index % 5 === 3 ? 'bg-yellow-200' : 'bg-purple-200'}`} /><img src={image} alt={`${event.title} ${index + 1}`} className='absolute inset-0 w-full h-full object-cover rounded-xl' /></div>)}</div></div>
-            <div className='mt-10 md:mt-16'><div className='flex flex-row sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6'><h2 className='font-dynapuff font-bold text-xl md:text-xl lg:text-xl mb-3 sm:mb-0'>Similar Events</h2><Link href={`/explore-events?category=${encodeURIComponent(event.category)}`}><Button text='View More' variant='cta' size='sm' iconRight={<i className="fa-solid fa-arrow-right"></i>} /></Link></div><div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6'>{similarEvents.map((similar) => <EventCard key={similar._id} eventId={similar._id} tags={similar.tags} imageUrl={similar.images[0] ?? fallbackImage} imageAlt={similar.title} title={similar.title} organizer={`By ${similar.organizer?.name ?? 'Event organizer'}`} descriptions={[similar.description]} location={similar.venue} price={similar.ticketTypes.some((ticket) => ticket.price === 0) ? 'Free' : `From Rs.${Math.min(...similar.ticketTypes.map((ticket) => ticket.price))}`} />)}</div></div>
-            <EventStalls eventId={event._id} />
-            <EventSocial eventId={event._id} />
-        </section>
+        </main>
     );
 };
 

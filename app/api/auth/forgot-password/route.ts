@@ -17,7 +17,16 @@ export async function POST(request: Request) {
             await PasswordResetToken.deleteMany({ user: user._id, usedAt: { $exists: false } });
             await PasswordResetToken.create({ user: user._id, tokenHash: createHash("sha256").update(token).digest("hex"), expiresAt: new Date(Date.now() + 60 * 60 * 1000) });
             const resetUrl = `${new URL(request.url).origin}/reset-password?token=${token}`;
-            await sendEmail({ to: user.email, subject: "Reset your Vivnt password", text: `Reset your password here: ${resetUrl}`, html: `<p>Hello ${user.name},</p><p><a href="${resetUrl}">Reset your Vivnt password</a>. This link expires in one hour.</p>` });
+            
+            const emailSent = await sendEmail({ to: user.email, subject: "Reset your Vivnt password", text: `Reset your password here: ${resetUrl}`, html: `<p>Hello ${user.name},</p><p><a href="${resetUrl}">Reset your Vivnt password</a>. This link expires in one hour.</p>` });
+            
+            if (!emailSent) {
+                console.error(`[Forgot Password] Failed to send reset email to ${user.email}`);
+                // Still return success message for security (don't reveal if account exists)
+                // but email was not sent, so reset token won't be usable
+            } else {
+                console.log(`[Forgot Password] Password reset email sent to ${user.email}`);
+            }
         }
         return NextResponse.json({ success: true, data: { message: "If an account matches that email, a reset link has been sent." } });
     } catch (error) {
