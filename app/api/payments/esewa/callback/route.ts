@@ -121,12 +121,17 @@ const complete = async (request: Request) => {
 		await dbConnect();
 		const payment = paymentId && Types.ObjectId.isValid(paymentId) ? await Payment.findById(paymentId).exec() : transactionUuid ? await Payment.findOne({ transactionId: transactionUuid }).exec() : null;
 		if (!payment) throw new Error("Payment record was not found.");
-		logPayment("callback payment resolved", { paymentId: payment._id.toString(), bookingId: payment.booking?.toString(), transactionUuid: transactionUuid ?? payment.transactionId });
+		
+		const eventId = payment.event?.toString();
+		if (!eventId) throw new Error("Payment has no associated event.");
+		
+		logPayment("callback payment resolved", { paymentId: payment._id.toString(), bookingId: payment.booking?.toString(), eventId, transactionUuid: transactionUuid ?? payment.transactionId });
 		await verifyPayment(payment._id.toString(), serializedCallback, transactionUuid ?? undefined);
-		return NextResponse.redirect(new URL(`/booknow?eventId=${payment.event}&paymentId=${payment._id}&settled=1`, request.url));
+		return NextResponse.redirect(new URL(`/booknow?eventId=${eventId}&paymentId=${payment._id}&settled=1`, request.url));
 	} catch (error) {
-		logPayment("callback failed", { error: error instanceof Error ? error.message : String(error) });
-		return NextResponse.redirect(new URL(`/booknow?paymentError=${encodeURIComponent(error instanceof Error ? error.message : "Payment verification failed.")}`, request.url));
+		const errorMsg = error instanceof Error ? error.message : "Payment verification failed.";
+		logPayment("callback failed", { error: errorMsg });
+		return NextResponse.redirect(new URL(`/booknow?paymentError=${encodeURIComponent(errorMsg)}`, request.url));
 	}
 };
 

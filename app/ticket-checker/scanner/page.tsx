@@ -133,7 +133,9 @@ export default function ScannerPage() {
 
                 try {
                     const { Html5Qrcode } = await import('html5-qrcode');
+                    // Html5Qrcode.scanFile() expects a File object, not a data URL
                     const qrCode = new Html5Qrcode(SCANNER_ID, false);
+                    
                     const result = await qrCode.scanFile(file, true);
 
                     if (result) {
@@ -142,13 +144,14 @@ export default function ScannerPage() {
                         setError('No QR code found in the uploaded image. Please try another image.');
                     }
                 } catch (scanError) {
-                    const message = scanError instanceof Error ? scanError.message : 'Unknown error';
-                    if (message.includes('No QR code found')) {
+                    const message = scanError instanceof Error ? scanError.message.toLowerCase() : '';
+                    console.error('QR scanning error:', scanError);
+                    
+                    if (message.includes('no qr code found') || message.includes('qr code could not be detected')) {
                         setError('No QR code found in the image. Please upload an image with a valid QR code.');
                     } else {
                         setError('Unable to scan the QR code from the image. Please try another image.');
                     }
-                    console.error('QR scanning error:', scanError);
                 } finally {
                     setIsProcessingImage(false);
                     if (fileInput.current) {

@@ -40,21 +40,99 @@ export const bookingService = {
 		return booking;
 	},
 	completeBooking: async (bookingId: Types.ObjectId, paymentId: Types.ObjectId) => {
-		await dbConnect(); const session = await mongoose.startSession();
+		await dbConnect();
+		const session = await mongoose.startSession();
 		logBooking("complete requested", { bookingId: bookingId.toString(), paymentId: paymentId.toString() });
-		try { let tickets: Awaited<ReturnType<typeof Ticket.create>> = [] as never;
+		try {
+			let tickets: Awaited<ReturnType<typeof Ticket.create>> = [] as never;
 			await session.withTransaction(async () => {
-				const booking = await Booking.findById(bookingId).session(session).exec(); const payment = await Payment.findById(paymentId).session(session).exec();
+				const booking = await Booking.findById(bookingId).session(session).exec();
+				const payment = await Payment.findById(paymentId).session(session).exec();
 				if (!booking || !payment) throw new HttpError(404, "Booking or payment was not found.", "NOT_FOUND");
-				if (booking.status === "paid") return;
-				const event = await Event.findById(booking.event).session(session).exec(); if (!event || event.status !== "published" || event.startDate <= new Date()) throw new HttpError(409, "This event is no longer available.", "BOOKING_UNAVAILABLE");
-				const existing = await Ticket.aggregate([{ $match: { event: event._id, ticketStatus: "active" } }, { $group: { _id: "$ticketType", count: { $sum: 1 } } }]).session(session).exec(); const sold = new Map(existing.map((item) => [item._id as string, item.count as number]));
-				const total = booking.items.reduce((sum, item) => sum + item.quantity, 0); if ([...sold.values()].reduce((sum, count) => sum + count, 0) + total > event.capacity) throw new HttpError(409, "This event is sold out.", "EVENT_SOLD_OUT");
-				for (const item of booking.items) { const type = event.ticketTypes.find((candidate) => candidate.name === item.ticketType); if (!type || (sold.get(item.ticketType) ?? 0) + item.quantity > type.quantity) throw new HttpError(409, `${item.ticketType} is sold out.`, "TICKET_TYPE_SOLD_OUT"); }
-				const rows = await Promise.all(booking.items.flatMap((item) => Array.from({ length: item.quantity }, async () => { const number = ticketNumber(); return { user: booking.user, event: booking.event, booking: booking._id, payment: payment._id, ticketType: item.ticketType, ticketNumber: number, qrCode: await QRCode.toDataURL(`vivnt-ticket:${number}`, { width: 300, margin: 1 }), paymentStatus: "paid" as const }; })));
-				tickets = await Ticket.create(rows, { session }); booking.status = "paid"; booking.payment = payment._id; payment.paymentStatus = "paid"; await Promise.all([booking.save({ session }), payment.save({ session })]);
+				if (booking.status === "paid") {
+					logBooking("complete already paid", { bookingId: bookingId.toString() });
+					return;
+				}
+				
+				logBooking("complete booking found", { 
+					bookingId: bookingId.toString(), 
+					bookingStatus: booking.status,
+					itemCount: booking.items.length,
+					totalQuantity: booking.items.reduce((sum, item) => sum + item.quantity, 0),
+					eventId: booking.event.toString()
+				});
+				
+				const event = await Event.findById(booking.event).session(session).exec();
+				if (!event || event.status !== "published" || event.startDate <= new Date()) {
+					logBooking("complete event validation failed", { 
+						eventId: booking.event.toString(),
+						eventExists: !!event,
+						eventStatus: event?.status,
+						eventStartDate: event?.startDate
+					});
+					throw new HttpError(409, "This event is no longer available.", "BOOKING_UNAVAILABLE");
+				}
+				
+				const existing = await Ticket.aggregate([{ $match: { event: event._id, ticketStatus: "active" } }, { $group: { _id: "$ticketType", count: { $sum: 1 } } }]).session(session).exec();
+				const sold = new Map(existing.map((item) => [item._id as string, item.count as number]));
+				const total = booking.items.reduce((sum, item) => sum + item.quantity, 0);
+				if ([...sold.values()].reduce((sum, count) => sum + count, 0) + total > event.capacity) throw new HttpError(409, "This event is sold out.", "EVENT_SOLD_OUT");
+				for (const item of booking.items) {
+					const type = event.ticketTypes.find((candidate) => candidate.name === item.ticketType);
+					if (!type || (sold.get(item.ticketType) ?? 0) + item.quantity > type.quantity) throw new HttpError(409, `${item.ticketType} is sold out.`, "TICKET_TYPE_SOLD_OUT");
+				}
+				
+				logBooking("complete capacity check passed", { 
+					bookingId: bookingId.toString(),
+					totalCapacityUsed: [...sold.values()].reduce((sum, count) => sum + count, 0) + total,
+					eventCapacity: event.capacity
+				});
+				
+				try {
+					const rows = await Promise.all(booking.items.flatMap((item) => Array.from({ length: item.quantity }, async () => {
+						const number = ticketNumber();
+						const qrDataUrl = await QRCode.toDataURL(`vivnt-ticket:${number}`, { width: 300, margin: 1 });
+						return {
+							user: booking.user,
+							event: booking.event,
+							booking: booking._id,
+							payment: payment._id,
+							ticketType: item.ticketType,
+							ticketNumber: number,
+							qrCode: qrDataUrl,
+							paymentStatus: "paid" as const,
+							ticketStatus: "active" as const,
+							checkedIn: false  // Explicitly set to false - ticket is newly created and unused
+						};
+					})));
+					
+					logBooking("complete rows generated", { 
+						bookingId: bookingId.toString(),
+						rowCount: rows.length
+					});
+					
+					tickets = await Ticket.create(rows, { session });
+					logBooking("complete tickets created", { 
+						bookingId: bookingId.toString(),
+						ticketCount: tickets.length
+					});
+				} catch (ticketError) {
+					logBooking("complete ticket creation failed", { 
+						bookingId: bookingId.toString(),
+						error: ticketError instanceof Error ? ticketError.message : String(ticketError)
+					});
+					throw ticketError;
+				}
+				
+				booking.status = "paid";
+				booking.payment = payment._id;
+				payment.paymentStatus = "paid";
+				await Promise.all([booking.save({ session }), payment.save({ session })]);
 				logBooking("complete transaction", { bookingId: booking._id.toString(), paymentId: payment._id.toString(), ticketCount: tickets.length, status: booking.status });
-			}); return tickets;
-		} finally { await session.endSession(); }
+			});
+			return tickets;
+		} finally {
+			await session.endSession();
+		}
 	},
 };
