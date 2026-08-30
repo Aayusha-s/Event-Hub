@@ -87,8 +87,8 @@ const Page = () => {
     });
 
     const handleNext = () => {
-        if (!startDate || !endDate || !startTime || !endTime || !venueName || !eventCapacity || !latitude || !longitude || (allowVendorStalls && (!stallOpeningDate || !stallApplicationDeadline || !stallCapacity))) {
-            alert('Please fill in all required fields, including selecting a location on the map.');
+        if (!startDate || !endDate || !startTime || !endTime || !venueName || !eventCapacity || (allowVendorStalls && (!stallOpeningDate || !stallApplicationDeadline || !stallCapacity))) {
+            alert('Please fill in all required fields.');
             return;
         }
 
@@ -146,8 +146,8 @@ const Page = () => {
 
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
                 <div>
-                    <h2 className="mb-2 text-sm font-medium text-text-dark">City *</h2>
-                    <input type="text" placeholder="e.g., New York" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" required value={city} onChange={(e) => setCity(e.target.value)} />
+                    <h2 className="mb-2 text-sm font-medium text-text-dark">City</h2>
+                    <input type="text" placeholder="e.g., New York" className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring" value={city} onChange={(e) => setCity(e.target.value)} />
                 </div>
                 <div>
                     <h2 className="mb-2 text-sm font-medium text-text-dark">State </h2>
