@@ -146,8 +146,9 @@ const Map = ({ mapId, latitude, longitude, venue }: MapProps) => {
             )}
 
             {!showLocationInfo && !isGeocoding && !showMap && (
-                <div className='max-w-full h-[250px] border-2 border-brown-normal rounded-xl overflow-hidden p-2 flex items-center justify-center bg-surface'>
-                    <p className='text-text-light text-center'>Location information not available</p>
+                <div className='max-w-full h-[250px] border-2 border-brown-normal rounded-xl overflow-hidden p-4 flex flex-col items-center justify-center bg-surface gap-3'>
+                    <p className='text-text-light text-center font-semibold'>Location information not available</p>
+                    <p className='text-xs text-text-light text-center'>The organizer hasn't set a specific location for this event yet.</p>
                 </div>
             )}
         </section>

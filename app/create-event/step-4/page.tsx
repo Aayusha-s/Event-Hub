@@ -23,6 +23,8 @@ type EventDetailsDraft = {
     city: string;
     state: string;
     eventCapacity: string;
+    latitude?: number;
+    longitude?: number;
 	allowVendorStalls?: boolean; stallOpeningDate?: string; stallApplicationDeadline?: string; stallCapacity?: string; stallCategories?: string;
 };
 
@@ -70,9 +72,8 @@ const Page = () => {
                     description: latestBasicInformation.description,
                     category: latestBasicInformation.category,
                     venue: [latestEventDetails.venueName, latestEventDetails.streetAddress, latestEventDetails.city, latestEventDetails.state].filter(Boolean).join(', '),
-                    // The current form has no map/geocoding input. Store a valid neutral coordinate until location coordinates are captured by that UI.
-                    latitude: 0,
-                    longitude: 0,
+                    latitude: latestEventDetails.latitude ?? 0,
+                    longitude: latestEventDetails.longitude ?? 0,
                     images: latestBasicInformation.images ?? [],
                     startDate: startDate.toISOString(),
                     endDate: endDate.toISOString(),

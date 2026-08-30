@@ -118,16 +118,16 @@ const Searchbar = ({ className, showLocation = true, compact = false, placeholde
         const params = new URLSearchParams();
 
         if (nextQuery.trim()) {
-            params.set("query", nextQuery.trim());
+            params.set("q", nextQuery.trim());
         }
 
         if (nextLocation.trim()) {
             params.set("location", nextLocation.trim());
         }
 
-        const targetPath = `/explore-events${params.toString() ? `?${params.toString()}` : ""}`;
+        const targetPath = `/search${params.toString() ? `?${params.toString()}` : ""}`;
 
-        if (pathname === "/explore-events") {
+        if (pathname === "/search") {
             router.replace(targetPath);
         } else {
             router.push(targetPath);
