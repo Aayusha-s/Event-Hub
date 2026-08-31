@@ -112,7 +112,7 @@ export const bookingService = {
 						rowCount: rows.length
 					});
 					
-					tickets = await Ticket.create(rows, { session });
+					tickets = await Ticket.create(rows, { session, ordered: true });
 					logBooking("complete tickets created", { 
 						bookingId: bookingId.toString(),
 						ticketCount: tickets.length

@@ -43,7 +43,7 @@ export const bookTicket = async (userId: Types.ObjectId, input: LegacyBookTicket
 				const ticketNumber = createTicketNumber();
 				return { user: userId, event: event._id, ticketType: input.ticketType, ticketNumber, qrCode: await createQrCode(ticketNumber) };
 			}));
-			tickets = await Ticket.create(ticketPayloads, { session });
+			tickets = await Ticket.create(ticketPayloads, { session, ordered: true });
 		});
 		return tickets;
 	} finally {

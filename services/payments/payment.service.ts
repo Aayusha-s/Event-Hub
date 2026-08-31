@@ -63,7 +63,13 @@ export const verifyPayment = async (paymentId: string, esewaData?: string, legac
 	const status = await response.json() as { status?: string; ref_id?: string };
 	logPayment("status response", { paymentId, httpStatus: response.status, status: status.status, referenceId: status.ref_id });
 	if (!response.ok || status.status !== "COMPLETE") throw new HttpError(409, "eSewa has not confirmed this payment yet.", "PAYMENT_PENDING");
-	payment.transactionId = status.ref_id ?? callback?.transaction_code ?? payment.transactionId;
+	// Keep the UUID submitted to eSewa immutable.  It is the identifier used by
+	// callback retries and status queries; the provider reference is supplemental.
+	payment.metadata = {
+		...(payment.metadata ?? {}),
+		providerReference: status.ref_id ?? callback?.transaction_code,
+	};
+	await payment.save();
 	if (!payment.booking) throw new HttpError(409, "Payment has no booking.", "INVALID_PAYMENT");
 	await bookingService.completeBooking(payment.booking, payment._id);
 	logPayment("database updated", { paymentId, bookingId: payment.booking.toString(), paymentStatus: "paid", ticketStatus: "active" });
