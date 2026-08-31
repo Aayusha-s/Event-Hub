@@ -19,6 +19,8 @@ export type StallDetailsDraft = {
 const draftKeys = {
     stallEvent: "StallEvent",
     stallDetails: "StallDetails",
+    stallImage: "StallImage",
+    stallImagePreview: "StallImagePreview",
 } as const;
 
 type DraftKey = keyof typeof draftKeys;

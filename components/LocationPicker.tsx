@@ -184,13 +184,13 @@ const LocationPicker: React.FC<LocationPickerProps> = ({ onLocationSelect, initi
     };
 
     return (
-        <div className='space-y-3'>
+        <div className='relative isolate space-y-3'>
             <div>
                 <label className='block mb-2 text-sm font-medium text-text-dark'>
                     Event Location
                     <span className='text-red-500'>*</span>
                 </label>
-                <div className='relative'>
+                <div className='relative z-10'>
                     <div className='flex gap-2 mb-2'>
                         <input
                             type='text'
@@ -211,7 +211,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({ onLocationSelect, initi
                     </div>
 
                     {searchSuggestions.length > 0 && (
-                        <div className='absolute top-full left-0 right-0 mt-1 bg-white border-2 border-brown-normal rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto'>
+                        <div className='absolute top-full left-0 right-0 z-20 mt-1 max-h-48 overflow-y-auto rounded-xl border-2 border-brown-normal bg-white shadow-lg'>
                             {searchSuggestions.map((suggestion, idx) => (
                                 <button
                                     key={idx}
@@ -240,7 +240,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({ onLocationSelect, initi
 
             <div
                 ref={mapContainer}
-                className='w-full h-96 rounded-xl border-2 border-brown-normal overflow-hidden'
+                className='relative z-0 w-full h-96 rounded-xl border-2 border-brown-normal overflow-hidden'
                 id='location-picker-map'
             />
 

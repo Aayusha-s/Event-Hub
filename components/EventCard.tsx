@@ -6,6 +6,7 @@ import { Calendar, ChevronRight, Heart, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTilt } from "@/hooks/use-tilt";
 import { useEffect, useState } from "react";
+import { isEventEnded } from "@/lib/event-status";
 
 type EventCardProps = {
     eventId: string | number;
@@ -17,6 +18,7 @@ type EventCardProps = {
     descriptions: string[];
     location: string;
     price: string;
+    endDate?: string;
 };
 
 const EventCard = ({
@@ -29,10 +31,12 @@ const EventCard = ({
     descriptions,
     location,
     price,
+    endDate,
 }: EventCardProps) => {
     const router = useRouter();
     const { cardRef, tilt, prefersReducedMotion } = useTilt(3);
     const [saved, setSaved] = useState(false);
+    const ended = endDate ? isEventEnded(endDate) : false;
     useEffect(() => { fetch('/api/saved-events').then(response => response.json()).then(result => { if (result.success) setSaved(result.data.items.some((item: { event: { _id: string } }) => item.event._id === String(eventId))); }).catch(() => undefined); }, [eventId]);
     const toggleSaved = async (event: React.MouseEvent) => { event.stopPropagation(); const response = await fetch('/api/saved-events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ eventId: String(eventId) }) }); const result = await response.json(); if (result.success) setSaved(result.data.saved); };
 
@@ -73,6 +77,7 @@ const EventCard = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+                    {ended && <span className="rounded-full bg-gray-900/90 px-2.5 py-1 text-xs font-semibold text-white">Event Ended</span>}
                     {tags.slice(0, 2).map((tag) => (
                         <div
                             key={tag}

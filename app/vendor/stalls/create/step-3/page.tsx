@@ -12,6 +12,8 @@ const Page = () => {
     const router = useRouter();
     const eventDraft = loadStallDraft<StallEventDraft>('stallEvent');
     const detailsDraft = loadStallDraft<StallDetailsDraft>('stallDetails');
+    const stallImage = loadStallDraft<File>('stallImage');
+    const stallImagePreview = loadStallDraft<string>('stallImagePreview');
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState('');
@@ -26,6 +28,27 @@ const Page = () => {
         setSubmitError('');
 
         try {
+            let stallImageUrl = '';
+
+            // Upload image if present
+            if (stallImage) {
+                const formData = new FormData();
+                formData.append('file', stallImage);
+
+                const uploadResponse = await fetch('/api/stalls/upload-image', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const uploadResult = await uploadResponse.json();
+                if (!uploadResponse.ok || !uploadResult.success) {
+                    throw new Error(uploadResult.error?.message || 'Failed to upload stall image.');
+                }
+
+                stallImageUrl = uploadResult.data.url;
+            }
+
+            // Submit stall request
             const response = await fetch('/api/vendors/stalls', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -36,6 +59,7 @@ const Page = () => {
                     stallType: detailsDraft.stallType,
                     size: detailsDraft.size,
                     bookingFee: Number(detailsDraft.bookingFee),
+                    stallImage: stallImageUrl,
                 }),
             });
 
@@ -101,6 +125,12 @@ const Page = () => {
                     <p><strong className="text-text-dark">Booking Fee:</strong> Rs. {Number(detailsDraft.bookingFee).toLocaleString()}</p>
                     <p><strong className="text-text-dark">Description:</strong> {detailsDraft.description}</p>
                 </div>
+                {stallImagePreview && (
+                    <div className="mt-4">
+                        <p className="mb-2 text-sm font-semibold text-text-dark">Stall Image:</p>
+                        <img src={stallImagePreview} alt="Stall" className="max-w-xs rounded-lg border border-border" />
+                    </div>
+                )}
             </div>
         </CreateEventStepShell>
     );

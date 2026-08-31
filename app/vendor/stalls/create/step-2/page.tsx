@@ -59,7 +59,48 @@ const Page = () => {
             return '';
         }
     });
+    const [stallImage, setStallImage] = useState<File | null>(null);
+    const [stallImagePreview, setStallImagePreview] = useState<string>(() => {
+        if (typeof window === 'undefined') return '';
+        try {
+            return JSON.parse(window.localStorage.getItem('StallDetails') || 'null')?.stallImagePreview ?? '';
+        } catch {
+            return '';
+        }
+    });
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const handleImageSelect = (file: File | null) => {
+        if (!file) {
+            setStallImage(null);
+            setStallImagePreview('');
+            return;
+        }
+
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            setErrors((prev) => ({ ...prev, stallImage: 'Only JPG, PNG, and WebP images are supported.' }));
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            setErrors((prev) => ({ ...prev, stallImage: 'Image must be 10MB or smaller.' }));
+            return;
+        }
+
+        setStallImage(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = e.target?.result as string;
+            setStallImagePreview(preview);
+            setErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors.stallImage;
+                return newErrors;
+            });
+        };
+        reader.readAsDataURL(file);
+    };
 
     const stallCategories = eventDraft?.stallCategories ?? [];
     const predefinedCategories = ['Food & Beverages', 'Clothing & Fashion', 'Arts & Crafts', 'Beauty & Wellness', 'Electronics & Technology', 'Home & Lifestyle', 'Books & Education', 'Jewelry & Accessories', 'Services'];
@@ -112,6 +153,10 @@ const Page = () => {
             description: description.trim(),
         };
         saveStallDraft('stallDetails', details);
+        if (stallImage) {
+            saveStallDraft('stallImage', stallImage);
+            saveStallDraft('stallImagePreview', stallImagePreview);
+        }
         router.push('/vendor/stalls/create/step-3');
     };
 
@@ -249,6 +294,38 @@ const Page = () => {
                     required
                 />
                 {errors.description && <p className="mt-1 text-xs text-red-600">{errors.description}</p>}
+            </div>
+
+            <div className="border-t pt-6 mt-6">
+                <h2 className="mb-4 text-sm font-medium text-text-dark">Stall Image (Optional)</h2>
+                
+                {stallImagePreview ? (
+                    <div className="mb-4">
+                        <img src={stallImagePreview} alt="Stall preview" className="max-w-xs rounded-xl border border-border" />
+                        <button
+                            type="button"
+                            onClick={() => handleImageSelect(null)}
+                            className="mt-2 text-sm text-red-600 hover:text-red-800"
+                        >
+                            Remove Image
+                        </button>
+                    </div>
+                ) : (
+                    <label className="block">
+                        <div className="border-2 border-dashed border-border rounded-xl p-6 text-center cursor-pointer hover:border-brown-normal transition-colors">
+                            <i className="fa-solid fa-image text-3xl text-text-dark/40 mb-2 block"></i>
+                            <p className="text-sm font-medium text-text-dark mb-1">Upload Stall Image</p>
+                            <p className="text-xs text-text-dark/60">JPG, PNG, or WebP (Max 10MB)</p>
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={(e) => handleImageSelect(e.target.files?.[0] || null)}
+                                className="hidden"
+                            />
+                        </div>
+                    </label>
+                )}
+                {errors.stallImage && <p className="mt-2 text-xs text-red-600">{errors.stallImage}</p>}
             </div>
         </CreateEventStepShell>
     );

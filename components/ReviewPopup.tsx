@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from './Button';
+import ModalOverlay from './ModalOverlay';
 
 type ReviewPopupProps = {
     isOpen: boolean;
@@ -12,12 +13,11 @@ const ReviewPopup = ({
     onclose, onSubmit
 }: ReviewPopupProps) => {
 
-    React.useEffect(() => { if (!isOpen) return; const previousOverflow = document.body.style.overflow; const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onclose(); }; document.body.style.overflow = 'hidden'; document.addEventListener('keydown', closeOnEscape); return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', closeOnEscape); }; }, [isOpen, onclose]);
     const [rating, setRating] = React.useState(5); const [text, setText] = React.useState(''); const [error, setError] = React.useState('');
     if (!isOpen) return null;
     return (
-        <div className='fixed inset-0 bg-text-dark/20 flex items-center justify-center z-50 p-4' onMouseDown={(event) => { if (event.target === event.currentTarget) onclose(); }}>
-            <div className='surface-card w-full max-w-md p-6 shadow-lg' onMouseDown={(event) => event.stopPropagation()}>
+        <ModalOverlay isOpen={isOpen} onClose={onclose} ariaLabel='Write a review'>
+            <div className='w-full max-w-md rounded-xl bg-white p-6 shadow-lg' onMouseDown={(event) => event.stopPropagation()}>
                 <h2 className='text-2xl font-semibold tracking-tight text-text-dark mb-4'>Write a Review</h2>
                 
                 <div>
@@ -53,7 +53,7 @@ const ReviewPopup = ({
 
             </div>
             
-        </div>
+        </ModalOverlay>
     )
 }
 

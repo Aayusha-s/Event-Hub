@@ -133,10 +133,9 @@ export default function ScannerPage() {
 
                 try {
                     const { Html5Qrcode } = await import('html5-qrcode');
-                    // Html5Qrcode.scanFile() expects a File object, not a data URL
-                    const qrCode = new Html5Qrcode(SCANNER_ID, false);
                     
-                    const result = await qrCode.scanFile(file, true);
+                    const qr = new Html5Qrcode('file-scanner-temp');
+                    const result = await (qr as any).scanFile(file, true);
 
                     if (result) {
                         await verifyTicket(result);

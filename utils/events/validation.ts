@@ -65,7 +65,8 @@ const isImageUrl = (value: string) => {
 		const url = new URL(value);
 		return url.protocol === "http:" || url.protocol === "https:";
 	} catch {
-		return false;
+		// Accept relative paths for local uploaded images
+		return value.startsWith("/");
 	}
 };
 

@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Store, MapPin } from "lucide-react";
 
-type Stall = { vendorId: string; businessName: string; category: string; logo?: string; stallName?: string };
+type Stall = { _id?: string; vendorId: string; businessName: string; category: string; logo?: string; stallName?: string };
 
 export default function EventStalls({ eventId }: { eventId: string }) {
     const [items, setItems] = useState<Stall[]>([]);
@@ -41,7 +42,7 @@ export default function EventStalls({ eventId }: { eventId: string }) {
                 {items.map((item) => (
                     <article
                         key={`${item.vendorId}-${item.stallName ?? "stall"}`}
-                        className="rounded-xl border-2 border-brown-normal p-4 transition-all duration-200 hover:shadow-md"
+                        className="rounded-xl border-2 border-brown-normal p-4 transition-all duration-200 hover:shadow-md hover:border-brown-dark"
                     >
                         <div className="flex items-center gap-3">
                             {item.logo ? (
@@ -52,8 +53,16 @@ export default function EventStalls({ eventId }: { eventId: string }) {
                                 </div>
                             )}
                             <div className="min-w-0">
-                                <h3 className="font-semibold truncate">{item.stallName ?? item.businessName}</h3>
-                                <p className="text-sm text-text-light">{item.businessName} · {item.category}</p>
+                                {item._id ? (
+                                    <Link href={`/stalls/${item._id}`} className="font-semibold truncate text-brown-normal hover:text-brown-dark transition-colors block">
+                                        {item.stallName ?? item.businessName}
+                                    </Link>
+                                ) : (
+                                    <h3 className="font-semibold truncate">{item.stallName ?? item.businessName}</h3>
+                                )}
+                                <Link href={`/vendors/${item.vendorId}`} className="text-sm text-text-light hover:text-brown-normal transition-colors">
+                                    {item.businessName} · {item.category}
+                                </Link>
                             </div>
                         </div>
                         <div className="mt-3 flex items-center gap-1 text-xs text-text-light">

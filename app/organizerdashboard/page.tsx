@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Archive, BarChart3, Calendar, CheckCircle2, Clock, DollarSign, Edit, Eye, Plus, Trash2, TrendingUp } from 'lucide-react';
+import { isEventEnded } from '@/lib/event-status';
 
 type DashboardEvent = {
 	_id: string;
@@ -169,7 +170,9 @@ export default function Page() {
 					</div>
 				) : (
 					<div className='space-y-4'>
-						{events.map((event) => (
+						{events.map((event) => {
+							const eventEnded = isEventEnded(event.endDate);
+							return (
 							<div key={event._id} className='rounded-xl border border-border bg-surface-hover overflow-hidden hover:shadow-md transition-shadow'>
 								<div className='flex flex-col md:flex-row gap-4 p-4'>
 									{/* Event Image */}
@@ -193,7 +196,7 @@ export default function Page() {
 												event.status === 'completed' ? 'bg-green-100 text-green-700' :
 												'bg-red-100 text-red-700'
 											}`}>
-												{event.status}
+											{eventEnded ? 'Event Ended' : event.status}
 											</div>
 											{event.approvalStatus === 'pending' && <div className='text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700 font-semibold'>Pending Approval</div>}
 										</div>
@@ -231,7 +234,7 @@ export default function Page() {
 										{/* Action Buttons */}
 										<div className='flex flex-wrap gap-2'>
 											<Button text='View' variant='secondary' size='sm' iconLeft={<Eye size={14} />} onClick={() => router.push(`/event-details/${event._id}`)} />
-											<Button text='Edit' variant='secondary' size='sm' iconLeft={<Edit size={14} />} onClick={() => router.push(`/create-event/step-1?eventId=${event._id}`)} />
+											{!eventEnded && <Button text='Edit' variant='secondary' size='sm' iconLeft={<Edit size={14} />} onClick={() => router.push(`/create-event/step-1?eventId=${event._id}`)} />}
 											<Button text='Duplicate' variant='secondary' size='sm' onClick={() => manageEvent(event._id, 'duplicate')} />
 											<Button text='Archive' variant='secondary' size='sm' iconLeft={<Archive size={14} />} onClick={() => manageEvent(event._id, 'archive')} />
 											<Button text='Delete' variant='secondary' size='sm' status='danger' iconLeft={<Trash2 size={14} />} onClick={() => deleteEvent(event._id)} />
@@ -239,7 +242,8 @@ export default function Page() {
 									</div>
 								</div>
 							</div>
-						))}
+							);
+						})}
 					</div>
 				)}
 			</div>

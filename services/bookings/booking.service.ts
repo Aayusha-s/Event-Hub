@@ -21,6 +21,7 @@ export const bookingService = {
 		const event = await Event.findById(input.eventId).exec();
 		if (!event) throw new HttpError(404, "Event not found.", "NOT_FOUND");
 		if (event.status !== "published") throw new HttpError(409, "This event is not published.", "EVENT_NOT_PUBLISHED");
+		if (event.endDate <= new Date()) throw new HttpError(409, "This event has ended.", "EVENT_ENDED");
 		if (event.startDate <= new Date()) throw new HttpError(409, "This event has already started.", "EVENT_STARTED");
 		const types = new Map(event.ticketTypes.map((type) => [type.name, type]));
 		const items = input.items.map((item) => {
@@ -63,7 +64,7 @@ export const bookingService = {
 				});
 				
 				const event = await Event.findById(booking.event).session(session).exec();
-				if (!event || event.status !== "published" || event.startDate <= new Date()) {
+				if (!event || event.status !== "published" || event.endDate <= new Date() || event.startDate <= new Date()) {
 					logBooking("complete event validation failed", { 
 						eventId: booking.event.toString(),
 						eventExists: !!event,

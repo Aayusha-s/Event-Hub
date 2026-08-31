@@ -15,6 +15,8 @@ type Event = {
 	tags: string[];
 	images: string[];
 	ticketTypes: { price: number }[];
+	startDate: string;
+	endDate: string;
 	organizer?: { name?: string };
 };
 
@@ -226,6 +228,7 @@ function Content() {
 											? 'Free'
 											: `From Rs.${Math.min(...event.ticketTypes.map((ticket) => ticket.price))}`
 									}
+									endDate={event.endDate}
 								/>
 							))}
 						</div>

@@ -55,8 +55,14 @@ const Page = () => {
         setPublishError('');
 
         try {
-            const startDate = new Date(`${latestEventDetails.startDate}T${latestEventDetails.startTime}`);
-            const endDate = new Date(`${latestEventDetails.endDate}T${latestEventDetails.endTime}`);
+            const [startYear, startMonth, startDay] = latestEventDetails.startDate.split('-').map(Number);
+            const [startHours, startMinutes] = latestEventDetails.startTime.split(':').map(Number);
+            const startDate = new Date(startYear, startMonth - 1, startDay, startHours, startMinutes, 0);
+
+            const [endYear, endMonth, endDay] = latestEventDetails.endDate.split('-').map(Number);
+            const [endHours, endMinutes] = latestEventDetails.endTime.split(':').map(Number);
+            const endDate = new Date(endYear, endMonth - 1, endDay, endHours, endMinutes, 0);
+
             const capacity = Number(latestEventDetails.eventCapacity);
 
             if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || !Number.isInteger(capacity) || capacity < 1) {

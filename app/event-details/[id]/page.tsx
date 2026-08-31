@@ -9,10 +9,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import EventSocial from '@/components/EventSocial';
 import EventStalls from '@/components/EventStalls';
+import { getEventTimeStatus, isEventEnded } from '@/lib/event-status';
 
 type TicketType = { name: string; price: number; quantity: number; description?: string };
 type EventData = {
-    _id: string; title: string; description: string; venue: string; latitude: number; longitude: number;
+    _id: string; title: string; description: string; venue?: string; latitude?: number; longitude?: number;
     category: string; images: string[]; startDate: string; endDate: string; ticketTypes: TicketType[];
     capacity: number; status: string; tags: string[]; ticketsSold?: number;
     organizer?: { _id: string; name?: string; profileImage?: string };
@@ -98,9 +99,14 @@ const Page = () => {
     const organizerHref = `/userprofile?userId=${event.organizer?._id ?? ''}`;
     const coverImage = event.images[0] ?? fallbackImage;
     const galleryImages = event.images.length ? event.images : [fallbackImage];
+    const hasCoordinates = typeof event.latitude === 'number' && typeof event.longitude === 'number' && (event.latitude !== 0 || event.longitude !== 0);
+    const mapQuery = hasCoordinates ? `${event.latitude},${event.longitude}` : event.venue?.trim();
+    const mapUrl = mapQuery ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed` : undefined;
     const role = session?.user?.role;
     const ownsEvent = role === 'organizer' && event.organizer?._id === session?.user?.id;
     const remainingSeats = Math.max(0, event.capacity - (event.ticketsSold ?? 0));
+    const eventEnded = isEventEnded(event.endDate);
+    const eventTimeStatus = getEventTimeStatus(event.startDate, event.endDate);
 
     return (
         <main className='bg-white text-text-dark font-cause'>
@@ -124,7 +130,7 @@ const Page = () => {
                         <div className='space-y-3'>
                             <div className='flex items-center gap-2 flex-wrap'>
                                 <span className='inline-block px-3 py-1 bg-brown-light text-brown-normal rounded-full text-sm font-semibold capitalize'>{event.category.replaceAll('_', ' ')}</span>
-                                <span className='inline-block px-3 py-1 bg-gray-100 text-text-dark rounded-full text-sm'>{event.status}</span>
+                                <span className={`inline-block rounded-full px-3 py-1 text-sm ${eventEnded ? 'bg-gray-900 text-white' : 'bg-gray-100 text-text-dark'}`}>{eventEnded ? 'Event Ended' : eventTimeStatus === 'active' ? 'Event Active' : event.status}</span>
                             </div>
                             <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold font-dynapuff leading-tight'>{event.title}</h1>
                             <div className='flex items-center gap-4 pt-2'>
@@ -174,7 +180,7 @@ const Page = () => {
 
                         {/* Location Map */}
                         <div className='border-t pt-8'>
-                            <Map mapId={1} latitude={event.latitude} longitude={event.longitude} venue={event.venue} />
+                            <Map mapId={1} mapUrl={mapUrl} />
                         </div>
 
                         {/* Event Description */}
@@ -246,7 +252,7 @@ const Page = () => {
                                 </div>
                                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                                     {similarEvents.map((similar) => (
-                                        <EventCard key={similar._id} eventId={similar._id} tags={similar.tags} imageUrl={similar.images[0] ?? fallbackImage} imageAlt={similar.title} title={similar.title} organizer={`By ${similar.organizer?.name ?? 'Event organizer'}`} descriptions={[similar.description]} location={similar.venue} price={similar.ticketTypes.some((ticket) => ticket.price === 0) ? 'Free' : `From Rs. ${Math.min(...similar.ticketTypes.map((ticket) => ticket.price)).toLocaleString()}`} />
+                                        <EventCard key={similar._id} eventId={similar._id} tags={similar.tags} imageUrl={similar.images[0] ?? fallbackImage} imageAlt={similar.title} title={similar.title} organizer={`By ${similar.organizer?.name ?? 'Event organizer'}`} descriptions={[similar.description]} location={similar.venue ?? 'Location unavailable'} price={similar.ticketTypes.some((ticket) => ticket.price === 0) ? 'Free' : `From Rs. ${Math.min(...similar.ticketTypes.map((ticket) => ticket.price)).toLocaleString()}`} endDate={similar.endDate} />
                                     ))}
                                 </div>
                             </div>
@@ -278,8 +284,8 @@ const Page = () => {
                             </div>
 
                             {/* Availability Status */}
-                            <div className={`p-3 rounded-lg text-sm font-semibold text-center ${remainingSeats > 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-                                {remainingSeats > 0 
+                            <div className={`p-3 rounded-lg text-sm font-semibold text-center ${eventEnded || remainingSeats <= 0 ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                                {eventEnded ? 'Event Ended' : remainingSeats > 0
                                     ? `${remainingSeats} tickets available` 
                                     : 'Event is sold out'
                                 }
@@ -287,7 +293,7 @@ const Page = () => {
 
                             {/* Action Buttons */}
                             <div className='space-y-3'>
-                                {role === 'attendee' && (
+                                {role === 'attendee' && !eventEnded && (
                                     <Link href={`/booknow?eventId=${event._id}`} className='block'>
                                         <Button text="Book Now" variant="cta" size="lg" className='w-full' />
                                     </Link>
@@ -302,7 +308,7 @@ const Page = () => {
                                         <Button text="Manage Event" variant="cta" size="lg" className='w-full' />
                                     </Link>
                                 )}
-                                {!role && (
+                                {!role && !eventEnded && (
                                     <Link href='/login' className='block'>
                                         <Button text="Sign in to Book" variant="cta" size="lg" className='w-full' />
                                     </Link>

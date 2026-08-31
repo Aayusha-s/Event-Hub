@@ -5,6 +5,7 @@ import LocationPicker from '@/components/LocationPicker';
 import { useRouter } from 'next/navigation';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { loadDraft, saveDraft } from '@/lib/createEventDraft';
+import { geocodeVenue } from '@/lib/geocoding';
 
 type EventDetailsDraft = {
     startDate: string;
@@ -66,6 +67,27 @@ const Page = () => {
         setStallCapacity(draft.stallCapacity ?? '');
         setStallCategories(draft.stallCategories ?? '');
     }, []);
+
+    // Auto-geocode venue name when it changes
+    useEffect(() => {
+        if (!venueName.trim() || latitude !== undefined && longitude !== undefined) {
+            return; // Don't auto-geocode if already has coordinates or empty
+        }
+
+        const timeoutId = setTimeout(async () => {
+            try {
+                const result = await geocodeVenue(venueName);
+                if (result) {
+                    setLatitude(result.latitude);
+                    setLongitude(result.longitude);
+                }
+            } catch (error) {
+                console.error('Auto-geocoding failed:', error);
+            }
+        }, 500); // Debounce by 500ms
+
+        return () => clearTimeout(timeoutId);
+    }, [venueName]);
 
     const buildEventDetails = (): EventDetailsDraft => ({
         startDate,
