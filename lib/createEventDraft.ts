@@ -25,6 +25,7 @@ export type TicketDraft = {
 
 export type EventInfoDraft = {
     tickets: TicketDraft[];
+    isFreeEvent?: boolean;
 };
 
 const draftKeys = {
@@ -70,10 +71,10 @@ export const clearEventDraft = () => {
     window.localStorage.removeItem(draftKeys.eventInfo);
 };
 
-export const createEmptyTicket = (): TicketDraft => ({
+export const createEmptyTicket = (isFreeEvent = false): TicketDraft => ({
     ticketName: "",
     quantity: "",
-    price: "",
+    price: isFreeEvent ? "0" : "",
     description: "",
 });
 
@@ -86,6 +87,11 @@ export const loadEventInfoTickets = (): TicketDraft[] => {
     return [createEmptyTicket()];
 };
 
-export const saveEventInfoTickets = (tickets: TicketDraft[]) => {
-    saveDraft("eventInfo", { tickets });
+export const saveEventInfoTickets = (tickets: TicketDraft[], isFreeEvent = false) => {
+    saveDraft("eventInfo", { tickets, isFreeEvent });
+};
+
+export const loadEventInfoIsFree = (): boolean => {
+    const draft = loadDraft<EventInfoDraft>("eventInfo");
+    return Boolean(draft?.isFreeEvent);
 };

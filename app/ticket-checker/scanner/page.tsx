@@ -18,6 +18,25 @@ type Ticket = {
 };
 
 const SCANNER_ID = 'ticket-checker-camera';
+const UPLOAD_SCANNER_ID = 'ticket-checker-upload';
+const VALID_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+const loadImageFromFile = (file: File) => new Promise<string>((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(objectUrl);
+    };
+
+    image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('Unable to read the selected image.'));
+    };
+
+    image.src = objectUrl;
+});
 
 export default function ScannerPage() {
     const scanner = useRef<Scanner | null>(null);
@@ -116,53 +135,53 @@ export default function ScannerPage() {
         const file = event.target.files?.[0];
         if (!file) return;
 
-        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!validTypes.includes(file.type)) {
+        if (!VALID_IMAGE_TYPES.includes(file.type)) {
             setError('Please upload a JPG, PNG, or WebP image containing a QR code.');
             return;
         }
 
         setIsProcessingImage(true);
         setError('');
+        setTicket(null);
 
         try {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const imageData = e.target?.result as string;
-                setUploadedImage(imageData);
+            await stop();
+            const imageData = await loadImageFromFile(file);
+            setUploadedImage(imageData);
 
-                try {
-                    const { Html5Qrcode } = await import('html5-qrcode');
-                    
-                    const qr = new Html5Qrcode('file-scanner-temp');
-                    const result = await (qr as any).scanFile(file, true);
+            const { Html5Qrcode } = await import('html5-qrcode');
+            const qr = new Html5Qrcode(UPLOAD_SCANNER_ID);
 
-                    if (result) {
-                        await verifyTicket(result);
-                    } else {
-                        setError('No QR code found in the uploaded image. Please try another image.');
-                    }
-                } catch (scanError) {
-                    const message = scanError instanceof Error ? scanError.message.toLowerCase() : '';
-                    console.error('QR scanning error:', scanError);
-                    
-                    if (message.includes('no qr code found') || message.includes('qr code could not be detected')) {
-                        setError('No QR code found in the image. Please upload an image with a valid QR code.');
-                    } else {
-                        setError('Unable to scan the QR code from the image. Please try another image.');
-                    }
-                } finally {
-                    setIsProcessingImage(false);
-                    if (fileInput.current) {
-                        fileInput.current.value = '';
-                    }
+            try {
+                const result = await qr.scanFile(file, true);
+                if (!result) {
+                    setError('Unable to scan the QR code from the image. Please try another image.');
+                    return;
                 }
-            };
 
-            reader.readAsDataURL(file);
+                await verifyTicket(result);
+            } catch (scanError) {
+                const message = scanError instanceof Error ? scanError.message.toLowerCase() : '';
+                console.error('QR scanning error:', scanError);
+
+                if (message.includes('no qr code found') || message.includes('qr code could not be detected')) {
+                    setError('Unable to scan the QR code from the image. Please try another image.');
+                } else {
+                    setError('Unable to scan the QR code from the image. Please try another image.');
+                }
+            } finally {
+                try {
+                    await qr.clear();
+                } catch {}
+            }
         } catch (cause) {
-            setError(cause instanceof Error ? cause.message : 'Unable to process the image.');
+            const message = cause instanceof Error ? cause.message : 'Unable to process the image.';
+            setError(message === 'Unable to read the selected image.' ? 'Unable to scan the QR code from the image. Please try another image.' : message);
+        } finally {
             setIsProcessingImage(false);
+            if (fileInput.current) {
+                fileInput.current.value = '';
+            }
         }
     };
 
@@ -183,7 +202,7 @@ export default function ScannerPage() {
                 throw new Error(json.error?.message);
             }
 
-            setTicket({ ...json.data, state: 'used' });
+            setTicket({ ...json.data, state: 'valid' });
         } catch (cause) {
             setError(cause instanceof Error ? cause.message : 'Check-in failed.');
         } finally {
@@ -192,7 +211,7 @@ export default function ScannerPage() {
     };
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-brown-light to-white py-8 px-4'>
+        <div className='min-h-screen bg-linear-to-br from-brown-light to-white py-8 px-4'>
             <div className='max-w-lg mx-auto'>
                 {/* Header */}
                 <div className='text-center mb-8'>
@@ -281,6 +300,7 @@ export default function ScannerPage() {
                             onClick={() => fileInput.current?.click()}
                             className='border-2 border-dashed border-brown-normal rounded-xl p-8 text-center cursor-pointer hover:bg-brown-light/20 transition-colors'
                         >
+                            <div id={UPLOAD_SCANNER_ID} className='hidden' aria-hidden='true' />
                             <input
                                 ref={fileInput}
                                 type='file'

@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import mongoose, { Types } from "mongoose";
 import QRCode from "qrcode";
 import dbConnect from "@/lib/mongodb";
-import Booking from "@/models/Booking";
+import Booking, { BookingDocument } from "@/models/Booking";
 import Event from "@/models/Event";
 import Payment from "@/models/Payment";
 import Ticket from "@/models/Ticket";
@@ -36,9 +36,61 @@ export const bookingService = {
 		const eventSold = [...sold.values()].reduce((sum, count) => sum + count, 0);
 		if (eventSold + total > event.capacity) throw new HttpError(409, "This event is sold out.", "EVENT_SOLD_OUT");
 		const booking = await Booking.create({ user, event: event._id, items, totalAmount: items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0) });
+		if (booking.totalAmount === 0) {
+			return bookingService.completeFreeBooking(booking._id);
+		}
 		await recordActivity(user, "booking", "Booked an event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` });
 		logBooking("create completed", { bookingId: booking._id.toString(), eventId: event._id.toString(), totalAmount: booking.totalAmount, itemCount: booking.items.length });
 		return booking;
+	},
+	completeFreeBooking: async (bookingId: Types.ObjectId) => {
+		await dbConnect();
+		const session = await mongoose.startSession();
+		try {
+			let bookingRecord: BookingDocument | null = null;
+			await session.withTransaction(async () => {
+				bookingRecord = await Booking.findById(bookingId).session(session).exec() as BookingDocument | null;
+				if (!bookingRecord) throw new HttpError(404, "Booking was not found.", "NOT_FOUND");
+				if (bookingRecord.status === "paid") {
+					logBooking("complete free already paid", { bookingId: bookingId.toString() });
+					return;
+				}
+				const event = await Event.findById(bookingRecord.event).session(session).exec();
+				if (!event || event.status !== "published" || event.endDate <= new Date() || event.startDate <= new Date()) {
+					throw new HttpError(409, "This event is no longer available.", "BOOKING_UNAVAILABLE");
+				}
+				const existing = await Ticket.aggregate([{ $match: { event: event._id, ticketStatus: "active" } }, { $group: { _id: "$ticketType", count: { $sum: 1 } } }]).session(session).exec();
+				const sold = new Map(existing.map((item) => [item._id as string, item.count as number]));
+				const total = bookingRecord!.items.reduce((sum, item) => sum + item.quantity, 0);
+				if ([...sold.values()].reduce((sum, count) => sum + count, 0) + total > event.capacity) throw new HttpError(409, "This event is sold out.", "EVENT_SOLD_OUT");
+				for (const item of bookingRecord!.items) {
+					const type = event.ticketTypes.find((candidate) => candidate.name === item.ticketType);
+					if (!type || (sold.get(item.ticketType) ?? 0) + item.quantity > type.quantity) throw new HttpError(409, `${item.ticketType} is sold out.`, "TICKET_TYPE_SOLD_OUT");
+				}
+				const rows = await Promise.all(bookingRecord!.items.flatMap((item) => Array.from({ length: item.quantity }, async () => {
+					const number = ticketNumber();
+					const qrDataUrl = await QRCode.toDataURL(`vivnt-ticket:${number}`, { width: 300, margin: 1 });
+					return {
+						user: bookingRecord!.user,
+						event: bookingRecord!.event,
+						booking: bookingRecord!._id,
+						ticketType: item.ticketType,
+						ticketNumber: number,
+						qrCode: qrDataUrl,
+						paymentStatus: "paid" as const,
+						ticketStatus: "active" as const,
+						checkedIn: false,
+					};
+				})));
+				await Ticket.create(rows, { session, ordered: true });
+				bookingRecord.status = "paid";
+				await bookingRecord.save({ session });
+				await recordActivity(bookingRecord.user, "booking", "Registered for a free event", { subject: event._id, subjectModel: "Event", link: `/event-details/${event._id}` });
+			});
+			return bookingRecord ?? null;
+		} finally {
+			await session.endSession();
+		}
 	},
 	completeBooking: async (bookingId: Types.ObjectId, paymentId: Types.ObjectId) => {
 		await dbConnect();

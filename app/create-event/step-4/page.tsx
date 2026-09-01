@@ -45,6 +45,8 @@ const Page = () => {
     const handlePublish = async () => {
         const latestBasicInformation = loadDraft<BasicInformationDraft>("basicInformation") ?? basicInformation;
         const latestEventDetails = loadDraft<EventDetailsDraft>("eventDetails") ?? eventDetails;
+        const eventInfoDraft = loadDraft<{ isFreeEvent?: boolean }>("eventInfo");
+        const isFreeEvent = Boolean(eventInfoDraft?.isFreeEvent) || tickets.every((ticket) => Number(ticket.price) === 0);
 
         if (!latestBasicInformation || !latestEventDetails || !tickets.length) {
             setPublishError('Your event draft is incomplete. Please return to the previous steps and complete every required field.');
@@ -94,7 +96,7 @@ const Page = () => {
                     ticketTypes: tickets.map((ticket) => ({
                         name: ticket.ticketName,
                         quantity: Number(ticket.quantity),
-                        price: Number(ticket.price),
+                        price: isFreeEvent ? 0 : Number(ticket.price),
                         description: ticket.description,
                     })),
                 }),

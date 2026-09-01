@@ -1,16 +1,27 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { CircleX, Plus } from 'lucide-react';
 import CreateEventStepShell from '@/components/CreateEventStepShell';
 import { useCreateEventTickets } from '@/components/CreateEventDraftProvider';
-import { createEmptyTicket, saveEventInfoTickets } from '@/lib/createEventDraft';
+import { createEmptyTicket, loadDraft, saveEventInfoTickets } from '@/lib/createEventDraft';
 
 const Page = () => {
     const router = useRouter();
 	const eventId = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('eventId');
     const { tickets, setTickets } = useCreateEventTickets();
+    const [isFreeEvent, setIsFreeEvent] = useState<boolean>(() => {
+        const draft = loadDraft<{ isFreeEvent?: boolean }>("eventInfo");
+        return Boolean(draft?.isFreeEvent);
+    });
+
+    useEffect(() => {
+        const draft = loadDraft<{ isFreeEvent?: boolean }>("eventInfo");
+        if (draft?.isFreeEvent !== undefined) {
+            setIsFreeEvent(Boolean(draft.isFreeEvent));
+        }
+    }, []);
 
     const updateTicket = (index: number, field: string, value: string) => {
         setTickets((prev) => {
@@ -21,28 +32,38 @@ const Page = () => {
     };
 
     const handleAddTicket = () => {
-        setTickets((prev) => [...prev, createEmptyTicket()]);
+        setTickets((prev) => [...prev, createEmptyTicket(isFreeEvent)]);
     };
 
     const handleRemoveTicket = (index: number) => {
         setTickets((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== index) : prev));
     };
 
+    const handleFreeToggle = (nextValue: boolean) => {
+        setIsFreeEvent(nextValue);
+        setTickets((prev) => prev.map((ticket) => ({ ...ticket, price: nextValue ? '0' : '' })));
+        saveEventInfoTickets(tickets.map((ticket) => ({ ...ticket, price: nextValue ? '0' : '' })), nextValue);
+    };
+
     const handleNext = () => {
         for (let i = 0; i < tickets.length; i++) {
             const t = tickets[i];
-            if (!t.ticketName || !t.quantity || t.price === '' || !t.description) {
+            if (!t.ticketName || !t.quantity || !t.description) {
                 alert(`Please fill in all required fields for Ticket ${i + 1}.`);
+                return;
+            }
+            if (!isFreeEvent && t.price === '') {
+                alert(`Please enter a valid price for Ticket ${i + 1}.`);
                 return;
             }
         }
 
-        saveEventInfoTickets(tickets);
+        saveEventInfoTickets(tickets.map((ticket) => ({ ...ticket, price: isFreeEvent ? '0' : ticket.price })), isFreeEvent);
         router.push(`/create-event/step-4${eventId() ? `?eventId=${eventId()}` : ''}`);
     };
 
     const handlePrevious = () => {
-        saveEventInfoTickets(tickets);
+        saveEventInfoTickets(tickets, isFreeEvent);
         router.push(`/create-event/step-2${eventId() ? `?eventId=${eventId()}` : ''}`);
     };
 
@@ -58,6 +79,24 @@ const Page = () => {
                 </div>
             )}
         >
+            <div className='mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-surface p-3'>
+                <span className='text-sm font-semibold text-text-dark'>Event type</span>
+                <button
+                    type='button'
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${isFreeEvent ? 'bg-brown-normal text-white' : 'bg-white text-text-dark border border-border'}`}
+                    onClick={() => handleFreeToggle(true)}
+                >
+                    Free Event
+                </button>
+                <button
+                    type='button'
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${!isFreeEvent ? 'bg-brown-normal text-white' : 'bg-white text-text-dark border border-border'}`}
+                    onClick={() => handleFreeToggle(false)}
+                >
+                    Paid Event
+                </button>
+            </div>
+
             <div className='flex justify-end'>
                 <Button text='Add Ticket Type' size='sm' variant='cta' iconLeft={<Plus />} onClick={handleAddTicket} />
             </div>
@@ -87,8 +126,16 @@ const Page = () => {
                                 <input className='w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring' type='number' placeholder='e.g. 100' required value={ticket.quantity} onChange={(e) => updateTicket(index, 'quantity', e.target.value)} />
                             </div>
                             <div>
-                                <label className='mb-1 block text-sm font-medium text-text-dark'>Price *</label>
-                                <input className='w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring' type='number' placeholder='e.g. 50.00' required value={ticket.price} onChange={(e) => updateTicket(index, 'price', e.target.value)} />
+                                <label className='mb-1 block text-sm font-medium text-text-dark'>Price {isFreeEvent ? '' : '*'}</label>
+                                <input
+                                    className='w-full rounded-xl border border-border bg-surface px-3 py-3 text-text-dark focus-ring disabled:cursor-not-allowed disabled:bg-surface-hover'
+                                    type='number'
+                                    placeholder={isFreeEvent ? 'Free event automatically sets price to 0' : 'e.g. 50.00'}
+                                    required={!isFreeEvent}
+                                    value={isFreeEvent ? '0' : ticket.price}
+                                    disabled={isFreeEvent}
+                                    onChange={(e) => updateTicket(index, 'price', e.target.value)}
+                                />
                             </div>
                             <div>
                                 <label className='mb-1 block text-sm font-medium text-text-dark'>Description *</label>
