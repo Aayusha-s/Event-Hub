@@ -11,7 +11,7 @@ const Map = ({ mapId, mapUrl }: MapProps) => {
     return (
         <section>
             <h2 className='mt-9 mb-4 max-w-[400px] font-dynapuff font-bold text-xl md:text-xl lg:text-xl'>Event Location</h2>
-            <div className='max-w-full h-[250px] border-2 border-brown-normal rounded-xl overflow-hidden p-2'>
+            <div className='max-w-full h-[250px] overflow-hidden rounded-xl border-2 border-brown-normal'>
                 <iframe
                     id={`map-${mapId}`}
                     src={mapUrl}
