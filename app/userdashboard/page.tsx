@@ -149,7 +149,7 @@ export default function Page() {
             )}
 
             <Section title='Upcoming Events' actionText='View All' onAction={() => router.push('/explore-events')}>
-                <div className='border border-brown-normal rounded-xl mt-6 p-4 w-full grid grid-cols-1 xl:grid-cols-2 gap-4'>
+                <div className='mt-6 grid w-full grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3'>
                     {upcoming.length ? upcoming.map((ticketData) => (
                         <UpcomingEventCard
                             key={ticketData._id}
