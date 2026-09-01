@@ -222,7 +222,7 @@ const Searchbar = ({ className, showLocation = true, compact = false, placeholde
 
     return (
         <form
-            className={cn("w-80%", className)}
+            className={cn("w-full max-w-full", className)}
             onSubmit={(event) => {
                 event.preventDefault();
                 submitSearch();
@@ -230,11 +230,11 @@ const Searchbar = ({ className, showLocation = true, compact = false, placeholde
         >
             <div
                 className={cn(
-                    "flex overflow-visible rounded-full border border-border bg-surface shadow-sm transition-all duration-200 ease-out hover:border-primary/40 hover:shadow-md focus-within:border-primary focus-within:shadow-lg",
+                    "flex w-full overflow-visible rounded-full border border-border bg-surface shadow-sm transition-all duration-200 ease-out hover:border-primary/40 hover:shadow-md focus-within:border-primary focus-within:shadow-lg",
                     compact ? "h-12 flex-row items-center md:focus-within:scale-[1.015]" : "flex-col lg:flex-row"
                 )}
             >
-                <label ref={suggestionRef} className={cn("relative flex min-w-0 flex-1 items-center gap-2.5", compact ? "h-full px-4" : "px-4 py-3")}>
+                <label ref={suggestionRef} className={cn("relative flex min-w-0 flex-1 items-center gap-2.5", compact ? "h-full px-3 sm:px-4" : "px-4 py-3")}>
                     <Search className="h-4 w-4 shrink-0 text-primary" />
                     <input
                         value={query}
@@ -242,14 +242,14 @@ const Searchbar = ({ className, showLocation = true, compact = false, placeholde
                         placeholder={placeholder ?? (compact ? "Search events..." : "Search events, artists, venues")}
                         className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none focus-visible:shadow-none"
                     />
-                    {showSuggestions && suggestions && <div className="absolute left-0 top-full z-60 mt-2 w-full min-w-[260px] rounded-xl border border-border bg-surface p-3 shadow-xl"><div className="max-h-72 overflow-y-auto text-sm">{[...suggestions.recent, ...suggestions.popular].slice(0, 5).map(value => <button type="button" key={`q-${value}`} onClick={() => { setQuery(value); submitSearch(value); }} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.events.map(item => <button type="button" key={item._id} onClick={() => router.push(`/event-details/${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.title}</button>)}{suggestions.organizers.map(item => <button type="button" key={item._id} onClick={() => router.push(`/userprofile?userId=${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.name}</button>)}{suggestions.venues.map(value => <button type="button" key={`v-${value}`} onClick={() => submitSearch(value, value)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.categories.concat(suggestions.tags).map(value => <button type="button" key={`f-${value}`} onClick={() => router.push(`/explore-events?tags=${encodeURIComponent(value)}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}</div></div>}
+                    {showSuggestions && suggestions && <div className="absolute left-0 top-full z-60 mt-2 w-[min(92vw,26rem)] min-w-0 rounded-xl border border-border bg-surface p-3 shadow-xl"><div className="max-h-72 overflow-y-auto text-sm">{[...suggestions.recent, ...suggestions.popular].slice(0, 5).map(value => <button type="button" key={`q-${value}`} onClick={() => { setQuery(value); submitSearch(value); }} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.events.map(item => <button type="button" key={item._id} onClick={() => router.push(`/event-details/${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.title}</button>)}{suggestions.organizers.map(item => <button type="button" key={item._id} onClick={() => router.push(`/userprofile?userId=${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.name}</button>)}{suggestions.venues.map(value => <button type="button" key={`v-${value}`} onClick={() => submitSearch(value, value)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.categories.concat(suggestions.tags).map(value => <button type="button" key={`f-${value}`} onClick={() => router.push(`/explore-events?tags=${encodeURIComponent(value)}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}</div></div>}
                 </label>
 
                 {showLocation && (
                     <label
                         className={cn(
                             "flex min-w-0 flex-1 items-center gap-2.5 border-divider",
-                            compact ? "h-full border-l px-4" : "border-t px-4 py-3 lg:border-l lg:border-t-0"
+                            compact ? "h-full border-l px-3 sm:px-4" : "border-t px-4 py-3 lg:border-l lg:border-t-0"
                         )}
                     >
                         <MapPin className="h-4 w-4 shrink-0 text-primary" />

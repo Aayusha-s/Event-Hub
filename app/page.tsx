@@ -14,9 +14,9 @@ export default function Home() {
     return (
         <main className="bg-background">
             {/* Enhanced Premium Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-brown-light via-background to-background py-16 md:py-24 lg:py-32">
+            <section className="relative overflow-hidden bg-gradient-to-br from-brown-light via-background to-background py-12 sm:py-16 md:py-20 lg:py-28 xl:py-32">
                 {/* Animated background elements */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-brown-normal/5 rounded-full blur-3xl animate-pulse"></div>
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-brown-normal/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
                 </div>
@@ -32,12 +32,12 @@ export default function Home() {
                         </div>
 
                         {/* Main Headline */}
-                        <h1 className="font-dynapuff text-5xl md:text-6xl lg:text-7xl font-bold text-center mb-6 leading-tight">
+                        <h1 className="mb-6 text-center font-dynapuff text-4xl font-bold leading-tight sm:text-5xl md:text-6xl lg:text-7xl">
                             Discover <span className="bg-gradient-to-r from-brown-normal to-brown-dark bg-clip-text text-transparent">Extraordinary</span> Moments
                         </h1>
 
                         {/* Subheadline */}
-                        <p className="text-lg md:text-xl text-gray-600 text-center max-w-3xl mx-auto mb-8">
+                        <p className="mx-auto mb-8 max-w-3xl text-center text-base text-gray-600 sm:text-lg md:text-xl">
                             From intimate gatherings to massive festivals, find the perfect event that matches your interests. Connect with communities, discover local talent, and create unforgettable memories.
                         </p>
 
@@ -49,7 +49,7 @@ export default function Home() {
                         </div>
 
                         {/* Quick Stats */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-8 border-t border-b border-gray-200">
+                        <div className="grid grid-cols-2 gap-4 border-t border-b border-gray-200 py-6 sm:gap-6 md:grid-cols-4 md:py-8">
                             <div className="text-center">
                                 <div className="text-3xl md:text-4xl font-bold text-brown-dark">10K+</div>
                                 <div className="text-sm text-gray-600 mt-1">Active Events</div>
