@@ -9,6 +9,11 @@ import User from "@/models/User";
 import { UserRole } from "@/types";
 import { validateLoginInput } from "@/utils/auth/validation";
 
+const getEnv = (key: string, fallbackKey?: string) => {
+	const value = process.env[key] ?? (fallbackKey ? process.env[fallbackKey] : undefined);
+	return value?.trim() || undefined;
+};
+
 export const authOptions: NextAuthOptions = {
 	secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
 	session: {
@@ -21,8 +26,30 @@ export const authOptions: NextAuthOptions = {
 		signIn: "/login",
 	},
 	providers: [
-		...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [GoogleProvider({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET })] : []),
-		...(process.env.GITHUB_ID && process.env.GITHUB_SECRET ? [GitHubProvider({ clientId: process.env.GITHUB_ID, clientSecret: process.env.GITHUB_SECRET })] : []),
+		...(getEnv("GOOGLE_CLIENT_ID", "GOOGLE_ID") && getEnv("GOOGLE_CLIENT_SECRET", "GOOGLE_SECRET")
+			? [GoogleProvider({
+					clientId: getEnv("GOOGLE_CLIENT_ID", "GOOGLE_ID")!,
+					clientSecret: getEnv("GOOGLE_CLIENT_SECRET", "GOOGLE_SECRET")!,
+				})]
+			: []),
+		...(getEnv("GITHUB_ID", "GITHUB_CLIENT_ID") && getEnv("GITHUB_SECRET", "GITHUB_CLIENT_SECRET")
+			? [GitHubProvider({
+					clientId: getEnv("GITHUB_ID", "GITHUB_CLIENT_ID")!,
+					clientSecret: getEnv("GITHUB_SECRET", "GITHUB_CLIENT_SECRET")!,
+					authorization: { params: { scope: "read:user user:email" } },
+					allowDangerousEmailAccountLinking: true,
+					profile(profile) {
+						const email = profile.email ?? `${profile.login}@users.noreply.github.com`;
+						return {
+							id: String(profile.id),
+							name: profile.name ?? profile.login,
+							email,
+							image: profile.avatar_url ?? null,
+							role: "attendee",
+						};
+					},
+				})]
+			: []),
 		CredentialsProvider({
 			name: "Credentials",
 			credentials: {

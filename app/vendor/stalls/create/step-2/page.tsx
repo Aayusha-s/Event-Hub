@@ -63,6 +63,8 @@ const Page = () => {
     const [stallImagePreview, setStallImagePreview] = useState<string>(() => {
         if (typeof window === 'undefined') return '';
         try {
+            const dataUrl = window.localStorage.getItem('StallImageDataUrl');
+            if (dataUrl) return dataUrl;
             return JSON.parse(window.localStorage.getItem('StallDetails') || 'null')?.stallImagePreview ?? '';
         } catch {
             return '';
@@ -74,6 +76,9 @@ const Page = () => {
         if (!file) {
             setStallImage(null);
             setStallImagePreview('');
+            window.localStorage.removeItem('StallImageDataUrl');
+            window.localStorage.removeItem('StallImageName');
+            window.localStorage.removeItem('StallImageType');
             return;
         }
 
@@ -93,6 +98,9 @@ const Page = () => {
         reader.onload = (e) => {
             const preview = e.target?.result as string;
             setStallImagePreview(preview);
+            window.localStorage.setItem('StallImageDataUrl', preview);
+            window.localStorage.setItem('StallImageName', file.name);
+            window.localStorage.setItem('StallImageType', file.type || 'image/png');
             setErrors((prev) => {
                 const newErrors = { ...prev };
                 delete newErrors.stallImage;
@@ -153,9 +161,13 @@ const Page = () => {
             description: description.trim(),
         };
         saveStallDraft('stallDetails', details);
-        if (stallImage) {
-            saveStallDraft('stallImage', stallImage);
+        if (stallImagePreview) {
             saveStallDraft('stallImagePreview', stallImagePreview);
+            saveStallDraft('stallImageDataUrl', stallImagePreview);
+            if (stallImage) {
+                saveStallDraft('stallImageName', stallImage.name);
+                saveStallDraft('stallImageType', stallImage.type || 'image/png');
+            }
         }
         router.push('/vendor/stalls/create/step-3');
     };

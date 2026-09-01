@@ -16,11 +16,20 @@ export type StallDetailsDraft = {
     description: string;
 };
 
+export type StallImageDraft = {
+    dataUrl: string;
+    name: string;
+    type: string;
+};
+
 const draftKeys = {
     stallEvent: "StallEvent",
     stallDetails: "StallDetails",
     stallImage: "StallImage",
     stallImagePreview: "StallImagePreview",
+    stallImageDataUrl: "StallImageDataUrl",
+    stallImageName: "StallImageName",
+    stallImageType: "StallImageType",
 } as const;
 
 type DraftKey = keyof typeof draftKeys;
@@ -57,4 +66,9 @@ export const clearStallDraft = () => {
 
     window.localStorage.removeItem(draftKeys.stallEvent);
     window.localStorage.removeItem(draftKeys.stallDetails);
+    window.localStorage.removeItem(draftKeys.stallImage);
+    window.localStorage.removeItem(draftKeys.stallImagePreview);
+    window.localStorage.removeItem(draftKeys.stallImageDataUrl);
+    window.localStorage.removeItem(draftKeys.stallImageName);
+    window.localStorage.removeItem(draftKeys.stallImageType);
 };

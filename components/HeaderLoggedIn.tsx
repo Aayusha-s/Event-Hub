@@ -44,7 +44,9 @@ const HeaderLoggedIn = () => {
                     </button>
 
                     <button type="button" className="flex flex-row items-center gap-1 rounded-full p-1.5 transition-colors hover:bg-surface-hover" onClick={() => setOpen(!open)}>
-                        <CircleUserRound size={32} strokeWidth={1.3} />
+                        <span className="relative block h-8 w-8 overflow-hidden rounded-full border border-border bg-surface-hover">
+                            <CircleUserRound size={32} strokeWidth={1.3} className="h-full w-full p-0.5 text-text-light" />
+                        </span>
                         <ChevronDown size={18} />
                     </button>
                 </div>

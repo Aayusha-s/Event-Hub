@@ -133,13 +133,15 @@ export default function EventSocial({ eventId }: { eventId: string }) {
 				onclose={() => setReviewOpen(false)}
 				onSubmit={async (rating, reviewText) => {
 					try {
+						const finalText = reviewText.trim();
+						if (!finalText) throw new Error('Please write a review before submitting.');
 						const response = await fetch(`/api/events/${eventId}/reviews`, {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({ rating, text: reviewText })
+							body: JSON.stringify({ rating, text: finalText })
 						});
 						const result = await response.json();
-						if (!response.ok) throw new Error(result.error?.message);
+						if (!response.ok) throw new Error(result.error?.message || 'Unable to submit review.');
 						setReviewOpen(false);
 						load();
 					} catch (error) {

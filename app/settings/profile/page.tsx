@@ -106,9 +106,15 @@ const Page = () => {
 
                     {/* change photo  */}
                     <div className='flex flex-row items-center gap-6 mt-6'>
-                        <span className='border border-brown-normal rounded-full w-24 h-24 flex items-center justify-center font-bold text-xl'>
-                            {profile?.profileImage ? <img src={profile.profileImage} alt={profile.name ?? 'Profile'} className='h-full w-full rounded-full object-cover' /> : (profile?.name ?? 'JD').split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}
-                        </span>
+                        <div className='relative h-24 w-24 overflow-hidden rounded-full border border-brown-normal bg-brown-light/60'>
+                            {profile?.profileImage ? (
+                                <img src={profile.profileImage} alt={profile.name ?? 'Profile'} className='h-full w-full object-cover object-center' />
+                            ) : (
+                                <div className='flex h-full w-full items-center justify-center text-xl font-bold'>
+                                    {(profile?.name ?? 'JD').split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}
+                                </div>
+                            )}
+                        </div>
 
                         <div className='space-y-2'>
                             <Button text={uploading ? 'Uploading...' : 'Change Photo'} variant="cta" iconLeft={<Camera />} size='sm' onClick={() => document.getElementById('profilePhoto')?.click()} disabled={uploading}></Button>

@@ -13,7 +13,9 @@ const Page = () => {
     const eventDraft = loadStallDraft<StallEventDraft>('stallEvent');
     const detailsDraft = loadStallDraft<StallDetailsDraft>('stallDetails');
     const stallImage = loadStallDraft<File>('stallImage');
-    const stallImagePreview = loadStallDraft<string>('stallImagePreview');
+    const stallImagePreview = loadStallDraft<string>('stallImagePreview') ?? loadStallDraft<string>('stallImageDataUrl');
+    const stallImageName = loadStallDraft<string>('stallImageName') ?? 'stall-image.png';
+    const stallImageType = loadStallDraft<string>('stallImageType') ?? 'image/png';
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState('');
@@ -30,10 +32,12 @@ const Page = () => {
         try {
             let stallImageUrl = '';
 
-            // Upload image if present
-            if (stallImage) {
+            const imageSource = stallImagePreview ?? '';
+            if (imageSource) {
+                const imageBlob = await fetch(imageSource).then((response) => response.blob());
+                const derivedFile = new File([imageBlob], stallImageName, { type: stallImageType || imageBlob.type || 'image/png' });
                 const formData = new FormData();
-                formData.append('file', stallImage);
+                formData.append('file', derivedFile);
 
                 const uploadResponse = await fetch('/api/stalls/upload-image', {
                     method: 'POST',
@@ -45,7 +49,7 @@ const Page = () => {
                     throw new Error(uploadResult.error?.message || 'Failed to upload stall image.');
                 }
 
-                stallImageUrl = uploadResult.data.url;
+                stallImageUrl = uploadResult.data.url || uploadResult.data.imageUrl;
             }
 
             // Submit stall request
