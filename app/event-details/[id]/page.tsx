@@ -100,7 +100,8 @@ const Page = () => {
     const coverImage = event.images[0] ?? fallbackImage;
     const galleryImages = event.images.length ? event.images : [fallbackImage];
     const hasCoordinates = typeof event.latitude === 'number' && typeof event.longitude === 'number' && (event.latitude !== 0 || event.longitude !== 0);
-    const mapQuery = hasCoordinates ? `${event.latitude},${event.longitude}` : event.venue?.trim();
+    const readableLocation = event.venue?.trim();
+    const mapQuery = readableLocation || (hasCoordinates ? `${event.latitude},${event.longitude}` : '');
     const mapUrl = mapQuery ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed` : undefined;
     const role = session?.user?.role;
     const ownsEvent = role === 'organizer' && event.organizer?._id === session?.user?.id;

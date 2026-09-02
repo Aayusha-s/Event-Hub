@@ -167,8 +167,8 @@ export const cancelStallBooking = async (ownerId: Types.ObjectId | string, event
 export const getVendorDashboard = async (ownerId: Types.ObjectId | string) => {
 	await dbConnect();
 	const vendor = await Vendor.findOne({ owner: new Types.ObjectId(ownerId) })
-		.populate({ path: "stallBookings.event", select: "title description organizer venue startDate endDate status images category isOnline" })
-		.populate({ path: "stallBookings.event", populate: { path: "organizer", select: "name" } })
+		.populate({ path: "stallBookings.event", select: "title description organizer venue latitude longitude startDate endDate status images category isOnline ticketTypes capacity ticketsSold tags" })
+		.populate({ path: "stallBookings.event", populate: { path: "organizer", select: "name profileImage" } })
 		.exec();
 
 	if (!vendor) throw new HttpError(404, "Vendor profile not found.", "NOT_FOUND");
