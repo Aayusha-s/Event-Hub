@@ -1,9 +1,9 @@
-import CreateEventLayoutClient from './CreateEventLayoutClient';
+import CreateEventLayoutClient from "./CreateEventLayoutClient";
 
 export default function CreateEventLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return <CreateEventLayoutClient>{children}</CreateEventLayoutClient>;
+  return <CreateEventLayoutClient>{children}</CreateEventLayoutClient>;
 }

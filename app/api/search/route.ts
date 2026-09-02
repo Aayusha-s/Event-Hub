@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = (searchParams.get("q") ?? "").trim().slice(0, 100);
   const session = await getServerSession(authOptions);
-  
+
   await dbConnect();
 
   if (!query) {
@@ -41,18 +41,16 @@ export async function GET(request: Request) {
         { description: pattern },
       ],
     })
-      .select("_id title venue images tags description startDate ticketTypes organizer")
+      .select(
+        "_id title venue images tags description startDate ticketTypes organizer",
+      )
       .limit(20)
       .lean(),
-    
+
     // Search people (Organizer, Vendor, Attendee, Ticket Checker - NOT Admin)
     User.find({
       role: { $in: ["organizer", "vendor", "attendee", "ticket_checker"] },
-      $or: [
-        { name: pattern },
-        { username: pattern },
-        { bio: pattern },
-      ],
+      $or: [{ name: pattern }, { username: pattern }, { bio: pattern }],
     })
       .select("_id name username profileImage role bio followers location")
       .limit(20)
@@ -69,7 +67,7 @@ export async function GET(request: Request) {
       {
         $set: { query: query },
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, new: true, setDefaultsOnInsert: true },
     ).catch(() => {
       // Silently fail if history recording fails
     });

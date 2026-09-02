@@ -1,5 +1,124 @@
 "use client";
 import { useEffect, useState } from "react";
 import Button from "@/components/Button";
-type Form = { businessName: string; description: string; category: string; logo: string; approvalStatus?: string };
-export default function VendorProfilePage() { const [form, setForm] = useState<Form>({ businessName: "", description: "", category: "", logo: "" }); const [message, setMessage] = useState(""); const [error, setError] = useState(""); useEffect(() => { fetch("/api/vendors?mode=mine", { cache: "no-store" }).then(async (r) => { const j = await r.json(); if (!r.ok || !j.success || !j.data) throw new Error(j.error?.message || "Unable to load vendor profile."); setForm({ businessName: j.data.businessName, description: j.data.description, category: j.data.category, logo: j.data.logo ?? "", approvalStatus: j.data.approvalStatus }); }).catch((e) => setError(e instanceof Error ? e.message : "Unable to load vendor profile.")); }, []); const save = async () => { setMessage(""); setError(""); try { const r = await fetch("/api/vendors", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) }); const j = await r.json(); if (!r.ok || !j.success) throw new Error(j.error?.message || "Unable to save vendor profile."); setMessage("Vendor profile updated successfully."); } catch (e) { setError(e instanceof Error ? e.message : "Unable to save vendor profile."); } }; return <section className="my-4 mx-2 px-4 font-cause text-text-dark md:mx-3 lg:mx-4 xl:mx-6"><h1 className="font-dynapuff text-2xl font-bold md:text-3xl">Vendor Profile</h1><p className="mt-1 text-text-light">Manage your public vendor business information. Your role cannot be changed here.</p>{form.approvalStatus && <p className="mt-4 rounded-xl border border-brown-normal p-3">Application status: <b className="capitalize">{form.approvalStatus}</b></p>}{message && <p className="mt-4 rounded-xl border border-green-300 bg-green-50 p-3 text-green-700">{message}</p>}{error && <p className="mt-4 rounded-xl border border-red-300 bg-red-50 p-3 text-red-700">{error}</p>}<div className="mt-6 max-w-3xl space-y-4 rounded-xl border border-brown-normal p-5"><label className="block font-semibold">Business name<input className="mt-1 w-full rounded-md border border-brown-normal p-2 font-normal" value={form.businessName} onChange={(e) => setForm({ ...form, businessName: e.target.value })}/></label><label className="block font-semibold">Category<input className="mt-1 w-full rounded-md border border-brown-normal p-2 font-normal" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}/></label><label className="block font-semibold">Logo URL (optional)<input className="mt-1 w-full rounded-md border border-brown-normal p-2 font-normal" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })}/></label><label className="block font-semibold">Business description<textarea rows={6} className="mt-1 w-full rounded-md border border-brown-normal p-2 font-normal" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}/></label><div className="flex justify-end"><Button text="Save Changes" onClick={save}/></div></div></section>; }
+type Form = {
+  businessName: string;
+  description: string;
+  category: string;
+  logo: string;
+  approvalStatus?: string;
+};
+export default function VendorProfilePage() {
+  const [form, setForm] = useState<Form>({
+    businessName: "",
+    description: "",
+    category: "",
+    logo: "",
+  });
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  useEffect(() => {
+    fetch("/api/vendors?mode=mine", { cache: "no-store" })
+      .then(async (r) => {
+        const j = await r.json();
+        if (!r.ok || !j.success || !j.data)
+          throw new Error(j.error?.message || "Unable to load vendor profile.");
+        setForm({
+          businessName: j.data.businessName,
+          description: j.data.description,
+          category: j.data.category,
+          logo: j.data.logo ?? "",
+          approvalStatus: j.data.approvalStatus,
+        });
+      })
+      .catch((e) =>
+        setError(
+          e instanceof Error ? e.message : "Unable to load vendor profile.",
+        ),
+      );
+  }, []);
+  const save = async () => {
+    setMessage("");
+    setError("");
+    try {
+      const r = await fetch("/api/vendors", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const j = await r.json();
+      if (!r.ok || !j.success)
+        throw new Error(j.error?.message || "Unable to save vendor profile.");
+      setMessage("Vendor profile updated successfully.");
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Unable to save vendor profile.",
+      );
+    }
+  };
+  return (
+    <section className="my-4 mx-2 px-4 font-cause text-text-dark md:mx-3 lg:mx-4 xl:mx-6">
+      <h1 className="font-dynapuff text-2xl font-bold md:text-3xl">
+        Vendor Profile
+      </h1>
+      <p className="mt-1 text-text-light">
+        Manage your public vendor business information. Your role cannot be
+        changed here.
+      </p>
+      {form.approvalStatus && (
+        <p className="mt-4 rounded-xl border border-brown-normal p-3">
+          Application status:{" "}
+          <b className="capitalize">{form.approvalStatus}</b>
+        </p>
+      )}
+      {message && (
+        <p className="mt-4 rounded-xl border border-green-300 bg-green-50 p-3 text-green-700">
+          {message}
+        </p>
+      )}
+      {error && (
+        <p className="mt-4 rounded-xl border border-red-300 bg-red-50 p-3 text-red-700">
+          {error}
+        </p>
+      )}
+      <div className="mt-6 max-w-3xl space-y-4 rounded-xl border border-brown-normal p-5">
+        <label className="block font-semibold">
+          Business name
+          <input
+            className="mt-1 w-full rounded-md border border-brown-normal p-2 font-normal"
+            value={form.businessName}
+            onChange={(e) => setForm({ ...form, businessName: e.target.value })}
+          />
+        </label>
+        <label className="block font-semibold">
+          Category
+          <input
+            className="mt-1 w-full rounded-md border border-brown-normal p-2 font-normal"
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+          />
+        </label>
+        <label className="block font-semibold">
+          Logo URL (optional)
+          <input
+            className="mt-1 w-full rounded-md border border-brown-normal p-2 font-normal"
+            value={form.logo}
+            onChange={(e) => setForm({ ...form, logo: e.target.value })}
+          />
+        </label>
+        <label className="block font-semibold">
+          Business description
+          <textarea
+            rows={6}
+            className="mt-1 w-full rounded-md border border-brown-normal p-2 font-normal"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
+        </label>
+        <div className="flex justify-end">
+          <Button text="Save Changes" onClick={save} />
+        </div>
+      </div>
+    </section>
+  );
+}

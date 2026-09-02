@@ -13,19 +13,8 @@ export interface RegisterOrganizerInput {
 	formData?: Record<string, unknown>;
 }
 
-/**
- * Creates (or reuses) an organizer application for the given user.
- *
- * NOTE: There is currently no dedicated admin-review queue for organizer
- * applications (unlike vendors, which are reviewed via /admin/vendors).
- * Until that exists, this follows the same "demo approval" pattern already
- * used for vendors: the application is stored with a full audit trail
- * (approvalStatus + formData) and the user's role is upgraded immediately
- * so the workflow is not left incomplete. If/when an admin approval queue
- * is added, flip DEMO_AUTO_APPROVE to false and wire up an
- * updateOrganizerApprovalStatus() admin action (mirrors
- * updateVendorApprovalStatus in vendor.service.ts).
- */
+
+
 const DEMO_AUTO_APPROVE = true;
 
 export const createOrganizerProfile = async (ownerId: Types.ObjectId | string, input: RegisterOrganizerInput) => {

@@ -1,13 +1,157 @@
-'use client';
-import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Bell, CheckCheck, Trash2 } from 'lucide-react';
-import Button from '@/components/Button';
-type Notification = { _id: string; title: string; message: string; type: string; read: boolean; link?: string; createdAt: string };
+"use client";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { Bell, CheckCheck, Trash2 } from "lucide-react";
+import Button from "@/components/Button";
+type Notification = {
+  _id: string;
+  title: string;
+  message: string;
+  type: string;
+  read: boolean;
+  link?: string;
+  createdAt: string;
+};
 export default function Page() {
- const [items,setItems]=useState<Notification[]>([]),[page,setPage]=useState(1),[pages,setPages]=useState(1),[unread,setUnread]=useState(0),[q,setQ]=useState(''),[loading,setLoading]=useState(true),[error,setError]=useState('');
- const load=useCallback(async(next=page)=>{setLoading(true);try{const r=await fetch(`/api/notifications?page=${next}&pageSize=20&q=${encodeURIComponent(q)}`,{cache:'no-store'}),j=await r.json();if(!r.ok||!j.success)throw new Error(j.error?.message||'Unable to load notifications.');setItems(j.data.items);setPages(j.data.totalPages);setUnread(j.data.unreadCount);setError('');}catch(e){setError(e instanceof Error?e.message:'Unable to load notifications.')}finally{setLoading(false)}},[page,q]);
- useEffect(()=>{const id=setTimeout(()=>load(1),250);return()=>clearTimeout(id)},[q,load]);
- const action=async(url:string,method:string)=>{const r=await fetch(url,{method});if(!r.ok)throw new Error('Action failed.');await load();};
- return <section className='flex flex-col my-4 mx-2 px-4 font-cause text-text-dark md:mx-3 lg:mx-4 xl:mx-6'><div className='flex flex-wrap items-center justify-between gap-3 mb-6'><div><h1 className='font-dynapuff text-2xl md:text-3xl font-bold flex gap-2'><Bell/>Notifications</h1><p>{unread} unread notification{unread===1?'':'s'}</p></div><div className='flex gap-2'><Button text='Mark all as read' size='sm' variant='cta' iconLeft={<CheckCheck size={16}/>} onClick={()=>action('/api/notifications','PATCH')}/><Button text='Delete all' size='sm' variant='secondary' iconLeft={<Trash2 size={16}/>} onClick={()=>action('/api/notifications','DELETE')}/></div></div><input value={q} onChange={e=>{setQ(e.target.value);setPage(1)}} placeholder='Search notifications...' className='mb-5 w-full rounded-lg border border-brown-normal p-3'/>{error&&<p className='text-red-600'>{error}</p>}{loading?<p>Loading notifications…</p>:items.length===0?<p className='rounded-xl border border-brown-normal p-6 text-center'>No notifications found.</p>:<div className='space-y-3'>{items.map(item=><article key={item._id} className={`rounded-xl border p-4 ${item.read?'border-brown-normal':'border-primary bg-brown-light'}`}><div className='flex justify-between gap-3'><Link href={item.link||'#'} onClick={()=>!item.read&&action(`/api/notifications/${item._id}`,'PATCH')}><h2 className='font-bold'>{item.title}</h2><p>{item.message}</p><p className='text-sm text-text-light'>{new Date(item.createdAt).toLocaleString()}</p></Link><button aria-label='Delete notification' onClick={()=>action(`/api/notifications/${item._id}`,'DELETE')}><Trash2 size={18}/></button></div></article>)}</div>}<div className='mt-5 flex justify-between'><Button text='Previous' size='sm' variant='secondary' disabled={page<=1} onClick={()=>setPage(page-1)}/><span>Page {page} of {pages||1}</span><Button text='Next' size='sm' variant='secondary' disabled={page>=pages} onClick={()=>setPage(page+1)}/></div></section>;
+  const [items, setItems] = useState<Notification[]>([]),
+    [page, setPage] = useState(1),
+    [pages, setPages] = useState(1),
+    [unread, setUnread] = useState(0),
+    [q, setQ] = useState(""),
+    [loading, setLoading] = useState(true),
+    [error, setError] = useState("");
+  const load = useCallback(
+    async (next = page) => {
+      setLoading(true);
+      try {
+        const r = await fetch(
+            `/api/notifications?page=${next}&pageSize=20&q=${encodeURIComponent(q)}`,
+            { cache: "no-store" },
+          ),
+          j = await r.json();
+        if (!r.ok || !j.success)
+          throw new Error(j.error?.message || "Unable to load notifications.");
+        setItems(j.data.items);
+        setPages(j.data.totalPages);
+        setUnread(j.data.unreadCount);
+        setError("");
+      } catch (e) {
+        setError(
+          e instanceof Error ? e.message : "Unable to load notifications.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page, q],
+  );
+  useEffect(() => {
+    const id = setTimeout(() => load(1), 250);
+    return () => clearTimeout(id);
+  }, [q, load]);
+  const action = async (url: string, method: string) => {
+    const r = await fetch(url, { method });
+    if (!r.ok) throw new Error("Action failed.");
+    await load();
+  };
+  return (
+    <section className="flex flex-col my-4 mx-2 px-4 font-cause text-text-dark md:mx-3 lg:mx-4 xl:mx-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div>
+          <h1 className="font-dynapuff text-2xl md:text-3xl font-bold flex gap-2">
+            <Bell />
+            Notifications
+          </h1>
+          <p>
+            {unread} unread notification{unread === 1 ? "" : "s"}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            text="Mark all as read"
+            size="sm"
+            variant="cta"
+            iconLeft={<CheckCheck size={16} />}
+            onClick={() => action("/api/notifications", "PATCH")}
+          />
+          <Button
+            text="Delete all"
+            size="sm"
+            variant="secondary"
+            iconLeft={<Trash2 size={16} />}
+            onClick={() => action("/api/notifications", "DELETE")}
+          />
+        </div>
+      </div>
+      <input
+        value={q}
+        onChange={(e) => {
+          setQ(e.target.value);
+          setPage(1);
+        }}
+        placeholder="Search notifications..."
+        className="mb-5 w-full rounded-lg border border-brown-normal p-3"
+      />
+      {error && <p className="text-red-600">{error}</p>}
+      {loading ? (
+        <p>Loading notifications…</p>
+      ) : items.length === 0 ? (
+        <p className="rounded-xl border border-brown-normal p-6 text-center">
+          No notifications found.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {items.map((item) => (
+            <article
+              key={item._id}
+              className={`rounded-xl border p-4 ${item.read ? "border-brown-normal" : "border-primary bg-brown-light"}`}
+            >
+              <div className="flex justify-between gap-3">
+                <Link
+                  href={item.link || "#"}
+                  onClick={() =>
+                    !item.read &&
+                    action(`/api/notifications/${item._id}`, "PATCH")
+                  }
+                >
+                  <h2 className="font-bold">{item.title}</h2>
+                  <p>{item.message}</p>
+                  <p className="text-sm text-text-light">
+                    {new Date(item.createdAt).toLocaleString()}
+                  </p>
+                </Link>
+                <button
+                  aria-label="Delete notification"
+                  onClick={() =>
+                    action(`/api/notifications/${item._id}`, "DELETE")
+                  }
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+      <div className="mt-5 flex justify-between">
+        <Button
+          text="Previous"
+          size="sm"
+          variant="secondary"
+          disabled={page <= 1}
+          onClick={() => setPage(page - 1)}
+        />
+        <span>
+          Page {page} of {pages || 1}
+        </span>
+        <Button
+          text="Next"
+          size="sm"
+          variant="secondary"
+          disabled={page >= pages}
+          onClick={() => setPage(page + 1)}
+        />
+      </div>
+    </section>
+  );
 }

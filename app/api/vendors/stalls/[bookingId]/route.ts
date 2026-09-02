@@ -6,17 +6,23 @@ import { HttpError } from "@/utils/api/httpError";
 type RouteContext = { params: Promise<{ bookingId: string }> };
 
 export async function DELETE(_request: Request, context: RouteContext) {
-	try {
-		const session = await requireRole(["vendor"]);
-		const { bookingId } = await context.params;
+  try {
+    const session = await requireRole(["vendor"]);
+    const { bookingId } = await context.params;
 
-		const vendor = await cancelStallBooking(session.user.id, bookingId);
-		return NextResponse.json({ success: true, data: vendor });
-	} catch (error) {
-		if (error instanceof HttpError) {
-			return NextResponse.json({ success: false, error: { message: error.message, code: error.code } }, { status: error.statusCode });
-		}
-		console.error("Cancel stall booking failed:", error);
-		return NextResponse.json({ success: false, error: { message: "Unable to cancel stall booking." } }, { status: 500 });
-	}
+    const vendor = await cancelStallBooking(session.user.id, bookingId);
+    return NextResponse.json({ success: true, data: vendor });
+  } catch (error) {
+    if (error instanceof HttpError) {
+      return NextResponse.json(
+        { success: false, error: { message: error.message, code: error.code } },
+        { status: error.statusCode },
+      );
+    }
+    console.error("Cancel stall booking failed:", error);
+    return NextResponse.json(
+      { success: false, error: { message: "Unable to cancel stall booking." } },
+      { status: 500 },
+    );
+  }
 }
