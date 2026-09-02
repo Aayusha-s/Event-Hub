@@ -91,11 +91,39 @@ export default function TrendingNearYou() {
 		if (!navigator.geolocation) return;
 
 		navigator.geolocation.getCurrentPosition(
-			(position) => {
+			async (position) => {
 				setCoordinates({ lat: position.coords.latitude, lng: position.coords.longitude });
-				// For Kathmandu Valley, assume default location based on geolocation
-				// In production, you'd use a reverse geocoding API to get the precise district
-				setDetectedLocation("Kathmandu");
+				try {
+					const response = await fetch(
+						`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`
+					);
+					if (!response.ok) throw new Error("Unable to detect location");
+					const data = await response.json() as {
+						address?: {
+							neighbourhood?: string;
+							suburb?: string;
+							quarter?: string;
+							road?: string;
+							village?: string;
+							town?: string;
+							city_district?: string;
+							city?: string;
+						};
+					};
+					setDetectedLocation(
+						data.address?.neighbourhood ||
+						data.address?.suburb ||
+						data.address?.quarter ||
+						data.address?.road ||
+						data.address?.village ||
+						data.address?.town ||
+						data.address?.city_district ||
+						data.address?.city ||
+						"Kathmandu"
+					);
+				} catch {
+					setDetectedLocation("Kathmandu");
+				}
 				setLocation("");
 			},
 			() => {
