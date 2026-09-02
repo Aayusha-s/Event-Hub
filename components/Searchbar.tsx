@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Filter, Mic, MapPin, Search } from "lucide-react";
+import { Filter, Mic, MapPin, Search, X } from "lucide-react";
 
 type SearchbarProps = {
     className?: string;
@@ -242,6 +242,16 @@ const Searchbar = ({ className, showLocation = true, compact = false, placeholde
                         placeholder={placeholder ?? (compact ? "Search events..." : "Search events, artists, venues")}
                         className="w-full min-w-0 bg-transparent text-sm text-text-dark placeholder:text-text-muted focus:outline-none focus-visible:shadow-none"
                     />
+                    {query && (
+                        <button
+                            type="button"
+                            onClick={() => { setQuery(""); setActiveSuggestion(-1); setShowSuggestions(false); }}
+                            className="shrink-0 rounded-full p-1 text-text-muted transition-colors hover:bg-surface-hover hover:text-text-dark"
+                            aria-label="Clear search"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                    )}
                     {showSuggestions && suggestions && <div className="absolute left-0 top-full z-60 mt-2 w-[min(92vw,26rem)] min-w-0 rounded-xl border border-border bg-surface p-3 shadow-xl"><div className="max-h-72 overflow-y-auto text-sm">{[...suggestions.recent, ...suggestions.popular].slice(0, 5).map(value => <button type="button" key={`q-${value}`} onClick={() => { setQuery(value); submitSearch(value); }} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.events.map(item => <button type="button" key={item._id} onClick={() => router.push(`/event-details/${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.title}</button>)}{suggestions.organizers.map(item => <button type="button" key={item._id} onClick={() => router.push(`/userprofile?userId=${item._id}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{item.name}</button>)}{suggestions.venues.map(value => <button type="button" key={`v-${value}`} onClick={() => submitSearch(value, value)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}{suggestions.categories.concat(suggestions.tags).map(value => <button type="button" key={`f-${value}`} onClick={() => router.push(`/explore-events?tags=${encodeURIComponent(value)}`)} className="block w-full px-2 py-1 text-left hover:text-primary">{value}</button>)}</div></div>}
                 </label>
 
