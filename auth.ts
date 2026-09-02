@@ -18,7 +18,6 @@ export const authOptions: NextAuthOptions = {
 	secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
 	session: {
 		strategy: "jwt",
-		
 		maxAge: 60 * 60 * 24 * 30,
 		updateAge: 60 * 60 * 24,
 	},
@@ -32,10 +31,11 @@ export const authOptions: NextAuthOptions = {
 					clientSecret: getEnv("GOOGLE_CLIENT_SECRET", "GOOGLE_SECRET")!,
 				})]
 			: []),
-		...(getEnv("GITHUB_ID", "GITHUB_CLIENT_ID") && getEnv("GITHUB_SECRET", "GITHUB_CLIENT_SECRET")
+		...((getEnv("GITHUB_ID", "GITHUB_CLIENT_ID") || getEnv("GITHUB_CLIENT_ID", "GITHUB_ID")) &&
+			(getEnv("GITHUB_SECRET", "GITHUB_CLIENT_SECRET") || getEnv("GITHUB_CLIENT_SECRET", "GITHUB_SECRET"))
 			? [GitHubProvider({
-					clientId: getEnv("GITHUB_ID", "GITHUB_CLIENT_ID")!,
-					clientSecret: getEnv("GITHUB_SECRET", "GITHUB_CLIENT_SECRET")!,
+					clientId: getEnv("GITHUB_ID", "GITHUB_CLIENT_ID") ?? getEnv("GITHUB_CLIENT_ID", "GITHUB_ID")!,
+					clientSecret: getEnv("GITHUB_SECRET", "GITHUB_CLIENT_SECRET") ?? getEnv("GITHUB_CLIENT_SECRET", "GITHUB_SECRET")!,
 					authorization: { params: { scope: "read:user user:email" } },
 					allowDangerousEmailAccountLinking: true,
 					profile(profile) {
